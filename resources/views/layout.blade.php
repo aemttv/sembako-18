@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,32 +19,102 @@
                         poppins: ['Poppins', 'sans-serif'],
                     },
                     colors: {
-                    primary: "#F68A1F",
-                    white: "#FFFFFF",
-                    black: "#000000",
-                    background: "#F7F7F7",
-                    hoverColor: "#f77b00"
+                        primary: "#F68A1F",
+                        white: "#FFFFFF",
+                        black: "#000000",
+                        background: "#F7F7F7",
+                        hoverColor: "#f77b00"
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-gray-100">
 
-    <!-- Header -->
-    <Header class="flex min-h-screen">
-        <x-navbar></x-navbar>
-    </Header>
+<body class="bg-gray-100 m-0 p-0">
 
-    {{-- <!-- Main Content -->
-    <main class="flex-grow">
-        {{ $slot }}
-    </main> --}}
+    <!-- Wrapper -->
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <x-sidebar />
 
-    <!-- Footer -->
-    {{-- <x-footer></x-footer> --}}
+        <!-- Main content wrapper -->
+        <div class="flex-1 flex flex-col">
+            
+            <!-- Header -->
+            <x-header /> <!-- Pastikan di komponen x-header sudah ditutup dengan benar -->
+
+            <!-- Page content -->
+            <main class="flex-1 p-4 bg-gray-100">
+                @yield('content')
+            </main>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-white flex items-center justify-center z-50 hidden">
+        <div class="text-center">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4 animate-spin"></div>
+            <p class="text-sm text-gray-500">Loading...</p>
+        </div>
+    </div>
+
+    <style>
+        .loader {
+            border-top-color: #3498db;
+        }
+    </style>
+
+<script>
+    const loadingScreen = document.getElementById('loading-screen');
+
+    // ✅ Handle first load (not from manual navigation)
+    if (!sessionStorage.getItem('manualNavigation')) {
+        window.addEventListener('DOMContentLoaded', () => {
+            loadingScreen.classList.remove('hidden');
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+            }, 800);
+        });
+    } else {
+        sessionStorage.removeItem('manualNavigation');
+    }
+
+    // ✅ Handle manual navigation (link clicks)
+    document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', function (e) {
+            const target = e.currentTarget.getAttribute('target');
+            const href = e.currentTarget.getAttribute('href');
+
+            if (
+                href.startsWith('#') ||
+                href.startsWith('javascript:') ||
+                target === '_blank'
+            ) return;
+
+            e.preventDefault();
+            loadingScreen.classList.remove('hidden');
+
+            // Mark that we're navigating manually
+            sessionStorage.setItem('manualNavigation', 'true');
+
+            setTimeout(() => {
+                window.location.href = href;
+            }, 800);
+        });
+    });
+
+    // ✅ FIX: Hide loader when coming back via browser back/forward button
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            // Page loaded from bfcache (back/forward)
+            loadingScreen.classList.add('hidden');
+        }
+    });
+</script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 </body>
+
 </html>
