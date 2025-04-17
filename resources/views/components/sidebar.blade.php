@@ -13,7 +13,7 @@
                     <li>
                         {{-- Request::is, to check whether it is on that url or not --}}
                         <a href="/dashboard"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium 
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                 {{ Request::is('dashboard') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                             <i
                                 class="fas fa-tachometer-alt w-3 {{ Request::is('dashboard') ? 'text-gray-700' : 'text-gray-500' }}"></i>
@@ -23,7 +23,7 @@
 
                     <li>
                         <a href="/daftar-produk"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium 
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                 {{ Request::is('daftar-produk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                             <i
                                 class="fas fa-box w-3 {{ Request::is('daftar-produk') ? 'text-gray-700' : 'text-gray-500' }}"></i>
@@ -32,7 +32,7 @@
                     </li>
                     <li>
                         <a href="/daftar-supplier"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium 
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                 {{ Request::is('daftar-supplier') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                             <i
                                 class="fas fa-truck w-3 {{ Request::is('daftar-supplier') ? 'text-gray-700' : 'text-gray-500' }}"></i>
@@ -47,7 +47,7 @@
                     <li>
                         <details class="group [&_summary::-webkit-details-marker]:hidden" {{ $stokOpen ? 'open' : '' }}>
                             <summary
-                                class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4 
+                                class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4
                 {{ $stokOpen ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
 
                                 <span class="flex items-center gap-3 text-sm font-medium">
@@ -69,14 +69,14 @@
                             <ul class="mt-2 space-y-1 px-4">
                                 <li>
                                     <a href="/barang-masuk"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium 
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                         {{ Request::is('barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         Barang Masuk
                                     </a>
                                 </li>
                                 <li>
                                     <a href="/barang-keluar"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium 
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                         {{ Request::is('barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         Barang Keluar
                                     </a>
@@ -93,7 +93,7 @@
                         <details class="group [&_summary::-webkit-details-marker]:hidden"
                             {{ $inventoryCareOpen ? 'open' : '' }}>
                             <summary
-                                class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4 
+                                class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4
                 {{ $inventoryCareOpen ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
 
                                 <span class="flex items-center gap-3 text-sm font-medium">
@@ -115,7 +115,7 @@
                             <ul class="mt-2 space-y-1 px-4">
                                 <li>
                                     <a href="/retur-barang"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium 
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                     {{ Request::is('retur-barang') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         Retur Barang
                                     </a>
@@ -123,7 +123,7 @@
 
                                 <li>
                                     <a href="/barang-rusak"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium 
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                     {{ Request::is('barang-rusak') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         Barang Rusak
                                     </a>
@@ -144,7 +144,7 @@
                         <details class="group [&_summary::-webkit-details-marker]:hidden"
                             {{ $laporanOpen ? 'open' : '' }}>
                             <summary
-                                class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4 
+                                class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4
             {{ $laporanOpen ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
 
                                 <span class="flex items-center gap-3 text-sm font-medium">
@@ -166,21 +166,21 @@
                             <ul class="mt-2 space-y-1 px-4">
                                 <li>
                                     <a href="/laporan-stok"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium 
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-stok') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         L.Stok
                                     </a>
                                 </li>
                                 <li>
                                     <a href="/laporan-barang-masuk"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium 
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         L.Barang Masuk
                                     </a>
                                 </li>
                                 <li>
                                     <a href="/laporan-barang-keluar"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium 
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         L.Barang Keluar
                                     </a>
@@ -196,7 +196,7 @@
                 <ul class="mt-2 space-y-1">
                     <li>
                         <a href="/daftar-akun"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium 
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                 {{ Request::is('daftar-akun') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                             <i
                                 class="fas fa-user-cog w-3 {{ Request::is('daftar-akun') ? 'text-gray-700' : 'text-gray-500' }}"></i>
@@ -209,7 +209,7 @@
                 <ul class="mt-2 space-y-1">
                     <li>
                         <a href="/backup-database"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium 
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                 {{ Request::is('backup-database') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                             <i
                                 class="fas fa-database w-3 {{ Request::is('backup-database') ? 'text-gray-700' : 'text-gray-500' }}"></i>
@@ -218,7 +218,7 @@
                     </li>
                     <li>
                         <a href="/log"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium 
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                 {{ Request::is('log') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                             <i
                                 class="fas fa-scroll w-3 {{ Request::is('log') ? 'text-gray-700' : 'text-gray-500' }}"></i>
@@ -236,7 +236,7 @@
                     class="size-10 rounded-full object-cover" />
                 <div>
                     <p class="text-xs">
-                        <strong class="block font-medium">Eric Frusciante</strong>
+                        <strong class="block font-medium">Yo San Lim</strong>
                         <span class="text-red-500">Logout</span>
                     </p>
                 </div>

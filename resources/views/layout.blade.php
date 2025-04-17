@@ -40,19 +40,19 @@
 
         <!-- Main content wrapper -->
         <div class="flex-1 flex flex-col">
-            
+
             <!-- Header -->
             <x-header /> <!-- Pastikan di komponen x-header sudah ditutup dengan benar -->
 
             <!-- Page content -->
-            <main class="flex-1 p-4 bg-gray-100">
+            <main class="flex-1 p-4">
                 @yield('content')
             </main>
         </div>
     </div>
 
     <!-- Loading Screen -->
-    <div id="loading-screen" class="fixed inset-0 bg-white flex items-center justify-center z-50 hidden">
+    <div id="loading-screen" class="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 hidden">
         <div class="text-center">
             <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4 animate-spin"></div>
             <p class="text-sm text-gray-500">Loading...</p>
@@ -68,7 +68,7 @@
 <script>
     const loadingScreen = document.getElementById('loading-screen');
 
-    // ✅ Handle first load (not from manual navigation)
+    // Handle first load (not from manual navigation)
     if (!sessionStorage.getItem('manualNavigation')) {
         window.addEventListener('DOMContentLoaded', () => {
             loadingScreen.classList.remove('hidden');
@@ -80,7 +80,7 @@
         sessionStorage.removeItem('manualNavigation');
     }
 
-    // ✅ Handle manual navigation (link clicks)
+    //  Handle manual navigation (link clicks)
     document.querySelectorAll('a[href]').forEach(link => {
         link.addEventListener('click', function (e) {
             const target = e.currentTarget.getAttribute('target');
@@ -104,7 +104,7 @@
         });
     });
 
-    // ✅ FIX: Hide loader when coming back via browser back/forward button
+    // FIX: Hide loader when coming back via browser back/forward button
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
             // Page loaded from bfcache (back/forward)

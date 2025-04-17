@@ -17,6 +17,19 @@ Route::get('/daftar-produk', function () {
 Route::get('/daftar-supplier', function () {
     return view('menu.supplier');
 });
+
+Route::get('/retur-barang', function () {
+    return view('menu.icare.confirm-bRetur');
+});
+
+Route::get('/barang-rusak', function () {
+    return view('menu.icare.confirm-bRusak');
+});
+
+Route::get('/barang-masuk', function () {
+    return view('menu.manajemen.bMasuk');
+});
+
 Route::get('/barang-keluar', function () {
     return view('menu.manajemen.bKeluar');
 });
@@ -33,4 +46,7 @@ Route::get('/backup-database', function () {
     return view('others.bDatabase');
 });
 
+Route::get('/log', function () {
+    return view('others.log');
+});
 
