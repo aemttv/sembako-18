@@ -58,7 +58,7 @@
         <div class="relative inline-block" id="profile-container">
             <!-- Clickable Profile Area -->
             <div id="profile-toggle" class="flex items-center gap-2 cursor-pointer">
-                <img src="https://i.pravatar.cc/100?img=12" alt="Profile" class="w-14 h-14 rounded-full object-cover">
+                <img src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" alt="Profile" class="w-14 h-14 rounded-full object-cover">
                 <span class="text-xl text-gray-800 font-medium">Yo San</span>
                 <i class="fas fa-chevron-down text-xs text-gray-600"></i>
             </div>
