@@ -40,59 +40,18 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
-                    {{-- @foreach ($suppliers as $supplier) --}}
+                    @foreach ($supplier as $data)
                         <tr>
-                            <td class="px-4 py-2">S0001</td>
-                            <td class="px-4 py-2">Dewi Purnamasari</td>
-                            <td class="px-4 py-2">085298765433</td>
-                            <td class="px-4 py-2">Jl. Mayjen Sungkono No.34, Surabaya</td>
-                            <td class="px-4 py-2">Aktif</td>
+                            <td class="px-4 py-2">{{$data->idSupplier}}</td>
+                            <td class="px-4 py-2">{{$data->nama}}</td>
+                            <td class="px-4 py-2">{{$data->nohp}}</td>
+                            <td class="px-4 py-2">{{$data->alamat}}</td>
+                            <td class="px-4 py-2">{{ $data->status == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
                             <td class="px-4 py-2 flex gap-1">
                                 <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="px-4 py-2">S0002</td>
-                            <td class="px-4 py-2">Natalia Anggraini</td>
-                            <td class="px-4 py-2">082234567891</td>
-                            <td class="px-4 py-2">Jl. Manyar kertoarjo no.77, Surabaya</td>
-                            <td class="px-4 py-2">Aktif</td>
-                            <td class="px-4 py-2 flex gap-1">
-                                <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-2">S0003</td>
-                            <td class="px-4 py-2">Siti Rahmawati</td>
-                            <td class="px-4 py-2">082198765432</td>
-                            <td class="px-4 py-2">Jl. Ahmad Yani no.23, Surabaya</td>
-                            <td class="px-4 py-2">Aktif</td>
-                            <td class="px-4 py-2 flex gap-1">
-                                <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-2">S0004</td>
-                            <td class="px-4 py-2">Arif Pratama</td>
-                            <td class="px-4 py-2">082234567890</td>
-                            <td class="px-4 py-2">Jl. Gubeng Kertajaya No.10, Surabaya</td>
-                            <td class="px-4 py-2">Tidak Aktif</td>
-                            <td class="px-4 py-2 flex gap-1">
-                                <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-2">S0005</td>
-                            <td class="px-4 py-2">Indra Mahardika</td>
-                            <td class="px-4 py-2">087643218765</td>
-                            <td class="px-4 py-2">Jl. Rungkut Industri No. 88, Surabaya</td>
-                            <td class="px-4 py-2">Tidak Aktif</td>
-                            <td class="px-4 py-2 flex gap-1">
-                                <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
-                            </td>
-                        </tr>
-                        
-                    {{-- @endforeach --}}
+                    @endforeach
                 </tbody>
             </table>
         </div>

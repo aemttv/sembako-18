@@ -22,6 +22,8 @@
             class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
     </div>
     <a href="/tambah-produk" class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah Produk</a>
+    <a href="/tambah-produk" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-green-600">Tambah Kategori</a>
+    <a href="/tambah-produk" class="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-green-600">Tambah Merek</a>
 </div>
 
 
@@ -40,14 +42,14 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y">
-                {{-- @foreach ($products as $product) --}}
+                @foreach ($barang as $data)
                     <tr>
-                        <td class="px-4 py-2">B0001</td>
-                        <td class="px-4 py-2">Susu UHT</td>
-                        <td class="px-4 py-2">ULTRA MILK</td>
-                        <td class="px-4 py-2">Kebutuhan Harian</td>
-                        <td class="px-4 py-2">10</td>
-                        <td class="px-4 py-2">Kadaluarsa</td>
+                        <td class="px-4 py-2">{{$data->idBarang}}</td>
+                        <td class="px-4 py-2">{{$data->namaBarang}}</td>
+                        <td class="px-4 py-2">{{$data->merekBarangText}}</td>
+                        <td class="px-4 py-2">{{$data->kategoriBarangText}}</td>
+                        <td class="px-4 py-2">{{$data->stokBarangCurrent}}</td>
+                        <td class="px-4 py-2">{{$data->kondisiBarangText}}</td>
                         <td class="px-4 py-2 flex gap-1">
                             <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
                             <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
@@ -55,63 +57,7 @@
                             <a href="#" class="px-2 py-1 bg-gray-700 text-white rounded text-xs">Keluar</a>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="px-4 py-2">B0002</td>
-                        <td class="px-4 py-2">Tepung Teriigu</td>
-                        <td class="px-4 py-2">SEGITIGA BIRU</td>
-                        <td class="px-4 py-2">Kebutuhan Harian</td>
-                        <td class="px-4 py-2">15</td>
-                        <td class="px-4 py-2">Normal</td>
-                        <td class="px-4 py-2 flex gap-1">
-                            <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
-                            <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
-                            <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Rusak</a>
-                            <a href="#" class="px-2 py-1 bg-gray-700 text-white rounded text-xs">Keluar</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-2">B0003</td>
-                        <td class="px-4 py-2">Deterjen</td>
-                        <td class="px-4 py-2">DAIA</td>
-                        <td class="px-4 py-2">Kebutuhan Harian</td>
-                        <td class="px-4 py-2">3</td>
-                        <td class="px-4 py-2">Rusak</td>
-                        <td class="px-4 py-2 flex gap-1">
-                            <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
-                            <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
-                            <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Rusak</a>
-                            <a href="#" class="px-2 py-1 bg-gray-700 text-white rounded text-xs">Keluar</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-2">B0004</td>
-                        <td class="px-4 py-2">Beras 5Kg</td>
-                        <td class="px-4 py-2">PINPIN</td>
-                        <td class="px-4 py-2">Kebutuhan Harian</td>
-                        <td class="px-4 py-2">3</td>
-                        <td class="px-4 py-2">Normal</td>
-                        <td class="px-4 py-2 flex gap-1">
-                            <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
-                            <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
-                            <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Rusak</a>
-                            <a href="#" class="px-2 py-1 bg-gray-700 text-white rounded text-xs">Keluar</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-2">B0005</td>
-                        <td class="px-4 py-2">Sabun Mandi Rose</td>
-                        <td class="px-4 py-2">LUX</td>
-                        <td class="px-4 py-2">Perawatan Kebersihan</td>
-                        <td class="px-4 py-2">5</td>
-                        <td class="px-4 py-2">Normal</td>
-                        <td class="px-4 py-2 flex gap-1">
-                            <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
-                            <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
-                            <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Rusak</a>
-                            <a href="#" class="px-2 py-1 bg-gray-700 text-white rounded text-xs">Keluar</a>
-                        </td>
-                    </tr>
-                {{-- @endforeach --}}
+                @endforeach
             </tbody>
         </table>
     </div>
