@@ -21,7 +21,7 @@ class BarangSeeder extends Seeder
         for ($i = 0; $i < 10; $i++) {
             $barang = new Barang();
             $barang->idBarang = Barang::generateNewIdBarang();  // e.g., B001, B002, etc.
-            $barang->namaBarang = $faker->word . ' ' . $faker->word; 
+            $barang->namaBarang = 'Produk ' . ($i + 1);
             $barang->kategoriBarang = $faker->numberBetween(1, 4);; // Assuming category ID 1 exists
             $barang->merekBarang = $faker->numberBetween(1, 10);;    // Assuming brand ID 1 exists
             $barang->stokAwalBarang = $faker->numberBetween(5, 100);

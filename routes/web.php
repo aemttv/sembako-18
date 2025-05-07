@@ -3,6 +3,7 @@
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\bMasukController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,9 +23,18 @@ Route::get('/dashboard', function () {
 //     return view('menu.produk');
 // });
 Route::get('/daftar-produk', [BarangController::class, 'viewBarang']);
-
+Route::get('/daftar-produk/search', [BarangController::class, 'search']);
 
 Route::get('/daftar-supplier', [SupplierController::class, 'viewSupplier']);
+Route::get('/suppliers/search', [SupplierController::class, 'search']);
+
+Route::get('/barang-masuk', [bMasukController::class, 'viewbMasuk'])->name('barang-masuk');
+Route::post('/barang-masuk/store', [bMasukController::class, 'tambahBMasuk'])->name('barang-masuk.store');
+
+
+Route::get('/barang-keluar', function () {
+    return view('menu.manajemen.bKeluar');
+});
 
 Route::get('/retur-barang', function () {
     return view('menu.icare.confirm-bRetur');
@@ -34,13 +44,6 @@ Route::get('/barang-rusak', function () {
     return view('menu.icare.confirm-bRusak');
 });
 
-Route::get('/barang-masuk', function () {
-    return view('menu.manajemen.bMasuk');
-});
-
-Route::get('/barang-keluar', function () {
-    return view('menu.manajemen.bKeluar');
-});
 
 Route::get('/laporan-stok', function () {
     return view('menu.laporan.stok');

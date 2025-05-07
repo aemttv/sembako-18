@@ -55,4 +55,16 @@ class BarangController extends Controller
 
         return view('menu.produk', ['barang' => $barang]);
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+
+        $results = Barang::where('namaBarang', 'like', "%$query%")
+            ->select('idBarang', 'namaBarang')
+            ->get();
+
+        return response()->json($results);
+    }
+
 }
