@@ -12,10 +12,12 @@
     <title>Toko Sembako 18</title>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode = false,
             theme: {
                 extend: {
                     fontFamily: {
@@ -28,6 +30,10 @@
                         background: "#F7F7F7",
                         hoverColor: "#f77b00"
                     }
+                    module.exports = {
+                        darkMode: false, // ← disables dark mode globally
+                        // or use 'class' if you want to control it manually
+                        }
                 }
             }
         }
@@ -50,7 +56,7 @@
             <x-header /> <!-- Pastikan di komponen x-header sudah ditutup dengan benar -->
 
             <!-- Page content -->
-            <main class="flex-1 p-4">
+            <main class="flex-1 p-4 pt-20 px-4">
                 @yield('content')
             </main>
         </div>

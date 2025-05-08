@@ -18,9 +18,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'idAkun','nama', 'password', 'nohp', 'email', 'alamat', 'peran', 'statusAkun'
     ];
 
     /**
@@ -44,5 +42,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public static function generateNewId()
+    {
+        $latest = self::orderBy('idAkun', 'desc')->first();
+        if ($latest) {
+            $last = intval(substr($latest->idAkun, 1)); // strip "A"
+            return 'A' . str_pad($last + 1, 3, '0', STR_PAD_LEFT);
+        }
+        return 'A001';
     }
 }

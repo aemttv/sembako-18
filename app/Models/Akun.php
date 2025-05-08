@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Akun extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory, Notifiable;
 
     // Specify the table name
     protected $table = 'akun';
@@ -20,16 +21,37 @@ class Akun extends Authenticatable
     public $incrementing = false;
 
     // Specify the fillable columns for mass-assignment
-    protected $fillable = ['nama', 'password', 'nohp', 'email', 'alamat', 'peran', 'statusAkun'];
+    protected $fillable = ['idAkun','nama', 'password', 'nohp', 'email', 'alamat', 'peran', 'statusAkun'];
 
     // Specify if you're using timestamps or not
     public $timestamps = true;
 
-    // You can also set the default guard if needed
-    protected $guard = 'web';
+     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    protected $rememberTokenName = null;
-
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+    public function getAuthIdentifierName()
+    {
+        return 'idAkun';
+    }
     public static function generateNewId()
     {
         $latest = self::orderBy('idAkun', 'desc')->first();

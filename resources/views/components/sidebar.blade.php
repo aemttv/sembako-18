@@ -1,6 +1,6 @@
 <!-- Sidebar -->
 <aside class="w-64 bg-white shadow-md">
-    <div class="flex h-screen flex-col justify-between border-e border-gray-100 bg-white">
+    <div class="fixed top-0 bottom-0 flex flex-col justify-between border-e border-gray-100 bg-white w-64">
         <div class="px-4 py-2">
             <div class="flex justify-center">
                 <img src="https://dummyimage.com/1920x1080/000/fff"
@@ -229,19 +229,30 @@
 
         </div>
 
-        <div class="sticky inset-x-0 bottom-0 border-t border-gray-100">
-            <a href="/" class="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
-                <img alt="Profile"
-                    src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                    class="size-10 rounded-full object-cover" />
-                <div>
-                    <p class="text-xs">
-                        <strong class="block font-medium">Yo San Lim</strong>
-                        <span class="text-red-500">Logout</span>
-                    </p>
-                </div>
-            </a>
+        <div class="sticky inset-x-0 bottom-0 border-t border-gray-100 bg-white p-4 flex items-center gap-4">
+            <img alt="Clock Icon"
+                src="https://cdn-icons-png.flaticon.com/512/2920/2920244.png"
+                class="size-10 rounded-full object-cover" />
+        
+            <div>
+                <p class="text-sm font-medium text-gray-800" id="current-time">--:--:--</p>
+                <p class="text-xs text-gray-500" id="current-date">Loading date...</p>
+            </div>
         </div>
 
     </div>
 </aside>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const time = now.toLocaleTimeString('en-US', { hour12: false });
+        const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        document.getElementById('current-time').textContent = time;
+        document.getElementById('current-date').textContent = date;
+    }
+
+    updateClock(); // Initial call
+    setInterval(updateClock, 1000); // Update every second
+</script>
