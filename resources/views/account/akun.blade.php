@@ -40,21 +40,19 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y">
-                {{-- @foreach ($suppliers as $supplier) --}}
-                    <tr>
-                        <td class="px-4 py-2">A0001</td>
-                        <td class="px-4 py-2">Yo San</td>
-                        <td class="px-4 py-2">081233779477</td>
-                        <td class="px-4 py-2">yosanlim@gmail.com</td>
-                        <td class="px-4 py-2">Owner</td>
-                        <td class="px-4 py-2">Aktif</td>
-                        <td class="px-4 py-2 flex gap-1">
-                            <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
-                        </td>
-                    </tr>
-                    
-                    
-                {{-- @endforeach --}}
+                @foreach ($akun as $data)
+                        <tr>
+                            <td class="px-4 py-2">{{$data->idAkun}}</td>
+                            <td class="px-4 py-2">{{$data->nama}}</td>
+                            <td class="px-4 py-2">{{$data->nohp}}</td>
+                            <td class="px-4 py-2">{{$data->email}}</td>
+                            <td class="px-4 py-2">{{$data->peran == 1 ? 'Owner' : 'Staff'}}</td>
+                            <td class="px-4 py-2">{{ $data->statusAkun == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
+                            <td class="px-4 py-2 flex gap-1">
+                                <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
+                            </td>
+                        </tr>
+                    @endforeach
             </tbody>
         </table>
     </div>
