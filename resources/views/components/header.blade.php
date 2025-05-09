@@ -1,5 +1,6 @@
 <!-- Top Navbar -->
-<header class="bg-white shadow px-4 py-3 flex justify-between items-center">
+
+<header class="fixed top-0 left-64 right-0  bg-white shadow px-4 py-3 flex justify-between items-center z-10">
     <!-- Left section: Menu + Search -->
     <div class="flex items-center gap-3">
         <!-- Menu Button -->
@@ -53,26 +54,27 @@
                 <div class="text-center text-sm p-2 text-blue-500 hover:underline cursor-pointer">View all</div>
             </div>
         </div>
-
-        <!-- Profile Section -->
-        <div class="relative inline-block" id="profile-container">
-            <!-- Clickable Profile Area -->
-            <div id="profile-toggle" class="flex items-center gap-2 cursor-pointer">
-                <img src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" alt="Profile" class="w-14 h-14 rounded-full object-cover">
-                <span class="text-xl text-gray-800 font-medium">Yo San</span>
-                <i class="fas fa-chevron-down text-xs text-gray-600"></i>
+        @if(session('user_logged_in'))
+            <!-- Profile Section -->
+            <div class="relative inline-block" id="profile-container">
+                <!-- Clickable Profile Area -->
+                <div id="profile-toggle" class="flex items-center gap-2 cursor-pointer">
+                    {{-- <img src="{{ asset('storage/profile-images/' . session('user_data')->foto) }}" alt="Profile" class="w-14 h-14 rounded-full object-cover"> --}}
+                    <span class="text-xl text-gray-800 font-medium">{{ session('user_data')->nama }}</span>
+                    <i class="fas fa-chevron-down text-xs text-gray-600"></i>
+                </div>
+                <!-- Dropdown Menu -->
+                <div id="dropdown-menu"
+                    class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    <ul class="text-gray-700 text-sm">
+                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
+                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li>
+                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="window.location.href='{{ route('logout') }}'">Logout</li>
+                    </ul>
+                </div>
             </div>
+        @endif
 
-            <!-- Dropdown Menu -->
-            <div id="dropdown-menu"
-                class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                <ul class="text-gray-700 text-sm">
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Logout</li>
-                </ul>
-            </div>
-        </div>
 
     </div>
     <!-- JavaScript -->

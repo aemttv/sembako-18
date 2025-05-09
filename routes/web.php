@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\bMasukController;
 use App\Http\Controllers\SupplierController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,8 +13,12 @@ Route::get('/', function () {
 });
 
 // Route::get('login', [LoginController::class, 'viewLogin'])->name('login');
-Route::post('login', [LoginController::class, 'login'])->name('login.submit');
 
+Route::middleware('web')->group(function () {
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+    Route::get('login', [LoginController::class, 'viewLogin'])->name('login');
+    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+});
 
 Route::get('/dashboard', function () {
     return view('menu.dashboard');
@@ -22,11 +27,15 @@ Route::get('/dashboard', function () {
 // Route::get('/daftar-produk', function () {
 //     return view('menu.produk');
 // });
-Route::get('/daftar-produk', [BarangController::class, 'viewBarang']);
+Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
 Route::get('/daftar-produk/search', [BarangController::class, 'search']);
 
-Route::get('/daftar-supplier', [SupplierController::class, 'viewSupplier']);
-Route::get('/suppliers/search', [SupplierController::class, 'search']);
+Route::middleware('web')->group(function () {
+    Route::post('/submit-supplier', [SupplierController::class, 'tambahSupplier'])->name('supplier.submit');
+    Route::get('/daftar-supplier', [SupplierController::class, 'viewSupplier'])->name('view.supplier');
+    Route::get('/tambah-supplier', [SupplierController::class, 'viewTambahSupplier']);
+    Route::get('/suppliers/search', [SupplierController::class, 'search']);
+});
 
 Route::get('/barang-masuk', [bMasukController::class, 'viewbMasuk'])->name('barang-masuk');
 Route::post('/barang-masuk/store', [bMasukController::class, 'tambahBMasuk'])->name('barang-masuk.store');
@@ -49,15 +58,10 @@ Route::get('/laporan-stok', function () {
     return view('menu.laporan.stok');
 });
 
-// Route::get('/daftar-akun', function () {
-//     return view('account.akun');
-// });
-
-Route::get('/daftar-akun', [AkunController::class, 'viewAkun']);
-
-
-Route::get('/backup-database', function () {
-    return view('others.bDatabase');
+Route::middleware('web')->group(function () {
+    Route::post('/submit-akun', [AkunController::class, 'tambahAkun'])->name('akun.submit');
+    Route::get('/daftar-akun', [AkunController::class, 'viewAkun'])->name('view.akun');
+    Route::get('/tambah-akun', [AkunController::class, 'viewTambahAkun']);
 });
 
 Route::get('/log', function () {
