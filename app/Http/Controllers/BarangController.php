@@ -9,7 +9,7 @@ class BarangController extends Controller
 {
     function viewBarang()
     {
-        $barang = Barang::where('statusBarang', 1)->paginate(10);
+        $barang = Barang::join('detail_barang', 'barang.idBarang', '=', 'detail_barang.idBarang')->where('statusBarang', 1)->paginate(10);
 
         $barang->getCollection()->transform(function ($item) {
             // Check the value of kondisiBarang and assign the appropriate string
@@ -65,6 +65,12 @@ class BarangController extends Controller
             ->get();
 
         return response()->json($results);
+    }
+
+    function viewDetailProduk($idBarang) {
+        //with acts like join but with eager loading and eloquent relationships
+        $barang = Barang::with('detailBarang')->where('idBarang', $idBarang)->paginate(5);
+        return view('menu.detail-produk', ['barang' => $barang]);
     }
 
 }

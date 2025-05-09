@@ -15,6 +15,17 @@ class AkunSeeder extends Seeder
      */
     public function run(): void
     {
+        $owner = new Akun();
+        $owner->idAkun = Akun::generateNewId();  // Generate new ID like A001, A002, etc.
+        $owner->nama = 'Yo San';
+        $owner->email = 'sani.aliem@gmail.com';
+        $owner->password = bcrypt('owner123');
+        $owner->nohp = '085150658692';
+        $owner->alamat = 'Jl.Puri Widya Kencana';
+        $owner->peran = 1;  // Default role (could be 1 for admin, etc.)
+        $owner->statusAkun = 1;  // Active by default
+        $owner->save();
+
         // Let's say we want to create 10 accounts for example
         for ($i = 0; $i < 2; $i++) {
             $akun = new Akun();

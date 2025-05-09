@@ -48,10 +48,10 @@
                         <td class="px-4 py-2">{{$data->namaBarang}}</td>
                         <td class="px-4 py-2">{{$data->merekBarangText}}</td>
                         <td class="px-4 py-2">{{$data->kategoriBarangText}}</td>
-                        <td class="px-4 py-2">{{$data->stokBarangCurrent}}</td>
-                        <td class="px-4 py-2">{{$data->kondisiBarangText}}</td>
+                        <td class="px-4 py-2">{{$data->stokBarangCurrent + $data->quantity}}</td>
+                        <td class="px-4 py-2">{{$data->kondisiBarang}}</td>
                         <td class="px-4 py-2 flex gap-1">
-                            <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
+                            <a href="{{route('detail.produk', ['idBarang' => $data->idBarang])}}" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
                             <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
                             <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Rusak</a>
                             <a href="#" class="px-2 py-1 bg-gray-700 text-white rounded text-xs">Keluar</a>

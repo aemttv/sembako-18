@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Barang;
+use App\Models\BarangDetail;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
@@ -20,19 +21,40 @@ class BarangSeeder extends Seeder
         // Create 10 barang records
         for ($i = 0; $i < 10; $i++) {
             $barang = new Barang();
-            $barang->idBarang = Barang::generateNewIdBarang();  // e.g., B001, B002, etc.
+            $barang->idBarang = Barang::generateNewIdBarang();  // e.g., B001
             $barang->namaBarang = 'Produk ' . ($i + 1);
-            $barang->kategoriBarang = $faker->numberBetween(1, 4);; // Assuming category ID 1 exists
-            $barang->merekBarang = $faker->numberBetween(1, 10);;    // Assuming brand ID 1 exists
-            $barang->stokAwalBarang = $faker->numberBetween(5, 100);
+            $barang->kategoriBarang = $faker->numberBetween(1, 4);
+            $barang->merekBarang = $faker->numberBetween(1, 10);
+            $barang->stokAwalBarang = 0;
             $barang->stokBarangCurrent = $barang->stokAwalBarang;
-            $barang->satuanBarang = $faker->numberBetween(1, 10);; // Assuming unit ID 1 exists
-            $barang->tglMasuk = $faker->dateTimeBetween('-1 month', 'now');
-            $barang->kondisiBarang = $faker->randomElement([1, 2, 3 ,4, 5]); // Example: 1 = Baik, 2 = Rusak
-            $barang->hargaBeli = $faker->numberBetween(5000, 20000);
-            $barang->hargaJual = $barang->hargaBeli + $faker->numberBetween(1000, 10000);
+            $barang->hargaJual = $faker->numberBetween(6000, 20000); // set a fallback if no hargaBeli yet
+            $barang->gambarProduk = null;
+            $barang->statusBarang = 1;
+            $barang->save();
+        
+            // Create 2–5 detail records for each barang
+            $detailCount = $faker->numberBetween(2, 5);
+            for ($j = 0; $j < $detailCount; $j++) {
+                $detail = new BarangDetail();
+                $detail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();  // e.g., DB001
+                $detail->idBarang = $barang->idBarang;
+                $detail->kondisiBarang = $faker->randomElement(['Baik', 'Mendekati Kadaluarsa']);
+                $detail->quantity = $faker->numberBetween(1, 10);
+                $detail->satuanBarang = 'PCS';
+                $detail->hargaBeli = $faker->numberBetween(1000, 5000);
+                $detail->tglMasuk = $faker->dateTimeBetween('-1 month', 'now');
+                $detail->tglKadaluarsa = $faker->dateTimeBetween($detail->tglMasuk, '+6 months');
+                $detail->barcode = $faker->ean13();
+                $detail->save();
+        
+                // Optionally update stok in Barang if needed:
+                $barang->stokBarangCurrent += $detail->quantity;
+            }
+        
+            // Save updated stock total
             $barang->save();
         }
+        
 
     }
 }

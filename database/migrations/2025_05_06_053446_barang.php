@@ -18,15 +18,25 @@ return new class extends Migration
             $table->integer('merekBarang');
             $table->integer('stokAwalBarang');
             $table->integer('stokBarangCurrent');
-            $table->integer('satuanBarang');
-            $table->date('tglMasuk');
-            $table->integer('kondisiBarang');
-            $table->float('hargaBeli');
             $table->float('hargaJual');
             $table->text('gambarProduk')->nullable();
-            $table->string('barcode')->nullable();
             $table->integer('statusBarang')->default(1);
             $table->timestamps();
+        });
+
+        Schema::create('detail_barang', function (Blueprint $table) {
+            $table->string('idDetailBarang')->primary();
+            $table->string('idBarang');
+            $table->string('kondisiBarang');
+            $table->integer('quantity');
+            $table->string('satuanBarang');
+            $table->float('hargaBeli');
+            $table->date('tglMasuk');
+            $table->date('tglKadaluarsa');
+            $table->string('barcode')->nullable();
+            $table->timestamps();
+
+            $table->foreign('idBarang')->references('idBarang')->on('barang');
         });
     }
 
@@ -36,5 +46,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('barang');
+        Schema::dropIfExists('detail_barang');
     }
 };

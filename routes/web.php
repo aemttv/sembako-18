@@ -29,6 +29,7 @@ Route::get('/dashboard', function () {
 // });
 Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
 Route::get('/daftar-produk/search', [BarangController::class, 'search']);
+Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
 
 Route::middleware('web')->group(function () {
     Route::post('/submit-supplier', [SupplierController::class, 'tambahSupplier'])->name('supplier.submit');

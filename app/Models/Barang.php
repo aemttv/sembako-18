@@ -36,4 +36,9 @@ class Barang extends Model
         }
         return 'B001';
     }
+
+    public function detailBarang()
+    {
+        return $this->hasMany(BarangDetail::class, 'idBarang', 'idBarang');
+    }
 }
