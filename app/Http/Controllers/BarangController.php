@@ -7,54 +7,44 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-    function viewBarang()
+    public function viewBarang()
     {
-        $barang = Barang::join('detail_barang', 'barang.idBarang', '=', 'detail_barang.idBarang')->where('statusBarang', 1)->paginate(10);
+        $barang = Barang::with('detailBarang')->where('statusBarang', 1)->paginate(10);
 
         $barang->getCollection()->transform(function ($item) {
-            // Check the value of kondisiBarang and assign the appropriate string
-            if ($item->merekBarang == 1) {
-                $item->merekBarangText = 'Merek 1';
-            } elseif ($item->merekBarang == 2) {
-                $item->merekBarangText = 'Merek 2';
-            } elseif ($item->merekBarang == 3) {
-                $item->merekBarangText = 'Merek 3';
-            } else {
-                $item->merekBarangText = 'Merek 4';
-            }
-            return $item;
-        });
+            // Dynamic total stock
+            $item->totalStok = $item->detailBarang->sum('quantity');
 
-        $barang->getCollection()->transform(function ($item) {
-            // Check the value of kondisiBarang and assign the appropriate string
-            if ($item->kategoriBarang == 1) {
-                $item->kategoriBarangText = 'Kategori 1';
-            } elseif ($item->kategoriBarang == 2) {
-                $item->kategoriBarangText = 'Kategori 2';
-            } elseif ($item->kategoriBarang == 3) {
-                $item->kategoriBarangText = 'Kategori 3';
-            } else {
-                $item->kategoriBarangText = 'Kategori 4';
-            }
-            return $item;
-        });
+            // Convert merek
+            $item->merekBarangText = match ($item->merekBarang) {
+                1 => 'Merek 1',
+                2 => 'Merek 2',
+                3 => 'Merek 3',
+                default => 'Merek 4',
+            };
 
-        $barang->getCollection()->transform(function ($item) {
-           // Check the value of kondisiBarang and assign the appropriate string
-            if ($item->kondisiBarang == 1) {
-                $item->kondisiBarangText = 'Baik';
-            } elseif ($item->kondisiBarang == 2) {
-                $item->kondisiBarangText = 'Mendekati Kadaluarsa';
-            } elseif ($item->kondisiBarang == 3) {
-                $item->kondisiBarangText = 'Kadaluarsa';
-            } else {
-                $item->kondisiBarangText = 'Rusak';
-            }
+            // Convert kategori
+            $item->kategoriBarangText = match ($item->kategoriBarang) {
+                1 => 'Kategori 1',
+                2 => 'Kategori 2',
+                3 => 'Kategori 3',
+                default => 'Kategori 4',
+            };
+
+            // Convert kondisi (only if Barang has this directly — usually it's in Detail though)
+            $item->kondisiBarangText = match ($item->kondisiBarang) {
+                'Baik' => 'Baik',
+                'Mendekati Kadaluarsa' => 'Mendekati Kadaluarsa',
+                'Kadaluarsa' => 'Kadaluarsa',
+                default => 'Baik',
+            };
+
             return $item;
         });
 
         return view('menu.produk', ['barang' => $barang]);
     }
+
 
     public function search(Request $request)
     {
@@ -67,10 +57,14 @@ class BarangController extends Controller
         return response()->json($results);
     }
 
-    function viewDetailProduk($idBarang) {
-        //with acts like join but with eager loading and eloquent relationships
-        $barang = Barang::with('detailBarang')->where('idBarang', $idBarang)->paginate(5);
-        return view('menu.detail-produk', ['barang' => $barang]);
+    public function viewDetailProduk($idBarang) {
+        $barang = Barang::with('detailBarang')->where('idBarang', $idBarang)->first();
+
+        // Dynamically calculate total stock (sum of all detail quantities)
+        $barang->totalStok = $barang->detailBarang->sum('quantity');
+
+        return view('menu.detail-produk', ['barang' => collect([$barang])]); // so @foreach still works
     }
+
 
 }

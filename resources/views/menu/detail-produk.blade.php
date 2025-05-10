@@ -65,7 +65,8 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Jumlah Stok</label>
                             <input type="number" id="jumlah_stok" class="w-full border rounded-md px-3 py-2"
-                                value="{{ $data->stokBarangCurrent + $data->quantity }}" />
+                                value="{{ $data->totalStok }}" />
+
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Status Produk</label>
@@ -106,9 +107,9 @@
                                 <tr>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">No</th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barang ID</th>
-                                    <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kondisi</th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Masuk</th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Kadaluarsa
+                                        <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kondisi</th>
                                     </th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kuantitas</th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Aksi</th>
@@ -119,12 +120,12 @@
                                     <tr>
                                         <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                         <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
-                                        <td class="px-4 py-2 border-b">{{ $detail->kondisiBarang }}</td>
                                         <td class="px-4 py-2 border-b">
                                             {{ \Carbon\Carbon::parse($detail->tglMasuk)->translatedFormat('d F Y') }}</td>
                                         <td class="px-4 py-2 border-b">
                                             {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}
                                         </td>
+                                        <td class="px-4 py-2 border-b">{{ $detail->kondisiBarang }}</td>
                                         <td class="px-4 py-2 border-b">{{ $detail->quantity }}</td>
                                         <td class="px-4 py-2 border-b">
                                             <button

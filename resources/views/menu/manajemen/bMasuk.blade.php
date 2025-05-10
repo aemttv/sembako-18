@@ -1,14 +1,13 @@
 @extends('layout')
 
 @section('content')
-
     <div class="p-6 space-y-4">
         @if (session('success'))
             <x-ui.alert type="success" :message="session('success')" />
         @elseif (session('error'))
             <x-ui.alert type="error" :message="session('error')" />
         @endif
-        
+
         <!-- Header -->
         <div class="flex justify-between items-center">
             <div class="flex-1">
@@ -47,10 +46,13 @@
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Satuan</label>
-                            <select id="satuan" class="w-full border rounded-md px-3 py-2">
+                            <input type="text" id="satuan"
+                                class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="Pcs"
+                                readonly />
+                            {{-- <select id="satuan" class="w-full border rounded-md px-3 py-2">
                                 <option>Pcs</option>
                                 <option>Kg</option>
-                            </select>
+                            </select> --}}
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
@@ -60,9 +62,8 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Tanggal Masuk</label>
-                            <input type="date" id="tanggal_masuk"
-                                class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed"
-                                value="{{ now()->format('Y-m-d') }}" readonly />
+                            <input type="date" id="tanggal_masuk" class="w-full border rounded-md px-3 py-2"
+                                value="{{ now()->format('Y-m-d') }}" />
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Tanggal Kadaluwarsa</label>
@@ -133,9 +134,7 @@
                                 <th class="px-4 py-2 border-b">Satuan</th>
                                 <th class="px-4 py-2 border-b">Kuantitas</th>
                                 <th class="px-4 py-2 border-b">Tanggal Masuk</th>
-                                {{-- <th class="px-4 py-2 border-b">Supplier ID</th> --}}
                                 <th class="px-4 py-2 border-b">Tanggal Kadaluarsa</th>
-                                <th class="px-4 py-2 border-b">Detail</th>
                                 <th class="px-4 py-2 border-b">Aksi</th>
                             </tr>
                         </thead>
@@ -200,9 +199,9 @@
                                     if (data.length > 0) {
                                         suggestionBox.innerHTML = data.map(item => `
                                 <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                                     data-id="${item[valueKeys.id]}"
-                                     data-name="${item[valueKeys.name]}">
-                                     ${item[valueKeys.name]} (${item[valueKeys.id]})
+                                    data-id="${item[valueKeys.id]}"
+                                    data-name="${item[valueKeys.name]}">
+                                    ${item[valueKeys.name]} (${item[valueKeys.id]})
                                 </div>
                             `).join('');
                                         suggestionBox.classList.remove('hidden');
@@ -265,8 +264,7 @@
                     <td class="px-4 py-2 border-b text-center">${tanggalKadaluwarsa}</td>
                     <td class="px-4 py-2 border-b text-center">
                         <button class="text-blue-500 hover:text-blue-700 hover:underline">Lihat</button>
-                    </td>
-                    <td class="px-4 py-2 border-b text-center">
+                        <button class="text-blue-500 hover:text-orange-700 hover:underline">Edit</button>
                         <button class="text-red-500 hover:text-red-700">Hapus</button>
                     </td>
                 `;

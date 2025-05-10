@@ -48,8 +48,8 @@
                         <td class="px-4 py-2">{{$data->namaBarang}}</td>
                         <td class="px-4 py-2">{{$data->merekBarangText}}</td>
                         <td class="px-4 py-2">{{$data->kategoriBarangText}}</td>
-                        <td class="px-4 py-2">{{$data->stokBarangCurrent + $data->quantity}}</td>
-                        <td class="px-4 py-2">{{$data->kondisiBarang}}</td>
+                        <td class="px-4 py-2">{{$data->totalStok}}</td>
+                        <td class="px-4 py-2">{{$data->kondisiBarangText}}</td>
                         <td class="px-4 py-2 flex gap-1">
                             <a href="{{route('detail.produk', ['idBarang' => $data->idBarang])}}" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
                             <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
@@ -63,17 +63,7 @@
     </div>
 
     <!-- Pagination -->
-    <div class="flex justify-between items-center text-sm text-gray-800">
-        <p>Showing 1 to 10 of 59 entries</p>
-        <div class="flex gap-1">
-            <button class="px-3 py-1 border rounded">Previous</button>
-            <button class="px-3 py-1 border rounded bg-blue-200">1</button>
-            <button class="px-3 py-1 border rounded">2</button>
-            <button class="px-3 py-1 border rounded">3</button>
-            <button class="px-3 py-1 border rounded">4</button>
-            <button class="px-3 py-1 border rounded">Next</button>
-        </div>
-    </div>
+     {{$barang->links() }}
 </div>
 
    

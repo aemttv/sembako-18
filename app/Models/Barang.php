@@ -39,6 +39,11 @@ class Barang extends Model
 
     public function detailBarang()
     {
-        return $this->hasMany(BarangDetail::class, 'idBarang', 'idBarang');
+        return $this->hasMany(BarangDetail::class, 'idBarang', 'idBarang')->latest('tglMasuk');
     }
+
+    public function latestDetailBarang()
+{
+    return $this->hasOne(BarangDetail::class, 'idBarang')->latest('tglMasuk');
+}
 }
