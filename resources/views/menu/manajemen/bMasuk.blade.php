@@ -117,7 +117,7 @@
         </div>
 
         <!-- Form action to store data -->
-        <form action="{{ route('barang-masuk.store') }}" method="POST" enctype="multipart/form-data" id="barangMasukForm">
+        <form action="{{ route('barang-masuk.submit') }}" method="POST" enctype="multipart/form-data" id="barangMasukForm">
             @csrf
             <!-- Hidden fields to store row data -->
             <div id="hiddenRows"></div>
@@ -263,9 +263,9 @@
                     <td class="px-4 py-2 border-b text-center">${tanggalMasuk}</td>
                     <td class="px-4 py-2 border-b text-center">${tanggalKadaluwarsa}</td>
                     <td class="px-4 py-2 border-b text-center">
-                        <button class="text-blue-500 hover:text-blue-700 hover:underline">Lihat</button>
-                        <button class="text-blue-500 hover:text-orange-700 hover:underline">Edit</button>
-                        <button class="text-red-500 hover:text-red-700">Hapus</button>
+                        <button class="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Lihat</button>
+                        <button class="bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-600">Edit</button>
+                        <button class="bg-red-500 text-white rounded-md px-4 py-2 hover:bg-red-600">Hapus</button>
                     </td>
                 `;
 

@@ -11,6 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('merek_barang', function (Blueprint $table) {
+            $table->integer('idMerek')->primary()->autoIncrement();
+            $table->string('namaMerek');
+            $table->timestamps();
+        });
+
         Schema::create('barang', function (Blueprint $table) {
             $table->string('idBarang')->primary();
             $table->string('namaBarang');
@@ -22,6 +28,8 @@ return new class extends Migration
             $table->text('gambarProduk')->nullable();
             $table->integer('statusBarang')->default(1);
             $table->timestamps();
+
+            $table->foreign('merekBarang')->references('idMerek')->on('merek_barang');
         });
 
         Schema::create('detail_barang', function (Blueprint $table) {
@@ -45,6 +53,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('merek_barang');
         Schema::dropIfExists('barang');
         Schema::dropIfExists('detail_barang');
     }

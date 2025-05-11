@@ -24,12 +24,12 @@ Route::get('/dashboard', function () {
     return view('menu.dashboard');
 });
 
-// Route::get('/daftar-produk', function () {
-//     return view('menu.produk');
-// });
-Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
-Route::get('/daftar-produk/search', [BarangController::class, 'search']);
-Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
+Route::middleware('web')->group(function () {
+    Route::post('/tambah-merek', [BarangController::class, 'tambahMerek'])->name('merek.submit');
+    Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
+    Route::get('/daftar-produk/search', [BarangController::class, 'search']);
+    Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
+});
 
 Route::middleware('web')->group(function () {
     Route::post('/submit-supplier', [SupplierController::class, 'tambahSupplier'])->name('supplier.submit');
@@ -38,9 +38,11 @@ Route::middleware('web')->group(function () {
     Route::get('/suppliers/search', [SupplierController::class, 'search']);
 });
 
-Route::get('/barang-masuk', [bMasukController::class, 'viewbMasuk'])->name('barang-masuk');
-Route::post('/barang-masuk/store', [bMasukController::class, 'tambahBMasuk'])->name('barang-masuk.store');
-
+Route::middleware('web')->group(function () {
+    Route::post('/barang-masuk/store', [bMasukController::class, 'tambahBMasuk'])->name('barang-masuk.submit');
+    Route::get('/daftar-barang-masuk', [bMasukController::class, 'viewBMasuk'])->name('view.bMasuk');
+    Route::get('/barang-masuk', [bMasukController::class, 'viewTambahBMasuk'])->name('barang-masuk');
+});
 
 Route::get('/barang-keluar', function () {
     return view('menu.manajemen.bKeluar');

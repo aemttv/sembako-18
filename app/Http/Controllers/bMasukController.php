@@ -7,20 +7,37 @@ use App\Models\BarangDetail;
 use App\Models\bMasuk;
 use App\Models\bMasukDetail;
 use App\Models\Supplier;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class bMasukController extends Controller
 {
-    function viewbMasuk()
+    function viewBMasuk() {
+        Carbon::setLocale('id');
+        $bMasuk = bMasuk::with('details')->paginate(10);
+
+        $bMasuk->getCollection()->transform(function ($item) {
+            
+            $item->quantity = $item->details->sum('jumlahMasuk');
+            $item->hargaBeli = $item->details->sum('hargaBeli');
+            $item->total = $item->details->sum('subtotal');
+            $item->expiredDate = $item->details->max('tglKadaluarsa');
+
+            return $item;
+        });
+
+        return view('menu.manajemen.list-bMasuk', ['bMasuk' => $bMasuk]);
+    }
+    function viewTambahBMasuk()
     {
         $suppliers = Supplier::pluck('nama');
 
         return view('menu.manajemen.bMasuk', compact('suppliers'));
     }
 
-    public function tambahBMasuk(Request $request)
+    public function tambahBMasuk(Request $request) //submit
     {
         // Start of - prevent partial from being saved when something goes wrong
         DB::beginTransaction();
@@ -54,14 +71,6 @@ class bMasukController extends Controller
                 $detail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
                 $detail->save();
 
-                // Update total stock in master Barang
-                // $barang = Barang::find($item['barang_id']);
-                // if ($barang) {
-                //     $barang->stokBarangCurrent += $item['kuantitas_masuk'];
-                //     $barang->save();
-                // }
-
-                // Sync with DetailBarang
                 // Create new row in BarangDetail always (no checking)
                 $newDetail = new BarangDetail();
                 $newDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
@@ -86,4 +95,5 @@ class bMasukController extends Controller
             return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
+
 }

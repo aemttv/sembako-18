@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Kondisi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,10 @@ class BarangDetail extends Model
 
     // You can also set the default guard if needed
     protected $guard = 'web';
+
+    // protected $casts = [
+    //     'kondisiBarang' => Kondisi::class
+    // ];
 
     public static function generateNewIdBarangDetail()
     {

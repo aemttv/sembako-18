@@ -7,6 +7,7 @@ use App\Models\BarangDetail;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\DB;
 
 class BarangSeeder extends Seeder
 {
@@ -15,6 +16,20 @@ class BarangSeeder extends Seeder
      */
     public function run(): void
     {
+        $data = [
+            ['namaMerek' => 'Indomie'],
+            ['namaMerek' => 'Mie Sedaap'],
+            ['namaMerek' => 'Mie Eko'],
+            ['namaMerek' => 'Masako'],
+            ['namaMerek' => 'Shinzui'],
+            ['namaMerek' => 'Rinso'],
+            ['namaMerek' => 'Royco'],
+            ['namaMerek' => 'Racik'],
+            ['namaMerek' => 'Sasa'],
+            ['namaMerek' => 'ABC'],
+        ];
+
+        DB::table('merek_barang')->insert($data);
 
         $faker = Faker::create('id_ID');
 
@@ -54,7 +69,7 @@ class BarangSeeder extends Seeder
             // Save updated stock total
             $barang->save();
         }
-        
 
+       
     }
 }

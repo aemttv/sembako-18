@@ -3,47 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\bMerek;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
     public function viewBarang()
-    {
-        $barang = Barang::with('detailBarang')->where('statusBarang', 1)->paginate(10);
+{
+    // Eager load both 'detailBarang' and 'merekBarang' relationships
+    $barang = Barang::with(['detailBarang', 'merek'])
+                    ->where('statusBarang', 1)
+                    ->paginate(10);
 
-        $barang->getCollection()->transform(function ($item) {
-            // Dynamic total stock
-            $item->totalStok = $item->detailBarang->sum('quantity');
+    // Transform the collection to include dynamic values
+    $barang->getCollection()->transform(function ($item) {
+        // Dynamic total stock from detailBarang
+        $item->totalStok = $item->detailBarang->sum('quantity');
 
-            // Convert merek
-            $item->merekBarangText = match ($item->merekBarang) {
-                1 => 'Merek 1',
-                2 => 'Merek 2',
-                3 => 'Merek 3',
-                default => 'Merek 4',
-            };
+        // Convert kondisi (only if Barang has this directly)
+        $item->kondisiBarangText = match ($item->kondisiBarang) {
+            '1' => 'Baik',
+            '2' => 'Mendekati Kadaluarsa',
+            '3' => 'Kadaluarsa',
+            default => 'Baik',
+        };
 
-            // Convert kategori
-            $item->kategoriBarangText = match ($item->kategoriBarang) {
-                1 => 'Kategori 1',
-                2 => 'Kategori 2',
-                3 => 'Kategori 3',
-                default => 'Kategori 4',
-            };
+        // Access the 'merekBarang' relationship and add a custom attribute
+                $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
 
-            // Convert kondisi (only if Barang has this directly — usually it's in Detail though)
-            $item->kondisiBarangText = match ($item->kondisiBarang) {
-                'Baik' => 'Baik',
-                'Mendekati Kadaluarsa' => 'Mendekati Kadaluarsa',
-                'Kadaluarsa' => 'Kadaluarsa',
-                default => 'Baik',
-            };
 
-            return $item;
-        });
+        return $item;
+    });
 
-        return view('menu.produk', ['barang' => $barang]);
-    }
+    // Return the view with the barang data
+    return view('menu.produk', ['barang' => $barang]);
+}
 
 
     public function search(Request $request)
@@ -58,12 +53,33 @@ class BarangController extends Controller
     }
 
     public function viewDetailProduk($idBarang) {
+        Carbon::setLocale('id');
         $barang = Barang::with('detailBarang')->where('idBarang', $idBarang)->first();
 
         // Dynamically calculate total stock (sum of all detail quantities)
         $barang->totalStok = $barang->detailBarang->sum('quantity');
 
         return view('menu.detail-produk', ['barang' => collect([$barang])]); // so @foreach still works
+    }
+
+    function tambahMerek(Request $request) {
+        
+        // Validate the input
+        $request->validate([
+            'merekBaru' => 'required|string|max:255',
+        ]);
+
+        // Create a new instance of the bMerek model
+        $merekBaru = new bMerek();
+
+        // Set the namaMerek field
+        $merekBaru->namaMerek = $request->input('merekBaru');
+
+        // Save to database
+        $merekBaru->save();
+
+        // Optionally return response or redirect
+        return redirect()->back()->with('success', 'Merek berhasil ditambahkan!');
     }
 
 

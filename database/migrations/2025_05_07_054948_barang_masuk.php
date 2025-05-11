@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('idSupplier');
             $table->string('idAkun');
             $table->date('tglMasuk');
-            $table->text('nota');
+            $table->text('nota')->nullable();
             $table->timestamps();
 
             $table->foreign('idSupplier')->references('idSupplier')->on('supplier');
