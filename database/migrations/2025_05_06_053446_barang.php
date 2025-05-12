@@ -12,32 +12,32 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('merek_barang', function (Blueprint $table) {
-            $table->integer('idMerek')->primary()->autoIncrement();
-            $table->string('namaMerek');
+            $table->integer('idMerek', 11)->primary()->autoIncrement();
+            $table->string('namaMerek', 100);
             $table->timestamps();
         });
 
         Schema::create('barang', function (Blueprint $table) {
-            $table->string('idBarang')->primary();
-            $table->string('namaBarang');
-            $table->integer('kategoriBarang');
-            $table->integer('merekBarang');
+            $table->string('idBarang', 11)->primary();
+            $table->string('namaBarang', 100);
+            $table->integer('kategoriBarang', 11);
+            $table->integer('merekBarang', 11);
             $table->integer('stokAwalBarang');
             $table->integer('stokBarangCurrent');
             $table->float('hargaJual');
             $table->text('gambarProduk')->nullable();
-            $table->integer('statusBarang')->default(1);
+            $table->integer('statusBarang', 1)->default(1);
             $table->timestamps();
 
             $table->foreign('merekBarang')->references('idMerek')->on('merek_barang');
         });
 
         Schema::create('detail_barang', function (Blueprint $table) {
-            $table->string('idDetailBarang')->primary();
-            $table->string('idBarang');
-            $table->string('kondisiBarang');
+            $table->string('idDetailBarang', 11)->primary();
+            $table->string('idBarang', 11);
+            $table->string('kondisiBarang', 50);
             $table->integer('quantity');
-            $table->string('satuanBarang');
+            $table->string('satuanBarang', 50);
             $table->float('hargaBeli');
             $table->date('tglMasuk');
             $table->date('tglKadaluarsa');
