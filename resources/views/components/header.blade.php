@@ -63,7 +63,6 @@
                     <span class="text-xl text-gray-800 font-medium">{{ session('user_data')->nama }}</span>
                     <i class="fas fa-chevron-down text-xs text-gray-600"></i>
                 </div>
-
                 <!-- Dropdown Menu -->
                 <div id="dropdown-menu"
                     class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('merek_barang', function (Blueprint $table) {
-            $table->integer('idMerek', 11)->primary()->autoIncrement();
+            $table->integer('idMerek')->primary()->autoIncrement();
             $table->string('namaMerek', 100);
             $table->timestamps();
         });
@@ -20,13 +20,13 @@ return new class extends Migration
         Schema::create('barang', function (Blueprint $table) {
             $table->string('idBarang', 11)->primary();
             $table->string('namaBarang', 100);
-            $table->integer('kategoriBarang', 11);
-            $table->integer('merekBarang', 11);
+            $table->integer('kategoriBarang');
+            $table->integer('merekBarang');
             $table->integer('stokAwalBarang');
             $table->integer('stokBarangCurrent');
             $table->float('hargaJual');
             $table->text('gambarProduk')->nullable();
-            $table->integer('statusBarang', 1)->default(1);
+            $table->integer('statusBarang')->default(1);
             $table->timestamps();
 
             $table->foreign('merekBarang')->references('idMerek')->on('merek_barang');

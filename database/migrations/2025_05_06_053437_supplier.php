@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('supplier', function (Blueprint $table) {
             $table->string('idSupplier', 11)->primary();
             $table->string('nama', 100);
-            $table->string('nohp', 15);
+            $table->string('nohp', 20);
             $table->string('alamat')->nullable();
-            $table->integer('status', 1)->default(1);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

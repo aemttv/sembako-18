@@ -15,10 +15,10 @@ return new class extends Migration
             $table->string('idAkun', 11)->primary();
             $table->string('nama', 100);
             $table->string('password')->bcrypt();
-            $table->string('nohp', 15);
+            $table->string('nohp', 20);
             $table->string('email', 100)->unique();
             $table->string('alamat')->nullable();
-            $table->integer('peran', 11)->default(2);
+            $table->integer('peran')->default(2);
             $table->integer('statusAkun')->default(1);
             $table->timestamps();
         });
