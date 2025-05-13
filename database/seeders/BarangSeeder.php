@@ -40,13 +40,12 @@ class BarangSeeder extends Seeder
             $barang->namaBarang = 'Produk ' . ($i + 1);
             $barang->kategoriBarang = $faker->numberBetween(1, 4);
             $barang->merekBarang = $faker->numberBetween(1, 10);
-            $barang->stokAwalBarang = 0;
-            $barang->stokBarangCurrent = $barang->stokAwalBarang;
+            $barang->stokBarang = 0;
             $barang->hargaJual = $faker->numberBetween(6000, 20000); // set a fallback if no hargaBeli yet
             $barang->gambarProduk = null;
             $barang->statusBarang = 1;
             $barang->save();
-        
+
             // Create 2–5 detail records for each barang
             $detailCount = $faker->numberBetween(2, 5);
             for ($j = 0; $j < $detailCount; $j++) {
@@ -61,15 +60,15 @@ class BarangSeeder extends Seeder
                 $detail->tglKadaluarsa = $faker->dateTimeBetween($detail->tglMasuk, '+6 months');
                 $detail->barcode = $faker->ean13();
                 $detail->save();
-        
+
                 // Optionally update stok in Barang if needed:
                 $barang->stokBarangCurrent += $detail->quantity;
             }
-        
+
             // Save updated stock total
             $barang->save();
         }
 
-       
+
     }
 }

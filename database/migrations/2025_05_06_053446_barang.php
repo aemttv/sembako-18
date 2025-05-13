@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('namaBarang', 100);
             $table->integer('kategoriBarang');
             $table->integer('merekBarang');
-            $table->integer('stokAwalBarang');
-            $table->integer('stokBarangCurrent');
+            $table->integer('stokBarang');
             $table->float('hargaJual');
             $table->text('gambarProduk')->nullable();
             $table->integer('statusBarang')->default(1);

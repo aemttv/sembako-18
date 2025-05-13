@@ -40,20 +40,21 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
-                    {{-- @foreach ($products as $product) --}}
-                    <tr>
-                        <td class="px-4 py-2">B0001</td>
-                        <td class="px-4 py-2">Susu UHT</td>
-                        <td class="px-4 py-2">ULTRA MILK</td>
-                        <td class="px-4 py-2">Kebutuhan Harian</td>
-                        <td class="px-4 py-2">10</td>
-                        <td class="px-4 py-2">Kadaluarsa</td>
-                        <td class="px-4 py-2 flex gap-1">
-                            <a href="#" onclick="openModal()"
-                                class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Proses</a>
-                        </td>
-                    </tr>
-                    {{-- @endforeach --}}
+                    @foreach ($stokTersedia as $data)
+                        <tr>
+                            <td class="px-4 py-2">{{ $data->idBarang }}</td>
+                            <td class="px-4 py-2">{{ $data->namaBarang }}</td>
+                            <td class="px-4 py-2">{{ $data->merekBarangName }}</td>
+                            <td class="px-4 py-2">{{ $data->kategoriBarang->namaKategori() ?? '-'}}</td>
+                            <td class="px-4 py-2">{{ $data->totalStok }}</td>
+                            <td class="px-4 py-2">{{ $data->kondisiBarangText ?? '-'}}</td>
+                            <td class="px-4 py-2 flex gap-1">
+                                <a href="{{ route('detail.produk', ['idBarang' => $data->idBarang]) }}"
+                                    class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
+                                <a href="#" class="px-2 py-1 bg-orange-700 text-white rounded text-xs">Keluar</a>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
