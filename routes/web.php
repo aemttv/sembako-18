@@ -44,8 +44,8 @@ Route::middleware('web')->group(function () {
     Route::get('/barang-masuk', [bMasukController::class, 'viewTambahBMasuk'])->name('barang-masuk');
 });
 
-Route::get('/barang-keluar', function () {
-    return view('menu.manajemen.bKeluar');
+Route::middleware('web')->group(function () {
+    Route::get('/barang-keluar', [BarangController::class, 'viewBKeluar'])->name('view.bKeluar');
 });
 
 Route::get('/retur-barang', function () {
