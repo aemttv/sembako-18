@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Kategori;
+use App\Merek;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
@@ -27,6 +29,10 @@ class Barang extends Model
     // You can also set the default guard if needed
     protected $guard = 'web';
 
+    protected $casts = [
+        'kategoriBarang' => Kategori::class
+    ];
+
     public static function generateNewIdBarang()
     {
         $latest = self::orderBy('idBarang', 'desc')->first();
@@ -35,5 +41,20 @@ class Barang extends Model
             return 'B' . str_pad($last + 1, 3, '0', STR_PAD_LEFT);
         }
         return 'B001';
+    }
+
+    public function detailBarang()
+    {
+        return $this->hasMany(BarangDetail::class, 'idBarang', 'idBarang')->latest('tglMasuk');
+    }
+
+    public function latestDetailBarang()
+    {
+        return $this->hasOne(BarangDetail::class, 'idBarang')->latest('tglMasuk');
+    }
+
+    public function merek()
+    {
+        return $this->belongsTo(bMerek::class, 'merekBarang', 'idMerek');
     }
 }

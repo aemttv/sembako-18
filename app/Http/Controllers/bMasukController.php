@@ -3,33 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\BarangDetail;
 use App\Models\bMasuk;
 use App\Models\bMasukDetail;
 use App\Models\Supplier;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class bMasukController extends Controller
 {
-    function viewbMasuk() {
+    function viewBMasuk() {
+        Carbon::setLocale('id');
+        $bMasuk = bMasuk::with('details')->paginate(10);
 
+        $bMasuk->getCollection()->transform(function ($item) {
+            
+            $item->quantity = $item->details->sum('jumlahMasuk');
+            $item->hargaBeli = $item->details->sum('hargaBeli');
+            $item->total = $item->details->sum('subtotal');
+            $item->expiredDate = $item->details->max('tglKadaluarsa');
+
+            return $item;
+        });
+
+        return view('menu.manajemen.list-bMasuk', ['bMasuk' => $bMasuk]);
+    }
+    function viewTambahBMasuk()
+    {
         $suppliers = Supplier::pluck('nama');
 
         return view('menu.manajemen.bMasuk', compact('suppliers'));
     }
 
-    public function tambahBMasuk(Request $request) {
+    public function tambahBMasuk(Request $request) //submit
+    {
         // Start of - prevent partial from being saved when something goes wrong
         DB::beginTransaction();
-    
+
         try {
             // Create main bMasuk entry
             $barangMasuk = new bMasuk();
 
             foreach ($request->barang_masuk as $jsonItem) {
                 $item = json_decode($jsonItem, true);
-            
+
                 $barangMasuk->idBarangMasuk = bMasuk::generateNewIdBarangMasuk();
                 $barangMasuk->idSupplier = $item['supplier_id'];
                 $barangMasuk->idAkun = 'A001';
@@ -40,8 +59,8 @@ class bMasukController extends Controller
 
             foreach ($request->barang_masuk as $jsonItem) {
                 $item = json_decode($jsonItem, true);
-            
-                // Create detail
+
+                // Create detail entry for barang masuk
                 $detail = new bMasukDetail();
                 $detail->idDetailBM = bMasukDetail::generateNewIdDetailBM();
                 $detail->idBarangMasuk = $barangMasuk->idBarangMasuk;
@@ -51,17 +70,21 @@ class bMasukController extends Controller
                 $detail->subtotal = $item['harga_satuan'] * $item['kuantitas_masuk'];
                 $detail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
                 $detail->save();
-                // @dd($detail);
-            
-                // Update stock
-                $barang = Barang::find($item['barang_id']);
-                if ($barang) {
-                    $barang->stokBarangCurrent += $item['kuantitas_masuk'];
-                    $barang->save();
-                }
+
+                // Create new row in BarangDetail always (no checking)
+                $newDetail = new BarangDetail();
+                $newDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
+                $newDetail->idBarang = $item['barang_id'];
+                $newDetail->kondisiBarang = 'Baik';       // default value
+                $newDetail->satuanBarang = 'PCS';         // default value
+                $newDetail->quantity = $item['kuantitas_masuk'];
+                $newDetail->hargaBeli = $item['harga_satuan'];
+                $newDetail->tglMasuk = now();
+                $newDetail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
+                $newDetail->barcode = ''; // Optional: you can generate this if needed
+                $newDetail->save();
             }
-            
-    
+
             // Commit the transaction
             DB::commit();
             // return response()->json(['success' => 'Barang Masuk berhasil disimpan'], 200);
@@ -72,4 +95,5 @@ class bMasukController extends Controller
             return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
+
 }

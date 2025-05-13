@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('akun', function (Blueprint $table) {
-            $table->string('idAkun', 10)->primary();
-            $table->string('nama');
+            $table->string('idAkun', 11)->primary();
+            $table->string('nama', 100);
             $table->string('password')->bcrypt();
-            $table->string('nohp');
-            $table->string('email')->unique();
+            $table->string('nohp', 15);
+            $table->string('email', 100)->unique();
             $table->string('alamat')->nullable();
-            $table->integer('peran')->default(2);
+            $table->integer('peran', 11)->default(2);
             $table->integer('statusAkun')->default(1);
             $table->timestamps();
         });

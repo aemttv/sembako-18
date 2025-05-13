@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('barang_masuk', function (Blueprint $table) {
-            $table->string('idBarangMasuk', 10)->primary();
-            $table->string('idSupplier');
-            $table->string('idAkun');
+            $table->string('idBarangMasuk', 11)->primary();
+            $table->string('idSupplier', 11);
+            $table->string('idAkun', 11);
             $table->date('tglMasuk');
-            $table->text('nota');
+            $table->text('nota')->nullable();
             $table->timestamps();
 
             $table->foreign('idSupplier')->references('idSupplier')->on('supplier');
@@ -24,9 +24,9 @@ return new class extends Migration
         });
 
         Schema::create('detail_barang_masuk', function (Blueprint $table) {
-            $table->string('idDetailBM', 10)->primary();
-            $table->string('idBarangMasuk');
-            $table->string('idBarang');
+            $table->string('idDetailBM', 11)->primary();
+            $table->string('idBarangMasuk', 11);
+            $table->string('idBarang', 11);
             $table->integer('jumlahMasuk');
             $table->float('hargaBeli');
             $table->float('subtotal');
