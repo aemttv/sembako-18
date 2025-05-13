@@ -1,144 +1,127 @@
 @extends('layout')
 
 @section('content')
-    <div class="p-6 space-y-4">
+    <div class="p-6 space-y-6">
         <!-- Header -->
         <div class="flex justify-between items-center">
-            <div class="flex-1">
-                <h1 class="text-xl font-semibold">Tabel Produk Jumlah Stok Tersedia</h1>
+            <div>
+                <h1 class="text-2xl font-bold">Barang <span class="text-gray-500">Keluar</span></h1>
+                <p class="text-sm text-gray-600">Transaction > Sales</p>
             </div>
-            <div class="text-right">
-                <p class="text-sm text-gray-500">Home > Barang Retur</p>
+
+        </div>
+
+        <!-- Form Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Date, Cashier, Customer -->
+            <div class="space-y-2 bg-white rounded-md shadow p-4">
+                <label class="block text-sm font-medium">Date</label>
+                <input type="date" class="w-full border border-gray-300 rounded p-2" value="{{ now()->format('Y-m-d') }}">
+
+                <label class="block text-sm font-medium">Kasir</label>
+                <input type="text" value="Mohammad Nur Fawaiq" class="w-full border border-gray-300 rounded p-2"
+                    readonly>
+
+                <label class="block text-sm font-medium">Customer</label>
+                <select class="w-full border border-gray-300 rounded p-2">
+                    <option>Umum</option>
+                    <option>Pribadi</option>
+                </select>
             </div>
+
+            <!-- Barcode & Qty Input -->
+            <div class="bg-white rounded-md shadow p-4 flex flex-col justify-between h-full min-h-[220px]">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium">Barcode</label>
+                    <div class="flex gap-2">
+                        <input type="text" class="w-full border border-gray-300 rounded p-2">
+                        <button class="bg-blue-500 text-white px-3 py-2 rounded">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+
+                    <label class="block text-sm font-medium">Qty</label>
+                    <input type="number" class="w-full border border-gray-300 rounded p-2" value="1" min="1">
+                </div>
+
+                <div class="flex justify-end mt-4">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Add</button>
+                </div>
+            </div>
+
+
+
+            <!-- Invoice Total -->
+            <div class="bg-white rounded-md shadow p-4 flex flex-col justify-between">
+                <div class="flex justify-end">
+                    <span class="text-lg font-semibold">Invoice <span class="text-blue-600">MP1909250001</span></span>
+                </div>
+                <div class="flex justify-center items-center flex-1">
+                    <span class="text-6xl font-bold text-gray-700">0</span>
+                </div>
+            </div>
+
         </div>
 
 
-        <!-- Tabs -->
-        <div class="flex justify-between items-center gap-2 border rounded-lg p-2 bg-white">
-            <!-- Search Input Group -->
-            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
-                <i class="fas fa-search text-gray-400 mr-2"></i>
-                <input type="text" placeholder="Search or type command..."
-                    class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
-            </div>
-            {{-- <a href="/tambah-produk" class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah Produk</a> --}}
-        </div>
-
-
-        <!-- Table -->
-        <div class="border rounded-lg overflow-x-auto">
-            <table class="min-w-full text-sm text-left">
-                <thead class="bg-gray-800 text-white">
+        <!-- Table Section -->
+        <div class="overflow-x-auto bg-white rounded-md shadow p-4 my-4">
+            <table class="min-w-full border border-gray-300 text-sm">
+                <thead class="bg-gray-100">
                     <tr>
-                        <th class="px-4 py-2">ID Barang</th>
-                        <th class="px-4 py-2">Nama Barang</th>
-                        <th class="px-4 py-2">Merek</th>
-                        <th class="px-4 py-2">Kategori</th>
-                        <th class="px-4 py-2">Stok</th>
-                        <th class="px-4 py-2">Kondisi</th>
-                        <th class="px-4 py-2">Proses</th>
+                        <th class="p-2 border">#</th>
+                        <th class="p-2 border">Barcode</th>
+                        <th class="p-2 border">Product Item</th>
+                        <th class="p-2 border">Price</th>
+                        <th class="p-2 border">Qty</th>
+                        <th class="p-2 border">Discount Item</th>
+                        <th class="p-2 border">Total</th>
+                        <th class="p-2 border">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y">
-                    @foreach ($stokTersedia as $data)
-                        <tr>
-                            <td class="px-4 py-2">{{ $data->idBarang }}</td>
-                            <td class="px-4 py-2">{{ $data->namaBarang }}</td>
-                            <td class="px-4 py-2">{{ $data->merekBarangName }}</td>
-                            <td class="px-4 py-2">{{ $data->kategoriBarang->namaKategori() ?? '-'}}</td>
-                            <td class="px-4 py-2">{{ $data->totalStok }}</td>
-                            <td class="px-4 py-2">{{ $data->kondisiBarangText ?? '-'}}</td>
-                            <td class="px-4 py-2 flex gap-1">
-                                <a href="{{ route('detail.produk', ['idBarang' => $data->idBarang]) }}"
-                                    class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
-                                <a href="#" class="px-2 py-1 bg-orange-700 text-white rounded text-xs">Keluar</a>
-                            </td>
-                        </tr>
-                    @endforeach
+                <tbody>
+                    <tr>
+                        <td class="p-2 border text-center" colspan="8">Tidak ada item</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
+        <!-- Payment Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+            <div class="space-y-2 bg-white rounded-md shadow p-4">
+                <label class="block text-sm font-medium">Sub Total</label>
+                <input type="text" class="w-full border border-gray-300 rounded p-2" readonly>
 
+                <label class="block text-sm font-medium">Discount</label>
+                <input type="text" value="0" class="w-full border border-gray-300 rounded p-2">
 
-        <!-- Modal -->
-        <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white w-[90%] max-w-3xl rounded-lg shadow-lg p-6 relative">
+                <label class="block text-sm font-medium">Grand Total</label>
+                <input type="text" class="w-full border border-gray-300 rounded p-2" readonly>
+            </div>
 
-                <!-- Tombol close -->
-                <button onclick="closeModal()"
-                    class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">✕</button>
+            <div class="space-y-2 bg-white rounded-md shadow p-4">
+                <label class="block text-sm font-medium">Cash</label>
+                <input type="text" value="0" class="w-full border border-gray-300 rounded p-2">
 
-                <!-- Header -->
-                <h2 class="text-lg font-semibold mb-4">Detail Pengeluaran Produk</h2>
+                <label class="block text-sm font-medium">Change</label>
+                <input type="text" class="w-full border border-gray-300 rounded p-2" readonly>
+            </div>
 
-                <!-- Divider -->
-                <div class="border-b border-gray-300 my-3"></div>
+            <div class="space-y-2 bg-white rounded-md shadow p-4">
+                <label for="kategoriKet">Keterangan Pengeluaran</label>
+                <select name="kategoriKet" id="kategoriKet" class="w-full border border-gray-300 rounded p-2">
+                    <option value="1">Jual</option>
+                    <option value="2">Pribadi</option>
+                </select>
+                <label class="block text-sm font-medium">Note</label>
+                <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
 
-                <!-- Isi Modal -->
-                <div class="flex gap-4">
-
-                    <!-- Gambar Produk -->
-                    <div class="w-1/2 border rounded flex items-center justify-center aspect-square">
-                        <img src="https://dummyimage.com/1920x1080/000/fff" alt="Foto Produk"
-                            class="h-full max-w-full max-h-full object-cover rounded">
-                    </div>
-
-                    <!-- Form -->
-                    <div class="w-1/2 flex flex-col gap-2">
-                        <div class="flex gap-2">
-                            <input type="text" placeholder="ID Produk" class="border px-2 py-1 w-1/2 rounded text-sm">
-                            <input type="text" placeholder="INVOICE" class="border px-2 py-1 w-1/2 rounded text-sm">
-                        </div>
-
-                        <input type="text" placeholder="Nama Produk" class="border px-2 py-1 rounded text-sm">
-
-                        <div class="flex gap-2">
-                            <input type="number" placeholder="Jumlah" class="border px-2 py-1 w-1/2 rounded text-sm">
-                            <input type="text" value="Kg" class="border px-2 py-1 w-1/2 rounded text-sm">
-                        </div>
-
-                        <select class="border px-2 py-1 rounded text-sm">
-                            <option value="">Alasan Pengeluaran Produk</option>
-                            <option value="keluar">Keluar/Terjual</option>
-                        </select>
-
-                        <label class="text-sm mt-2">Keterangan</label>
-                        <textarea rows="4" class="border px-2 py-1 rounded text-sm resize-none"></textarea>
-
-                        <div class="flex justify-end gap-2 mt-3">
-                            <button class="bg-green-500 text-white px-4 py-1 rounded-md text-sm">Simpan</button>
-                            <button onclick="closeModal()" class="bg-gray-300 px-4 py-1 rounded-md text-sm">Batal</button>
-                        </div>
-                    </div>
+                <div class="flex gap-2 mt-2">
+                    <button class="bg-yellow-500 text-white px-4 py-2 rounded">Cancel</button>
+                    <button class="bg-green-600 text-white px-4 py-2 rounded">Process</button>
                 </div>
             </div>
         </div>
-
-
-
-        <!-- Pagination -->
-        <div class="flex justify-between items-center text-sm text-gray-800">
-            <p>Showing 1 to 10 of 59 entries</p>
-            <div class="flex gap-1">
-                <button class="px-3 py-1 border rounded">Previous</button>
-                <button class="px-3 py-1 border rounded bg-blue-200">1</button>
-                <button class="px-3 py-1 border rounded">2</button>
-                <button class="px-3 py-1 border rounded">3</button>
-                <button class="px-3 py-1 border rounded">4</button>
-                <button class="px-3 py-1 border rounded">Next</button>
-            </div>
-        </div>
     </div>
-
-    <!-- JS untuk buka/tutup modal -->
-    <script>
-        function openModal() {
-            document.getElementById('modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
-    </script>
 @endsection

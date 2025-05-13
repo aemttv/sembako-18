@@ -75,10 +75,17 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="/barang-masuk"
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
+                        {{ Request::is('barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                        Form Barang Masuk
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="/barang-keluar"
                                         class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                         {{ Request::is('barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        Daftar Barang Keluar
+                                        Form Barang Keluar
                                     </a>
                                 </li>
                             </ul>

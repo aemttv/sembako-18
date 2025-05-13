@@ -62,7 +62,7 @@ class BarangSeeder extends Seeder
                 $detail->save();
 
                 // Optionally update stok in Barang if needed:
-                $barang->stokBarangCurrent += $detail->quantity;
+                $barang->stokBarang += $detail->quantity;
             }
 
             // Save updated stock total
