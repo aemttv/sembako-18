@@ -85,7 +85,7 @@
             loadingScreen.classList.remove('hidden');
             setTimeout(() => {
                 loadingScreen.classList.add('hidden');
-            }, 800);
+            }, 600);
         });
     } else {
         sessionStorage.removeItem('manualNavigation');
