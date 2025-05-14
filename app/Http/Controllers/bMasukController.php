@@ -16,14 +16,14 @@ class bMasukController extends Controller
 {
     function viewBMasuk() {
         Carbon::setLocale('id');
-        $bMasuk = bMasuk::with('details')->paginate(10);
+        $bMasuk = bMasuk::with('detailMasuk')->paginate(10);
 
         $bMasuk->getCollection()->transform(function ($item) {
             
-            $item->quantity = $item->details->sum('jumlahMasuk');
-            $item->hargaBeli = $item->details->sum('hargaBeli');
-            $item->total = $item->details->sum('subtotal');
-            $item->expiredDate = $item->details->max('tglKadaluarsa');
+            $item->quantity = $item->detailMasuk->sum('jumlahMasuk');
+            $item->hargaBeli = $item->detailMasuk->sum('hargaBeli');
+            $item->total = $item->detailMasuk->sum('subtotal');
+            $item->expiredDate = $item->detailMasuk->max('tglKadaluarsa');
 
             return $item;
         });
@@ -81,7 +81,7 @@ class bMasukController extends Controller
                 $newDetail->hargaBeli = $item['harga_satuan'];
                 $newDetail->tglMasuk = now();
                 $newDetail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
-                $newDetail->barcode = ''; // Optional: you can generate this if needed
+                $newDetail->barcode = ''; 
                 $newDetail->save();
             }
 
@@ -95,5 +95,4 @@ class bMasukController extends Controller
             return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
-
 }

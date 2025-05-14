@@ -2,6 +2,11 @@
 
 @section('content')
     <div class="p-6 space-y-6">
+        @if (session('success'))
+            <x-ui.alert type="success" :message="session('success')" />
+        @elseif (session('error'))
+            <x-ui.alert type="error" :message="session('error')" />
+        @endif
         <!-- Header -->
         <div class="flex justify-between items-center">
             <div>
@@ -18,8 +23,8 @@
                 <label class="block text-sm font-medium">Date</label>
                 <input type="date" class="w-full border border-gray-300 rounded p-2" value="{{ now()->format('Y-m-d') }}">
 
-                <div class="relative">
-                    <label class="block text-sm font-medium">Staff</label>
+                <div class="relative flex-grow">
+                    <label class="block text-sm font-medium mb-2">Staff</label>
                     <input id="nama_akun" type="text" class="w-full border border-gray-300 rounded p-2"
                         value="{{ session('user_data')->nama }} ({{ session('user_data')->idAkun }})">
                     <div id="staff-suggestions"
@@ -30,11 +35,11 @@
                 </div>
 
 
-                <label class="block text-sm font-medium">Customer</label>
+                {{-- <label class="block text-sm font-medium">Customer</label>
                 <select class="w-full border border-gray-300 rounded p-2">
                     <option>Umum</option>
                     <option>Pribadi</option>
-                </select>
+                </select> --}}
             </div>
 
             <!-- Barcode & Qty Input -->
@@ -78,8 +83,8 @@
 
             <!-- Invoice Total -->
             <div class="bg-white rounded-md shadow p-4 flex flex-col justify-between">
-                <div class="flex justify-end">
-                    <span class="text-lg font-semibold">Invoice <span class="text-blue-600">MP1909250001</span></span>
+                <div class="flex justify-center">
+                    <span class="text-lg font-semibold text-center">Grand Total</span>
                 </div>
                 <div class="flex justify-center items-center flex-1">
                     <span id="invoice-total" class="text-6xl font-bold text-gray-700">Rp.0</span>
@@ -89,59 +94,65 @@
         </div>
 
 
-        <!-- Table Section -->
-        <div class="overflow-x-auto bg-white rounded-md shadow p-4 my-4">
-            <table class="min-w-full border border-gray-300 text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-2 border">#</th>
-                        <th class="p-2 border">Barcode</th>
-                        <th class="p-2 border">Product Item</th>
-                        <th class="p-2 border">Price</th>
-                        <th class="p-2 border">Qty</th>
-                        <th class="p-2 border">Subtotal</th>
-                        <th class="p-2 border">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="transaction-table-body">
-                    <tr class="no-items-row">
-                        {{-- <td class="p-2 border text-center" colspan="8">Tidak ada item</td> --}}
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Payment Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
-
-
-            <div class="space-y-2 bg-white rounded-md shadow p-4">
-                <label class="block text-sm font-medium">GrandTotal</label>
-                <input id="invoice-total-input" value="" type="text" class="w-full border border-gray-300 rounded p-2" readonly>
-
-                <label class="block text-sm font-medium">Cash</label>
-                <input id="cash-input" type="text" value="0" class="w-full border border-gray-300 rounded p-2">
-
-                <label class="block text-sm font-medium">Change</label>
-                <input id="change-output" type="text" class="w-full border border-gray-300 rounded p-2" readonly>
-
+        <form id="form-bkeluar" action="{{ route('barang-keluar.submit') }}" method="POST">
+            @csrf
+            <!-- Table Section -->
+            <div class="overflow-x-auto bg-white rounded-md shadow p-4 my-4">
+                <table class="min-w-full border border-gray-300 text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2 border">#</th>
+                            <th class="p-2 border">Barcode</th>
+                            <th class="p-2 border">Product Item</th>
+                            <th class="p-2 border">Price</th>
+                            <th class="p-2 border">Qty</th>
+                            <th class="p-2 border">Subtotal</th>
+                            <th class="p-2 border">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-table-body">
+                        <tr class="no-items-row">
+                            {{-- <td class="p-2 border text-center" colspan="8">Tidak ada item</td> --}}
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <div class="space-y-2 bg-white rounded-md shadow p-4">
-                <label for="kategoriKet">Keterangan Pengeluaran</label>
-                <select name="kategoriKet" id="kategoriKet" class="w-full border border-gray-300 rounded p-2">
-                    <option value="1">Jual</option>
-                    <option value="2">Pribadi</option>
-                </select>
-                <label class="block text-sm font-medium">Note</label>
-                <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
+            <!-- Payment Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
 
-                <div class="flex gap-2 mt-2">
-                    <button class="bg-yellow-500 text-white px-4 py-2 rounded">Cancel</button>
-                    <button class="bg-green-600 text-white px-4 py-2 rounded">Process</button>
+                <div class="space-y-2 bg-white rounded-md shadow p-4">
+                    <label class="block text-sm font-medium">Grand Total</label>
+                    <input id="invoice-total-input" value="" type="text"
+                        class="w-full border border-gray-300 rounded p-2" readonly>
+
+                    <label class="block text-sm font-medium">Cash</label>
+                    <input id="cash-input" type="text" value="0" class="w-full border border-gray-300 rounded p-2">
+
+                    <label class="block text-sm font-medium">Change</label>
+                    <input id="change-output" type="text" class="w-full border border-gray-300 rounded p-2" readonly>
+
                 </div>
+
+                <div class="space-y-2 bg-white rounded-md shadow p-4">
+                    <label for="kategoriKet">Keterangan Pengeluaran</label>
+                    <select name="kategoriKet" id="kategoriKet" class="w-full border border-gray-300 rounded p-2">
+                        <option value="1">Jual</option>
+                        <option value="2">Pribadi</option>
+                    </select>
+                    <label class="block text-sm font-medium">Note</label>
+                    <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
+
+                    <div class="flex gap-2 mt-2">
+                        <button class="bg-yellow-500 text-white px-4 py-2 rounded">Cancel</button>
+                        <button id="process-button" class="bg-green-600 text-white px-4 py-2 rounded">Process</button>
+                    </div>
+                </div>
+
             </div>
-        </div>
+
+            <div id="hiddenRows"></div>
+        </form>
     </div>
 
     <script>
@@ -264,11 +275,12 @@
             }
         });
 
+        // add item to row 
         document.getElementById('add-barcode-btn').addEventListener('click', async function() {
             const barcode = document.getElementById('nama_barang').value.trim();
             const qty = parseInt(document.getElementById('qty')?.value || "1", 10);
             const totalInvoiceElement = document.getElementById(
-            'invoice-total'); // Get the total invoice element
+                'invoice-total'); // Get the total invoice element
 
             if (!barcode || qty <= 0) {
                 alert('Please enter a valid barcode and quantity.');
@@ -288,6 +300,7 @@
                 return;
             }
 
+            const id = detail.idBarang;
             const name = detail.nama;
             const price = parseFloat(detail.harga) || 0;
             const total = price * qty;
@@ -301,7 +314,7 @@
             // Create new row
             const row = document.createElement('tr');
             row.innerHTML = `
-            <td class="p-2 border text-center">*</td>
+            <td class="p-2 border text-center">${id}</td>
             <td class="p-2 border">${barcode}</td>
             <td class="p-2 border">${name}</td>
             <td class="p-2 border">Rp. ${price.toLocaleString()}</td>
@@ -353,7 +366,7 @@
             // Update the total invoice element
             const totalInvoiceElement = document.getElementById('invoice-total');
             totalInvoiceElement.innerText = `Rp. ${total.toLocaleString()}`;
-            
+
             // Get current total from input (if already has value)
             let invoiceSpan = document.getElementById('invoice-total');
             let invoiceInput = document.getElementById('invoice-total-input');
@@ -369,16 +382,66 @@
             invoiceInput.value = `Rp. ${newTotal.toLocaleString('id-ID')}`;
         }
 
-        document.getElementById('cash-input').addEventListener('input', function () {
-        const cashValue = parseFloat(this.value.replace(/[^0-9]/g, '')) || 0;
+        document.getElementById('cash-input').addEventListener('input', function() {
+            const cashValue = parseFloat(this.value.replace(/[^0-9]/g, '')) || 0;
 
-        const totalText = document.getElementById('invoice-total-input').value;
-        const totalValue = parseFloat(totalText.replace(/[^0-9]/g, '')) || 0;
+            const totalText = document.getElementById('invoice-total-input').value;
+            const totalValue = parseFloat(totalText.replace(/[^0-9]/g, '')) || 0;
 
-        const change = cashValue - totalValue;
-        const formattedChange = `Rp. ${change.toLocaleString('id-ID')}`;
+            const change = cashValue - totalValue;
+            const formattedChange = `Rp. ${change.toLocaleString('id-ID')}`;
 
-        document.getElementById('change-output').value = formattedChange;
-    });
+            document.getElementById('change-output').value = formattedChange;
+        });
+
+        //form submission
+        document.getElementById('process-button').addEventListener('click', function() {
+            const rows = document.querySelectorAll('#transaction-table-body tr');
+            const hiddenRowsDiv = document.getElementById('hiddenRows');
+            hiddenRowsDiv.innerHTML = ''; // Clear previous inputs if any
+
+            const kategoriAlasan = document.getElementById('kategoriKet').value;
+            const keterangan = document.querySelector('textarea').value;
+
+            let hasValidRow = false;
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length < 6) return;
+
+                const barangId = cells[0].innerText.trim();
+                const barcode = cells[1].innerText.trim();
+                const namaBarang = cells[2].innerText.trim();
+                const hargaText = cells[3].innerText.replace(/[^\d]/g, '');
+                const qty = parseInt(cells[4].innerText.trim(), 10);
+                const subtotalText = cells[5].innerText.replace(/[^\d]/g, '');
+
+                if (!barcode || !qty || !subtotalText) return;
+
+                hasValidRow = true;
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'barang_keluar[]';
+                input.value = JSON.stringify({
+                    barang_id: barangId,
+                    barcode: barcode,
+                    nama_barang: namaBarang,
+                    kuantitas_keluar: qty,
+                    subtotal: parseInt(subtotalText),
+                    kategori_alasan: kategoriAlasan,
+                    keterangan: keterangan
+                });
+
+                hiddenRowsDiv.appendChild(input);
+            });
+
+            if (!hasValidRow) {
+                alert("Tidak ada item untuk disimpan.");
+                return;
+            }
+
+            document.getElementById('form-bkeluar').submit();
+        });
     </script>
 @endsection

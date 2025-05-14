@@ -21,7 +21,7 @@ class BarangDetail extends Model
     public $incrementing = false;
 
     // Specify the fillable columns for mass-assignment
-    protected $fillable = ['idDetailBarang', 'idBarang', 'kondisiBarang', 'quantity', 'satuanBarang', 'hargaBeli', 'tglMasuk', 'tglKadaluarsa', 'barcode'];
+    protected $fillable = ['idDetailBarang', 'idBarang', 'kondisiBarang', 'quantity', 'satuanBarang', 'hargaBeli', 'tglMasuk', 'tglKadaluarsa', 'barcode', 'statusBarang'];
 
     // Specify if you're using timestamps or not
     public $timestamps = true;

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('barang_keluar', function ( Blueprint $table ) {
             $table->string('idBarangKeluar', 11)->primary();
-            $table->string('invoice');
+            $table->string('invoice')->after('idBarangKeluar')->unique();
             $table->string('idAkun', 11);
             $table->date('tglKeluar');
 

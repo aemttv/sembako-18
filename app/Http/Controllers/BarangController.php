@@ -85,6 +85,7 @@ class BarangController extends Controller
 
         if ($detail) {
             return response()->json([
+                'idBarang' => $detail->idBarang,
                 'barcode' => $detail->barcode,
                 'nama' => $detail->barang->namaBarang ?? '',
                 'harga' => $detail->barang->hargaJual ?? 0,
@@ -126,34 +127,5 @@ class BarangController extends Controller
 
         // Optionally return response or redirect
         return redirect()->back()->with('success', 'Merek berhasil ditambahkan!');
-    }
-
-    function viewBKeluar() {
-
-        $stokTersedia = Barang::with(['detailBarang', 'merek'])
-            ->where('statusBarang', 1)
-            ->paginate(10);
-
-            $stokTersedia->getCollection()->transform(function ($item) {
-            // Dynamic total stock from detailBarang
-            $item->totalStok = $item->detailBarang->sum('quantity');
-
-            // Convert kondisi (only if Barang has this directly)
-            $item->kondisiBarangText = match ($item->kondisiBarang) {
-                '1' => 'Baik',
-                '2' => 'Mendekati Kadaluarsa',
-                '3' => 'Kadaluarsa',
-                default => 'Baik',
-            };
-
-            // Access the 'merekBarang' relationship and add a custom attribute
-            $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
-
-            return $item;
-        });
-
-        // $barcode = Barang::where('statusBarang', 1)->pluck('barcode')->toArray();
-
-        return view('menu.manajemen.bKeluar', ['stokTersedia' => $stokTersedia]);
     }
 }

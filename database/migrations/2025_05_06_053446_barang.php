@@ -25,7 +25,6 @@ return new class extends Migration
             $table->integer('stokBarang');
             $table->float('hargaJual');
             $table->text('gambarProduk')->nullable();
-            $table->integer('statusBarang')->default(1);
             $table->timestamps();
 
             $table->foreign('merekBarang')->references('idMerek')->on('merek_barang');
@@ -41,6 +40,7 @@ return new class extends Migration
             $table->date('tglMasuk');
             $table->date('tglKadaluarsa');
             $table->string('barcode')->nullable();
+            $table->integer('statusBarang')->default(1);
             $table->timestamps();
 
             $table->foreign('idBarang')->references('idBarang')->on('barang');

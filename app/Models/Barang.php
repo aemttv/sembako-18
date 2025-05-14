@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\enum\KategoriBarang;
 use App\Kategori;
-use App\Merek;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,7 +21,7 @@ class Barang extends Model
     public $incrementing = false;
 
     // Specify the fillable columns for mass-assignment
-    protected $fillable = ['namaBarang', 'kategoriBarang', 'merekBarang', 'stokBarang', 'satuanBarang', 'tglMasuk', 'kondisiBarang', 'hargaJual', 'gambarProduk', 'statusBarang'];
+    protected $fillable = ['namaBarang', 'kategoriBarang', 'merekBarang', 'stokBarang', 'satuanBarang', 'tglMasuk', 'kondisiBarang', 'hargaJual', 'gambarProduk'];
 
     // Specify if you're using timestamps or not
     public $timestamps = true;
@@ -30,7 +30,7 @@ class Barang extends Model
     protected $guard = 'web';
 
     protected $casts = [
-        'kategoriBarang' => Kategori::class
+        'kategoriBarang' => KategoriBarang::class
     ];
 
     public static function generateNewIdBarang()

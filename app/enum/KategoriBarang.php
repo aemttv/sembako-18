@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\enum;
 
-enum Kategori : int
+enum KategoriBarang : int
 {
     case Kebutuhan_Harian = 1;
     case Perawatan_Kebersihan = 2;

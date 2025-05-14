@@ -3,6 +3,7 @@
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\bKeluarController;
 use App\Http\Controllers\bMasukController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,6 @@ Route::middleware('web')->group(function () {
     Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
     Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
     Route::get('/daftar-produk/search-detail', [BarangController::class, 'searchDetail']);
-
 });
 
 Route::middleware('web')->group(function () {
@@ -46,7 +46,8 @@ Route::middleware('web')->group(function () {
 });
 
 Route::middleware('web')->group(function () {
-    Route::get('/barang-keluar', [BarangController::class, 'viewBKeluar'])->name('view.bKeluar');
+    Route::post('/barang-keluar/store', [bKeluarController::class, 'buatBKeluar'])->name('barang-keluar.submit');
+    Route::get('/barang-keluar', [bKeluarController::class, 'viewBKeluar'])->name('view.bKeluar');
 });
 
 Route::get('/retur-barang', function () {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\enum;
 
-enum Kondisi: string
+enum KondisiBarang : string
 {
     case Baik = 'baik';
     case MendekatiKadaluarsa = 'mendekati_kadaluarsa';
@@ -17,4 +17,3 @@ enum Kondisi: string
         };
     }
 }
-

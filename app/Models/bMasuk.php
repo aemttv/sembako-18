@@ -45,7 +45,7 @@ class bMasuk extends Model
         });
     }
 
-    public function details()
+    public function detailMasuk()
     {
         return $this->hasMany(bMasukDetail::class, 'idBarangMasuk', 'idBarangMasuk');
     }
