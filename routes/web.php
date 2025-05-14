@@ -12,8 +12,6 @@ Route::get('/', function () {
     return view('signin');
 });
 
-// Route::get('login', [LoginController::class, 'viewLogin'])->name('login');
-
 Route::middleware('web')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
     Route::get('login', [LoginController::class, 'viewLogin'])->name('login');
@@ -29,6 +27,9 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
     Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
+    Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
+    Route::get('/daftar-produk/search-detail', [BarangController::class, 'searchDetail']);
+
 });
 
 Route::middleware('web')->group(function () {
@@ -65,6 +66,7 @@ Route::middleware('web')->group(function () {
     Route::post('/submit-akun', [AkunController::class, 'tambahAkun'])->name('akun.submit');
     Route::get('/daftar-akun', [AkunController::class, 'viewAkun'])->name('view.akun');
     Route::get('/tambah-akun', [AkunController::class, 'viewTambahAkun']);
+    Route::get('/akun/search', [AkunController::class, 'search']);
 });
 
 Route::get('/log', function () {

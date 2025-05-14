@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\BarangDetail;
 use App\Models\bMerek;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -49,6 +50,52 @@ class BarangController extends Controller
 
         return response()->json($results);
     }
+    public function searchBarcode(Request $request)
+    {
+        $query = $request->get('q');
+
+        $results = Barang::with(['detailBarang' => function ($queryBuilder) use ($query) {
+            $queryBuilder->where('barcode', 'like', "%$query%"); // load barcode 
+        }])
+        ->whereHas('detailBarang', function ($queryBuilder) use ($query) {
+            $queryBuilder->where('barcode', 'like', "%$query%"); // filterkan parent barang yang barcodenya related sama detailbarang 
+        })
+        ->select('idBarang') // barcode is in the relation
+        ->get();
+
+        // Flatten result for easier frontend use (just the latest barcode)
+        $formatted = $results->map(function ($item) {
+            $barcode = $item->detailBarang->first()->barcode ?? '';
+            return [
+                'idBarang' => $item->idBarang,
+                'barcode' => $barcode
+            ];
+        });
+
+        return response()->json($formatted);
+    }
+
+    public function searchDetail(Request $request)
+    {
+        $barcode = $request->get('barcode');
+
+        $detail = BarangDetail::with('barang')
+            ->where('barcode', $barcode)
+            ->first();
+
+        if ($detail) {
+            return response()->json([
+                'barcode' => $detail->barcode,
+                'nama' => $detail->barang->namaBarang ?? '',
+                'harga' => $detail->barang->hargaJual ?? 0,
+                'stok' => $detail->quantity ?? 0,
+            ]);
+        } else {
+            return response()->json(null, 404);
+        }
+    }
+
+
 
     public function viewDetailProduk($idBarang)
     {
@@ -104,6 +151,8 @@ class BarangController extends Controller
 
             return $item;
         });
+
+        // $barcode = Barang::where('statusBarang', 1)->pluck('barcode')->toArray();
 
         return view('menu.manajemen.bKeluar', ['stokTersedia' => $stokTersedia]);
     }

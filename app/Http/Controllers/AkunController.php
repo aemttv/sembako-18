@@ -42,4 +42,16 @@ class AkunController extends Controller
         return redirect()->route('view.akun')->with('success', 'Informasi Staff berhasil disimpan');
         
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q'); // Search query from input
+
+        // Search for suppliers with names that contain the query string
+        $akun = Akun::where('nama', 'like', "%$query%")
+                            ->select('idAkun', 'nama')
+                            ->get();  // Only retrieve id and name fields for efficiency
+
+        return response()->json($akun); // Return matched suppliers as JSON
+    }
 }

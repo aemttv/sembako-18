@@ -41,7 +41,7 @@ class BarangSeeder extends Seeder
             $barang->kategoriBarang = $faker->numberBetween(1, 4);
             $barang->merekBarang = $faker->numberBetween(1, 10);
             $barang->stokBarang = 0;
-            $barang->hargaJual = $faker->numberBetween(6000, 20000); // set a fallback if no hargaBeli yet
+            $barang->hargaJual = $faker->randomElement([5000, 8000, 12000]); // set a fallback if no hargaBeli yet
             $barang->gambarProduk = null;
             $barang->statusBarang = 1;
             $barang->save();
@@ -52,10 +52,10 @@ class BarangSeeder extends Seeder
                 $detail = new BarangDetail();
                 $detail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();  // e.g., DB001
                 $detail->idBarang = $barang->idBarang;
-                $detail->kondisiBarang = $faker->randomElement(['Baik', 'Mendekati Kadaluarsa']);
+                $detail->kondisiBarang = $faker->randomElement(['Layak', 'Mendekati Kadaluarsa']);
                 $detail->quantity = $faker->numberBetween(1, 10);
                 $detail->satuanBarang = 'PCS';
-                $detail->hargaBeli = $faker->numberBetween(1000, 5000);
+                $detail->hargaBeli = $faker->randomElement([1000, 3000, 5000, 7000, 10000]);
                 $detail->tglMasuk = $faker->dateTimeBetween('-1 month', 'now');
                 $detail->tglKadaluarsa = $faker->dateTimeBetween($detail->tglMasuk, '+6 months');
                 $detail->barcode = $faker->ean13();
