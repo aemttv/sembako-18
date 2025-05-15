@@ -41,27 +41,27 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative w-full">
-    <label class="block text-sm text-gray-600 mb-1">Merek Barang</label>
-    <input type="text" id="nama_merek" name="namaMerek"
-        class="w-full border rounded-md px-3 py-2"
-        placeholder="Search Merek Barang..." autocomplete="off">
+                            <label class="block text-sm text-gray-600 mb-1">Merek Barang</label>
+                            <input type="text" id="nama_merek" name="nama_merek"
+                                class="w-full border rounded-md px-3 py-2" placeholder="Search Merek Barang..."
+                                autocomplete="off">
 
-    <!-- Suggestions -->
-    <div id="merek-suggestions"
-        class="absolute left-0 right-0 z-10 bg-white border mt-1 rounded-md hidden max-h-60 overflow-auto">
-        <!-- Suggestions will appear here -->
-    </div>
+                            <!-- Suggestions -->
+                            <div id="merek-suggestions"
+                                class="absolute left-0 right-0 z-10 bg-white border mt-1 rounded-md hidden max-h-60 overflow-auto">
+                                <!-- Suggestions will appear here -->
+                            </div>
 
-    <!-- Hidden input to store ID -->
-    <input type="hidden" id="merek_id" name="idMerek" />
-</div>
+                            <!-- Hidden input to store ID -->
+                            <input type="hidden" id="merek_id" name="idMerek" />
+                        </div>
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Kategori Barang</label>
-                            <select id="kategori" name="kategoriBarang" class="w-full border rounded-md px-3 py-2">
+                            <select id="kategori" name="kategori" class="w-full border rounded-md px-3 py-2">
                                 @foreach ($kategori as $item)
-                                    <option value="{{$item->value}}">
-                                        {{$item->namaKategori()}}
+                                    <option value="{{ $item->value }}">
+                                        {{ $item->namaKategori() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -85,7 +85,9 @@
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
-                            <input type="number" id="kuantitas_masuk" class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="0" readonly/>
+                            <input type="number" id="kuantitas_masuk"
+                                class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="0"
+                                readonly />
                         </div>
                     </div>
                 </div>
@@ -226,10 +228,14 @@
 
                     // Close dropdown when clicking outside
                     document.addEventListener('click', function(e) {
-                        if (!suggestionBox.contains(e.target) && e.target !== input) {
-                            suggestionBox.classList.add('hidden');
-                        }
-                    });
+            if (!suggestionBox.contains(e.target) && e.target !== input) {
+                    suggestionBox.classList.add('hidden');
+
+                    if (!hiddenInput.value) {
+                        input.value = '';
+                    }
+                }
+            });
                 }
             });
 
@@ -262,14 +268,15 @@
                 // Menambahkan input tersembunyi untuk setiap row ke dalam form
                 var hiddenRows = document.getElementById('hiddenRows');
                 var hiddenInput = document.createElement('input');
+                var merekId = document.getElementById('merek_id').value;
                 hiddenInput.type = 'hidden';
 
                 hiddenInput.name = `barang_input[]`;
                 hiddenInput.value = JSON.stringify({
                     nama_barang: namaBarang,
-                    nama_merek: namaMerek,
+                    merek_barang: merekId,
                     kategori: kategoriBarang,
-                    harga_satuan: hargaJual,
+                    harga_satuan: hargaSatuan,
                     kuantitas_masuk: kuantitasMasuk,
                 });
                 hiddenRows.appendChild(hiddenInput);

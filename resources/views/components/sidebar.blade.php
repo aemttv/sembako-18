@@ -1,10 +1,10 @@
 <!-- Sidebar -->
-<aside class="w-64 bg-white shadow-md">
-    <div class="fixed top-0 bottom-0 flex flex-col justify-between border-e border-gray-100 bg-white w-64">
+<aside class="w-80 bg-white shadow-md">
+    <div class="fixed top-0 bottom-0 flex flex-col justify-between border-e border-gray-100 bg-white w-80">
         <div class="px-4 py-2">
             <div class="flex justify-center">
                 <img src="https://dummyimage.com/1920x1080/000/fff"
-                    class="grid h-20 w-56 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600"></img>
+                    class="grid h-32 w-60 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600"></img>
             </div>
 
             <ul class="mt-6 space-y-1">
@@ -70,8 +70,15 @@
                                 <li>
                                     <a href="/daftar-barang-masuk"
                                         class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
-                        {{ Request::is('barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        Daftar Barang Masuk
+                        {{ Request::is('daftar-barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                        Daftar - Barang Masuk
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/daftar-barang-keluar"
+                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
+                        {{ Request::is('barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                        Daftar - Barang Keluar
                                     </a>
                                 </li>
                                 <li>
@@ -85,7 +92,7 @@
                                     <a href="/barang-keluar"
                                         class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                         {{ Request::is('barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        Barang Keluar
+                                        Form Barang Keluar
                                     </a>
                                 </li>
                             </ul>

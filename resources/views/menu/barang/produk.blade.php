@@ -32,7 +32,7 @@
                 Produk</a>
             <!-- Trigger Buttons -->
             <button onclick="openModal('merekModal')"
-                class="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-green-600">
+                class="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600">
                 Tambah Merek
             </button>
 
@@ -57,7 +57,7 @@
 
         <!-- Table -->
         <div class="border rounded-lg overflow-x-auto">
-            <table class="min-w-full text-sm text-left">
+            <table class="min-w-full text-lg text-center items-center">
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-4 py-2">ID Barang</th>
@@ -78,12 +78,9 @@
                             <td class="px-4 py-2">{{ $data->kategoriBarang->namaKategori() ?? '-'}}</td>
                             <td class="px-4 py-2">{{ $data->totalStok }}</td>
                             <td class="px-4 py-2">{{ $data->kondisiBarangText ?? '-'}}</td>
-                            <td class="px-4 py-2 flex gap-1">
+                            <td class="px-4 py-2 flex gap-1 justify-center ">
                                 <a href="{{ route('detail.produk', ['idBarang' => $data->idBarang]) }}"
                                     class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
-                                <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Retur</a>
-                                <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Rusak</a>
-                                <a href="#" class="px-2 py-1 bg-gray-700 text-white rounded text-xs">Keluar</a>
                             </td>
                         </tr>
                     @endforeach

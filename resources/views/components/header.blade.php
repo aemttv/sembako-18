@@ -1,6 +1,6 @@
 <!-- Top Navbar -->
 
-<header class="fixed top-0 left-64 right-0  bg-white shadow px-4 py-3 flex justify-between items-center z-10">
+<header class="fixed top-0 left-80 right-0  bg-white shadow px-4 py-3 flex justify-between items-center z-10">
     <!-- Left section: Menu + Search -->
     <div class="flex items-center gap-3">
         <!-- Menu Button -->

@@ -108,8 +108,6 @@ class BarangController extends Controller
         }
     }
 
-
-
     public function viewDetailProduk($idBarang)
     {
         Carbon::setLocale('id');
@@ -154,28 +152,25 @@ class BarangController extends Controller
 
     function tambahProduk(Request $request) {
 
-        if (!is_array($request->barang_input)) {
-            return back()->with('error', 'Tidak ada data barang yang dikirim.');
-        }
-
         DB::beginTransaction();
 
         foreach ($request->barang_input as $jsonItem) {
             $item = json_decode($jsonItem, true);
 
+            if (!isset($item['merek_barang'])) {
+                return response()->json(['error' => 'Merek Barang ID is missing.'], 400);
+            }
             $barang = new Barang();
             $barang->idBarang = Barang::generateNewIdBarang();
             $barang->namaBarang = $item['nama_barang'];
-            $barang->merekBarang = $item['nama_merek'];
+            $barang->merekBarang = $item['merek_barang'];
             $barang->kategoriBarang = $item['kategori'];
             $barang->hargaJual = $item['harga_satuan'];
             $barang->stokBarang = $item['kuantitas_masuk'];
-
-            dd($barang);
-
             $barang->save();
         }
 
+        DB::commit();
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
     }
 }

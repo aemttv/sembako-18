@@ -33,7 +33,7 @@
 
         <!-- Table -->
         <div class="border rounded-lg overflow-x-auto">
-            <table class="min-w-full text-sm text-left">
+            <table class="min-w-full text-lg text-left">
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-4 py-2">ID Akun</th>
