@@ -13,35 +13,34 @@ class bKeluarController extends Controller
 {
     function viewBKeluar() {
 
-        $stokTersedia = Barang::with(['detailBarang', 'merek'])
-            ->where('statusBarang', 1)
-            ->paginate(10);
+        // $stokTersedia = Barang::with(['detailBarang', 'merek'])
+        //     ->paginate(10);
 
-            $stokTersedia->getCollection()->transform(function ($item) {
-            // Dynamic total stock from detailBarang
-            $item->totalStok = $item->detailBarang->sum('quantity');
+        //     $stokTersedia->getCollection()->transform(function ($item) {
+        //     // Dynamic total stock from detailBarang
+        //     $item->totalStok = $item->detailBarang->sum('quantity');
 
-            // Convert kondisi (only if Barang has this directly)
-            $item->kondisiBarangText = match ($item->kondisiBarang) {
-                '1' => 'Baik',
-                '2' => 'Mendekati Kadaluarsa',
-                '3' => 'Kadaluarsa',
-                default => 'Baik',
-            };
+        //     // Convert kondisi (only if Barang has this directly)
+        //     $item->kondisiBarangText = match ($item->kondisiBarang) {
+        //         '1' => 'Baik',
+        //         '2' => 'Mendekati Kadaluarsa',
+        //         '3' => 'Kadaluarsa',
+        //         default => 'Baik',
+        //     };
 
-            // Access the 'merekBarang' relationship and add a custom attribute
-            $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
+        //     // Access the 'merekBarang' relationship and add a custom attribute
+        //     $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
 
-            return $item;
-        });
+        //     return $item;
+        // });
 
         // $barcode = Barang::where('statusBarang', 1)->pluck('barcode')->toArray();
 
-        return view('menu.manajemen.bKeluar', ['stokTersedia' => $stokTersedia]);
+        return view('menu.manajemen.bKeluar');
     }
 
     public function buatBKeluar(Request $request) {
-        
+
         DB::beginTransaction();
 
             $barangKeluar = new bKeluar();
@@ -65,13 +64,18 @@ class bKeluarController extends Controller
                 $detail->kategoriAlasan = $item['kategori_alasan'];
                 $detail->keterangan = $item['keterangan'];
                 $detail->save();
-                
+
                 $barang = BarangDetail::where('barcode', $item['barcode'])->first();
 
                 if ($barang) {
                     $barang->quantity -= $detail->jumlahKeluar;
                     // dd($barang);
-                    $barang->save();
+
+                    if ($barang->quantity <= 0) {
+                        $barang->statusBarang = 0;
+
+                        $barang->save();
+                    }
                 } else {
                     return redirect()->back()->with('error', 'Data barang tidak ditemukan.');
                 }

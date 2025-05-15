@@ -8,10 +8,10 @@
             <x-ui.alert type="error" :message="session('error')" />
         @endif
         <!-- Header -->
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center bg-primary">
             <div>
                 <h1 class="text-2xl font-bold">Barang <span class="text-gray-500">Keluar</span></h1>
-                <p class="text-sm text-gray-600">Transaction > Sales</p>
+                {{-- <p class="text-sm text-gray-600">Transaction > Sales</p> --}}
             </div>
 
         </div>
@@ -275,7 +275,7 @@
             }
         });
 
-        // add item to row 
+        // add item to row
         document.getElementById('add-barcode-btn').addEventListener('click', async function() {
             const barcode = document.getElementById('nama_barang').value.trim();
             const qty = parseInt(document.getElementById('qty')?.value || "1", 10);

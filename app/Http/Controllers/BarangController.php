@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\enum\KategoriBarang;
 use App\Models\Barang;
 use App\Models\BarangDetail;
 use App\Models\bMerek;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
@@ -14,7 +16,6 @@ class BarangController extends Controller
     {
         // Eager load both 'detailBarang' and 'merekBarang' relationships
         $barang = Barang::with(['detailBarang', 'merek'])
-            ->where('statusBarang', 1)
             ->paginate(10);
 
         // Transform the collection to include dynamic values
@@ -37,7 +38,18 @@ class BarangController extends Controller
         });
 
         // Return the view with the barang data
-        return view('menu.produk', ['barang' => $barang]);
+        return view('menu.barang.produk', ['barang' => $barang]);
+    }
+
+    public function searchMerek(Request $request)
+    {
+        $query = $request->get('q');
+
+        $results = bMerek::where('namaMerek', 'like', "%$query%")
+            ->select('idMerek', 'namaMerek')
+            ->get();
+
+        return response()->json($results);
     }
 
     public function search(Request $request)
@@ -55,10 +67,10 @@ class BarangController extends Controller
         $query = $request->get('q');
 
         $results = Barang::with(['detailBarang' => function ($queryBuilder) use ($query) {
-            $queryBuilder->where('barcode', 'like', "%$query%"); // load barcode 
+            $queryBuilder->where('barcode', 'like', "%$query%"); // load barcode
         }])
         ->whereHas('detailBarang', function ($queryBuilder) use ($query) {
-            $queryBuilder->where('barcode', 'like', "%$query%"); // filterkan parent barang yang barcodenya related sama detailbarang 
+            $queryBuilder->where('barcode', 'like', "%$query%"); // filterkan parent barang yang barcodenya related sama detailbarang
         })
         ->select('idBarang') // barcode is in the relation
         ->get();
@@ -101,12 +113,16 @@ class BarangController extends Controller
     public function viewDetailProduk($idBarang)
     {
         Carbon::setLocale('id');
-        $barang = Barang::with('detailBarang')->where('idBarang', $idBarang)->first();
+        $barang = Barang::with(['detailBarang' => function ($query) {
+            $query->where('statusBarang', 1);
+        }])
+        ->where('idBarang', $idBarang)
+        ->first();
 
         // Dynamically calculate total stock (sum of all detail quantities)
         $barang->totalStok = $barang->detailBarang->sum('quantity');
 
-        return view('menu.detail-produk', ['barang' => collect([$barang])]); // so @foreach still works
+        return view('menu.barang.detail-produk', ['barang' => collect([$barang])]); // so @foreach still works
     }
 
     function tambahMerek(Request $request)
@@ -127,5 +143,39 @@ class BarangController extends Controller
 
         // Optionally return response or redirect
         return redirect()->back()->with('success', 'Merek berhasil ditambahkan!');
+    }
+
+    function viewTambahProduk() {
+        $merek = bMerek::all();
+        $kategori = KategoriBarang::cases();
+
+        return view('menu.barang.tambah', ['kategori' => $kategori, 'merek' => $merek]);
+    }
+
+    function tambahProduk(Request $request) {
+
+        if (!is_array($request->barang_input)) {
+            return back()->with('error', 'Tidak ada data barang yang dikirim.');
+        }
+
+        DB::beginTransaction();
+
+        foreach ($request->barang_input as $jsonItem) {
+            $item = json_decode($jsonItem, true);
+
+            $barang = new Barang();
+            $barang->idBarang = Barang::generateNewIdBarang();
+            $barang->namaBarang = $item['nama_barang'];
+            $barang->merekBarang = $item['nama_merek'];
+            $barang->kategoriBarang = $item['kategori'];
+            $barang->hargaJual = $item['harga_satuan'];
+            $barang->stokBarang = $item['kuantitas_masuk'];
+
+            dd($barang);
+
+            $barang->save();
+        }
+
+        return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
     }
 }

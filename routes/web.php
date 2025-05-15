@@ -24,9 +24,12 @@ Route::get('/dashboard', function () {
 });
 
 Route::middleware('web')->group(function () {
+    Route::post('/tambah-produk', [BarangController::class, 'tambahProduk'])->name('produk.submit');
     Route::post('/tambah-merek', [BarangController::class, 'tambahMerek'])->name('merek.submit');
+    Route::get('/tambah-produk', [BarangController::class, 'viewtambahProduk'])->name('view.tambah-produk');
     Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
+    Route::get('/merek/search', [BarangController::class, 'searchMerek']);
     Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
     Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
     Route::get('/daftar-produk/search-detail', [BarangController::class, 'searchDetail']);
