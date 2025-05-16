@@ -18,108 +18,112 @@
             </div>
         </div>
 
-        <!-- Form Container -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Informasi Barang -->
-            <div class="border rounded-lg bg-white shadow-sm">
-                <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Barang</div>
-                <div class="p-6 space-y-4">
-                    {{-- <div>
-                        <label class="block text-sm text-gray-600 mb-1">ID Barang Masuk</label>
-                        <input type="text" id="id_barang" class="w-full border rounded-md px-3 py-2" />
-                    </div> --}}
-                    <div class="relative">
-                        <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
-                        <input type="text" id="nama_barang" name="nama_barang" class="w-full border rounded-md px-3 py-2"
-                            placeholder="Search Barang..." autocomplete="off">
-                        <div id="barang-suggestions"
-                            class="absolute z-10 w-full bg-white border mt-1 rounded-md hidden max-h-60 overflow-auto">
-                            <!-- Suggestions will appear here -->
-                        </div>
-                        <!-- Hidden input to store supplier ID -->
-                        <input type="hidden" id="barang_id" name="barang_id" />
-                    </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Harga Satuan</label>
-                            <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" />
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Satuan</label>
-                            <input type="text" id="satuan"
-                                class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="Pcs"
-                                readonly />
-                            {{-- <select id="satuan" class="w-full border rounded-md px-3 py-2">
-                                <option>Pcs</option>
-                                <option>Kg</option>
-                            </select> --}}
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
-                            <input type="number" id="kuantitas_masuk" class="w-full border rounded-md px-3 py-2" />
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Tanggal Masuk</label>
-                            <input type="date" id="tanggal_masuk" class="w-full border rounded-md px-3 py-2"
-                                value="{{ now()->format('Y-m-d') }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Tanggal Kadaluwarsa</label>
-                            <input type="date" id="tanggal_kadaluwarsa" class="w-full border rounded-md px-3 py-2" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Informasi Supplier -->
-            <div class="border rounded-lg bg-white shadow-sm flex flex-col justify-between">
-                <div>
-                    <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Supplier</div>
-                    <div class="p-6 space-y-4">
-                        <div class="relative">
-                            <label class="block text-sm text-gray-600 mb-1">Nama Supplier</label>
-                            <input type="text" id="nama_supplier" name="nama_supplier"
-                                class="w-full border rounded-md px-3 py-2" placeholder="Search Supplier..."
-                                autocomplete="off">
-                            <div id="supplier-suggestions"
-                                class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
-                                <!-- Suggestions will appear here -->
-                            </div>
-                            <!-- Hidden input to store supplier ID -->
-                            <input type="hidden" id="supplier_id" name="supplier_id" />
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Upload Nota</label>
-                            <div id="uploadArea"
-                                class="border rounded-md h-40 flex items-center justify-center text-gray-400 bg-gray-50 cursor-pointer relative">
-                                <span id="uploadText" class="text-sm text-center">[ Upload area / drag file here or click to
-                                    select ]</span>
-                                <input type="file" id="notaFile" name="nota"
-                                    class="absolute inset-0 opacity-0 cursor-pointer" />
-                            </div>
-                            <p id="fileName" class="text-sm text-gray-600 mt-2"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="px-6 pb-6 flex justify-end gap-4">
-                    <button id="addRow"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Masukkan
-                        Barang</button>
-                    <button type="button"
-                        class="px-4 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-100 transition"
-                        id="clearFields">Kosongkan Field</button>
-                </div>
-            </div>
-        </div>
-
         <!-- Form action to store data -->
         <form action="{{ route('barang-masuk.submit') }}" method="POST" enctype="multipart/form-data" id="barangMasukForm">
             @csrf
-            <!-- Hidden fields to store row data -->
+            <!-- Form Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Informasi Barang -->
+                <div class="border rounded-lg bg-white shadow-sm">
+                    <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Barang</div>
+                    <div class="p-6 space-y-4">
+                        {{-- <div>
+                        <label class="block text-sm text-gray-600 mb-1">ID Barang Masuk</label>
+                        <input type="text" id="id_barang" class="w-full border rounded-md px-3 py-2" />
+                    </div> --}}
+                        <div class="relative">
+                            <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
+                            <input type="text" id="nama_barang" name="nama_barang"
+                                class="w-full border rounded-md px-3 py-2" placeholder="Search Barang..."
+                                autocomplete="off">
+                            <div id="barang-suggestions"
+                                class="absolute z-10 w-full bg-white border mt-1 rounded-md hidden max-h-60 overflow-auto">
+                                <!-- Suggestions will appear here -->
+                            </div>
+                            <!-- Hidden input to store supplier ID -->
+                            <input type="hidden" id="barang_id" name="barang_id" />
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Harga Satuan</label>
+                                <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" />
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Satuan</label>
+                                <input type="text" id="satuan"
+                                    class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="Pcs"
+                                    readonly />
+                                {{-- <select id="satuan" class="w-full border rounded-md px-3 py-2">
+                                <option>Pcs</option>
+                                <option>Kg</option>
+                            </select> --}}
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
+                                <input type="number" id="kuantitas_masuk" class="w-full border rounded-md px-3 py-2" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Tanggal Masuk</label>
+                                <input type="date" id="tanggal_masuk" class="w-full border rounded-md px-3 py-2"
+                                    value="{{ now()->format('Y-m-d') }}" />
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Tanggal Kadaluwarsa</label>
+                                <input type="date" id="tanggal_kadaluwarsa" class="w-full border rounded-md px-3 py-2" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Informasi Supplier -->
+                <div class="border rounded-lg bg-white shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Supplier</div>
+                        <div class="p-6 space-y-4">
+                            <div class="relative">
+                                <label class="block text-sm text-gray-600 mb-1">Nama Supplier</label>
+                                <input type="text" id="nama_supplier" name="nama_supplier"
+                                    class="w-full border rounded-md px-3 py-2" placeholder="Search Supplier..."
+                                    autocomplete="off">
+                                <div id="supplier-suggestions"
+                                    class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
+                                    <!-- Suggestions will appear here -->
+                                </div>
+                                <!-- Hidden input to store supplier ID -->
+                                <input type="hidden" id="supplier_id" name="supplier_id"
+                                    value="{{ old('supplier_id') }}" />
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Upload Nota</label>
+                                <div id="uploadArea"
+                                    class="border rounded-md h-40 flex items-center justify-center text-gray-400 bg-gray-50 cursor-pointer relative">
+                                    <span id="uploadText" class="text-sm text-center">[ Upload area / drag file here or
+                                        click to
+                                        select ]</span>
+                                    <input type="file" id="notaFile" name="nota_file"
+                                        class="absolute inset-0 opacity-0 cursor-pointer" />
+                                </div>
+                                <p id="fileName" class="text-sm text-gray-600 mt-2"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="px-6 pb-6 flex justify-end gap-4">
+                        <button id="addRow" type="button"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Masukkan
+                            Barang</button>
+                        <button type="button"
+                            class="px-4 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-100 transition"
+                            id="clearFields">Kosongkan Field</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="hiddenRows"></div>
 
             <div class="mt-6 border rounded-lg bg-white shadow-sm">
@@ -140,7 +144,7 @@
                         </thead>
                         <tbody id="barangTableBody">
                             <!-- Rows will be added here dynamically -->
-                            <input type="hidden" id="supplier_id" name="supplier_id" />
+
                         </tbody>
                     </table>
                 </div>
@@ -239,78 +243,147 @@
                 }
             });
 
-            // Menambahkan baris baru ke dalam tabel
-            document.getElementById('addRow').addEventListener('click', function() {
-                var idBarang = document.getElementById('barang_id').value;
-                var namaBarang = document.getElementById('nama_barang').value;
-                var hargaSatuan = document.getElementById('harga_satuan').value;
-                var satuan = document.getElementById('satuan').value;
-                var kuantitasMasuk = document.getElementById('kuantitas_masuk').value;
-                var tanggalMasuk = document.getElementById('tanggal_masuk').value;
-                var idSupplier = document.getElementById('supplier_id').value;
-                var tanggalKadaluwarsa = document.getElementById('tanggal_kadaluwarsa').value;
+            // File upload handling
+            const uploadArea = document.getElementById('uploadArea');
+            const notaFileInput = document.getElementById('notaFile');
+            const fileNameDisplay = document.getElementById('fileName');
 
-                // Add new row to the table
-                var tableBody = document.getElementById('barangTableBody');
-                var newRow = tableBody.insertRow();
-
-                newRow.innerHTML = `
-                    <td class="px-4 py-2 border-b text-center">${idBarang}</td>
-                    <td class="px-4 py-2 border-b text-center">${namaBarang}</td>
-                    <td class="px-4 py-2 border-b text-center">${hargaSatuan}</td>
-                    <td class="px-4 py-2 border-b text-center">${satuan}</td>
-                    <td class="px-4 py-2 border-b text-center">${kuantitasMasuk}</td>
-                    <td class="px-4 py-2 border-b text-center">${tanggalMasuk}</td>
-                    <td class="px-4 py-2 border-b text-center">${tanggalKadaluwarsa}</td>
-                    <td class="px-4 py-2 border-b text-center">
-                        <button class="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Lihat</button>
-                        <button class="bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-600">Edit</button>
-                        <button class="bg-red-500 text-white rounded-md px-4 py-2 hover:bg-red-600">Hapus</button>
-                    </td>
-                `;
-
-                // Menambahkan input tersembunyi untuk setiap row ke dalam form
-                var hiddenRows = document.getElementById('hiddenRows');
-                var hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-
-                hiddenInput.name = `barang_masuk[]`;
-                hiddenInput.value = JSON.stringify({
-                    barang_id: idBarang,
-                    nama_barang: namaBarang,
-                    harga_satuan: hargaSatuan,
-                    satuan: satuan,
-                    kuantitas_masuk: kuantitasMasuk,
-                    tanggal_masuk: tanggalMasuk,
-                    supplier_id: idSupplier,
-                    tanggal_kadaluwarsa: tanggalKadaluwarsa
-                });
-                hiddenRows.appendChild(hiddenInput);
-
-                // Clear form fields
-                document.getElementById('barang_id').value = '';
-                document.getElementById('nama_barang').value = '';
-                document.getElementById('harga_satuan').value = '';
-                document.getElementById('satuan').value = 'Pcs';
-                document.getElementById('kuantitas_masuk').value = '';
-                // document.getElementById('tanggal_masuk').value = '';
-                document.getElementById('tanggal_kadaluwarsa').value = '';
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('border-blue-500', 'bg-blue-50');
             });
 
-            // Kosongkan semua field
-            document.getElementById('clearFields').addEventListener('click', function() {
-                document.getElementById('barang_id').value = '';
-                document.getElementById('nama_barang').value = '';
-                document.getElementById('harga_satuan').value = '';
-                document.getElementById('satuan').value = 'Pcs';
-                document.getElementById('kuantitas_masuk').value = '';
-                document.getElementById('tanggal_masuk').value = '';
-                document.getElementById('tanggal_kadaluwarsa').value = '';
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+                if (e.dataTransfer.files.length) {
+                    notaFileInput.files = e.dataTransfer.files;
+                    updateFileNameDisplay();
+                }
+            });
+
+            // Handle file selection
+            notaFileInput.addEventListener('change', updateFileNameDisplay);
+
+            function updateFileNameDisplay() {
+                if (notaFileInput.files.length > 0) {
+                    fileNameDisplay.textContent = `Selected file: ${notaFileInput.files[0].name}`;
+                } else {
+                    fileNameDisplay.textContent = '';
+                }
+            }
+
+            // Menambahkan baris baru ke dalam tabel
+            document.addEventListener('DOMContentLoaded', function() {
+                const addRowBtn = document.getElementById('addRow');
+                const tableBody = document.getElementById('barangTableBody');
+                const hiddenRows = document.getElementById('hiddenRows');
+
+                let rowIndex = 0;
+
+                addRowBtn.addEventListener('click', function() {
+                    const barangId = document.getElementById('barang_id').value;
+                    const namaBarang = document.getElementById('nama_barang').value;
+                    const hargaSatuan = document.getElementById('harga_satuan').value;
+                    const satuan = document.getElementById('satuan').value;
+                    const kuantitas = document.getElementById('kuantitas_masuk').value;
+                    const tanggalMasuk = document.getElementById('tanggal_masuk').value;
+                    const tanggalKadaluwarsa = document.getElementById('tanggal_kadaluwarsa').value;
+
+                    if (!barangId || !namaBarang || !hargaSatuan || !kuantitas || !tanggalMasuk) {
+                        alert('Mohon lengkapi semua field penting.');
+                        return;
+                    }
+
+                    // Tambahkan ke tabel tampilan
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                <td class="px-4 py-2 border-b">${barangId}</td>
+                <td class="px-4 py-2 border-b">${namaBarang}</td>
+                <td class="px-4 py-2 border-b">${hargaSatuan}</td>
+                <td class="px-4 py-2 border-b">${satuan}</td>
+                <td class="px-4 py-2 border-b">${kuantitas}</td>
+                <td class="px-4 py-2 border-b">${tanggalMasuk}</td>
+                <td class="px-4 py-2 border-b">${tanggalKadaluwarsa}</td>
+                <td class="px-4 py-2 border-b">
+                    <button type="button" class="text-red-500 hover:underline remove-row" data-index="${rowIndex}">Hapus</button>
+                </td>
+            `;
+                    tableBody.appendChild(tr);
+
+                    hiddenRows.insertAdjacentHTML('beforeend', `
+                <input type="hidden" name="items[${rowIndex}][barang_id]" value="${barangId}">
+                <input type="hidden" name="items[${rowIndex}][nama_barang]" value="${namaBarang}">
+                <input type="hidden" name="items[${rowIndex}][harga_satuan]" value="${hargaSatuan}">
+                <input type="hidden" name="items[${rowIndex}][satuan]" value="${satuan}">
+                <input type="hidden" name="items[${rowIndex}][kuantitas_masuk]" value="${kuantitas}">
+                <input type="hidden" name="items[${rowIndex}][tanggal_masuk]" value="${tanggalMasuk}">
+                <input type="hidden" name="items[${rowIndex}][tanggal_kadaluwarsa]" value="${tanggalKadaluwarsa}">
+            `);
+
+                    rowIndex++;
+
+                    // Kosongkan field setelah input
+                    document.getElementById('nama_barang').value = '';
+                    document.getElementById('barang_id').value = '';
+                    document.getElementById('harga_satuan').value = '';
+                    document.getElementById('kuantitas_masuk').value = '';
+                    document.getElementById('tanggal_kadaluwarsa').value = '';
+                });
+
+                // Hapus baris
+                tableBody.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-row')) {
+                        const index = e.target.getAttribute('data-index');
+
+                        // Hapus row dari tabel
+                        e.target.closest('tr').remove();
+
+                        // Hapus hidden input
+                        const inputs = hiddenRows.querySelectorAll(`input[name^="items[${index}]"]`);
+                        inputs.forEach(input => input.remove());
+                    }
+                });
+
+                // Tombol kosongkan field
+                document.getElementById('clearFields').addEventListener('click', function() {
+                    document.getElementById('nama_barang').value = '';
+                    document.getElementById('barang_id').value = '';
+                    document.getElementById('harga_satuan').value = '';
+                    document.getElementById('kuantitas_masuk').value = '';
+                    document.getElementById('tanggal_kadaluwarsa').value = '';
+                });
             });
 
             // Pastikan form bisa submit ke backend
             document.getElementById('submitData').addEventListener('click', function() {
-                // Di sini bisa tambahkan validasi jika diperlukan sebelum submit
+                e.preventDefault();
+                const supplierId = document.getElementById('supplier_id').value;
+                if (!supplierId) {
+                    alert('Please select a supplier first');
+                    return;
+                }
+
+                // Validate at least one row exists
+                const rowCount = document.getElementById('barangTableBody').rows.length;
+                if (rowCount === 0) {
+                    alert('Please add at least one item');
+                    return;
+                }
+
+                // Create FormData object
+                const formData = new FormData(this);
+
+                // Get the nota file
+                const notaFile = notaFileInput.files[0];
+                if (notaFile) {
+                    formData.append('nota_file', notaFile);
+                }
             });
         </script>
 
