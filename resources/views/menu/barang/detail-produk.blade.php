@@ -140,14 +140,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- Buttons -->
-                <div class="px-6 pb-6 flex justify-end gap-4">
-                    <button type="submit" id="submitData"
-                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-                        Konfirmasi Input
-                    </button>
-                </div>
             </div>
         @endforeach
     </div>
