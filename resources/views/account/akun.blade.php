@@ -46,6 +46,11 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
+                    @if ($akun->isEmpty())
+                        <tr>
+                            <td class="px-4 py-2 border-b text-center" colspan="8">Data akun tidak ditemukan.</td>
+                        </tr>
+                    @endif
                     @foreach ($akun as $data)
                         <tr>
                             <td class="px-4 py-2">{{ $data->idAkun }}</td>

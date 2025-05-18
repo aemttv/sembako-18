@@ -70,6 +70,11 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
+                    @if ($barang->isEmpty())
+                        <td>
+                            <td class="px-4 py-2 text-center" colspan="9">Data Barang tidak ditemukan.</td>
+                        </td>
+                    @endif
                     @foreach ($barang as $data)
                         <tr>
                             <td class="px-4 py-2">{{ $data->idBarang }}</td>

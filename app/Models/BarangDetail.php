@@ -29,10 +29,14 @@ class BarangDetail extends Model
     // You can also set the default guard if needed
     protected $guard = 'web';
 
-    // protected $casts = [
-    //     'kondisiBarang' => Kondisi::class
-    // ];
-
+    /**
+     * Generates a new idDetailBarang that doesn't already exist in the table.
+     *
+     * This function is atomic and thread-safe, so it is safe to call it from
+     * multiple threads or processes concurrently.
+     *
+     * @return string The newly generated idDetailBarang.
+     */
     public static function generateNewIdBarangDetail()
     {
         return DB::transaction(function () {
@@ -54,6 +58,25 @@ class BarangDetail extends Model
     
             return $newId;
         });
+    }
+
+    /**
+     * Generates a random barcode of a given length.
+     *
+     * The characters used to generate the barcode are the uppercase letters A-Z and the numbers 0-9.
+     * The length of the barcode can be adjusted by modifying the value of the $length variable.
+     *
+     * @return string A random barcode of the specified length.
+     */
+    public static function generateBarcode() {
+        $length = 12; // adjust the length of the barcode as needed
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $barcode = '';
+        
+        for ($i = 0; $i < $length; $i++) {
+            $barcode .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $barcode;
     }
 
     public function barang()

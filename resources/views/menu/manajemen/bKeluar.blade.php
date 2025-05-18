@@ -99,20 +99,20 @@
             <!-- Table Section -->
             <div class="overflow-x-auto bg-white rounded-md shadow p-4 my-4">
                 <table class="min-w-full border border-gray-300 text-sm">
-                    <thead class="bg-gray-100">
+                    <thead class="bg-gray-100 uppercase text-md">
                         <tr>
                             <th class="p-2 border">#</th>
                             <th class="p-2 border">Barcode</th>
-                            <th class="p-2 border">Product Item</th>
-                            <th class="p-2 border">Price</th>
-                            <th class="p-2 border">Qty</th>
+                            <th class="p-2 border">Nama Barang</th>
+                            <th class="p-2 border">Harga</th>
+                            <th class="p-2 border">Kuantitas</th>
                             <th class="p-2 border">Subtotal</th>
-                            <th class="p-2 border">Actions</th>
+                            <th class="p-2 border">Proses</th>
                         </tr>
                     </thead>
                     <tbody id="transaction-table-body">
-                        <tr class="no-items-row">
-                            {{-- <td class="p-2 border text-center" colspan="8">Tidak ada item</td> --}}
+                        <tr id="noDataRow">
+                            <td colspan="7" class="text-center text-gray-500 p-2">Tidak ada data</td>
                         </tr>
                     </tbody>
                 </table>
@@ -237,6 +237,29 @@
             }
         });
 
+        function updateNoDataRow() {
+            const tableBody = document.getElementById('transaction-table-body');
+            const noDataRow = document.getElementById('noDataRow');
+            // Count rows that are NOT the placeholder
+            const dataRows = Array.from(tableBody.children).filter(
+                row => row.id !== 'noDataRow'
+            );
+            if (dataRows.length === 0) {
+                // Show placeholder if not present
+                if (!noDataRow) {
+                    const tr = document.createElement('tr');
+                    tr.id = 'noDataRow';
+                    tr.innerHTML = `<td colspan="7" class="text-center text-gray-500 p-2">Tidak ada data</td>`;
+                    tableBody.appendChild(tr);
+                }
+            } else {
+                // Remove placeholder if present
+                if (noDataRow) {
+                    noDataRow.remove();
+                }
+            }
+        }
+
         // search popup function
         document.getElementById('search-barcode-btn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -281,25 +304,26 @@
             const qty = parseInt(document.getElementById('qty')?.value || "1", 10);
             const totalInvoiceElement = document.getElementById(
                 'invoice-total'); // Get the total invoice element
-
-            if (!barcode || qty <= 0) {
-                alert('Please enter a valid barcode and quantity.');
-                return;
-            }
-
-            // Fetch detail based on barcode
-            let detail;
-
-            try {
-                const response = await fetch(`/daftar-produk/search-detail?barcode=${barcode}`);
-                if (!response.ok) throw new Error('Not Found');
-
-                detail = await response.json();
-            } catch (e) {
-                alert('Barcode not found.');
-                return;
-            }
-
+                
+                if (!barcode || qty <= 0) {
+                    alert('Please enter a valid barcode and quantity.');
+                    return;
+                }
+                
+                // Fetch detail based on barcode
+                let detail;
+                
+                try {
+                    const response = await fetch(`/daftar-produk/search-detail?barcode=${barcode}`);
+                    if (!response.ok) throw new Error('Not Found');
+                    
+                    detail = await response.json();
+                } catch (e) {
+                    alert('Barcode not found.');
+                    return;
+                }
+                
+                
             const id = detail.idBarang;
             const name = detail.nama;
             const price = parseFloat(detail.harga) || 0;
@@ -307,21 +331,17 @@
 
             const tableBody = document.getElementById('transaction-table-body');
 
-            // Remove "Tidak ada item" row if exists
-            const noItemRow = document.getElementById('no-items-row');
-            if (noItemRow) noItemRow.remove();
-
             // Create new row
             const row = document.createElement('tr');
             row.innerHTML = `
-            <td class="p-2 border text-center">${id}</td>
-            <td class="p-2 border">${barcode}</td>
-            <td class="p-2 border">${name}</td>
-            <td class="p-2 border">Rp. ${price.toLocaleString()}</td>
-            <td class="p-2 border">${qty}</td>
-            <td class="p-2 border">Rp. ${total.toLocaleString()}</td>
-            <td class="p-2 border text-center"><button class="text-red-500 hover:underline remove-item">Remove</button></td>
-        `;
+                <td class="p-2 border text-center">${id}</td>
+                <td class="p-2 border">${barcode}</td>
+                <td class="p-2 border">${name}</td>
+                <td class="p-2 border">Rp. ${price.toLocaleString()}</td>
+                <td class="p-2 border">${qty}</td>
+                <td class="p-2 border">Rp. ${total.toLocaleString()}</td>
+                <td class="p-2 border text-center"><button class="text-red-500 hover:underline remove-item">Remove</button></td>
+            `;
 
             tableBody.appendChild(row);
 
@@ -347,6 +367,7 @@
 
             // Update the total invoice after adding the row
             updateTotalInvoice();
+            updateNoDataRow()
         });
 
         // Function to update the total invoice

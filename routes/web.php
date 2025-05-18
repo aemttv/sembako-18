@@ -30,9 +30,13 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
     Route::get('/merek/search', [BarangController::class, 'searchMerek']);
+});
+
+Route::middleware('web')->group(function () {
     Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
     Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
     Route::get('/daftar-produk/search-detail', [BarangController::class, 'searchDetail']);
+    Route::post('/barang-detail/{idBarang}/{barcode}/soft-delete', [BarangController::class, 'softDeleteBarangDetail'])->name('soft.delete.detail');
 });
 
 Route::middleware('web')->group(function () {

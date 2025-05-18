@@ -27,7 +27,7 @@
 
     <!-- Table -->
     <div class="border rounded-lg overflow-x-auto">
-        <table class="min-w-full text-sm text-left">
+        <table class="min-w-full text-lg text-center items-center">
             <thead class="bg-gray-800 text-white">
                 <tr>
                     <th class="px-4 py-2">ID Barang Masuk</th>
@@ -42,6 +42,11 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y">
+                @if ($bMasuk->isEmpty())
+                    <td>
+                        <td class="px-4 py-2 text-center" colspan="9">Data Barang Masuk tidak ditemukan.</td>
+                    </td>
+                @endif
                 @foreach ($bMasuk as $data)
                     <tr>
                         <td class="px-4 py-2">{{$data->idBarangMasuk}}</td>
@@ -64,8 +69,8 @@
     </div>
 
     <!-- Pagination -->
-     {{$bMasuk->links() }}
+    {{$bMasuk->links() }}
 </div>
 
-   
+
 @endsection

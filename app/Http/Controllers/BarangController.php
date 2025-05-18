@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
+    /**
+     * View all barang in the database, with pagination.
+     * Each item in the collection is transformed to include dynamic values:
+     * - totalStok: the sum of all quantity values in the detailBarang relationship
+     * - kondisiBarangText: the text representation of the kondisiBarang enum value
+     * - merekBarangName: the namaMerek value of the merekBarang relationship, or 'Unknown' if not present
+     * The view is returned with the barang data.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function viewBarang()
     {
         // Eager load both 'detailBarang' and 'merekBarang' relationships
@@ -108,19 +118,29 @@ class BarangController extends Controller
         }
     }
 
+    /**
+     * Show the detail of a specific product with its details and stock.
+     * 
+     * @param int $idBarang The ID of the product to show.
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function viewDetailProduk($idBarang)
     {
         Carbon::setLocale('id');
         $barang = Barang::with(['detailBarang' => function ($query) {
             $query->where('statusBarang', 1);
-        }])
+        }, 'merek'])
         ->where('idBarang', $idBarang)
         ->first();
+
+        // Add custom attribute directly
+        $barang->merekBarangName = $barang->merek ? $barang->merek->namaMerek : 'Unknown';
 
         // Dynamically calculate total stock (sum of all detail quantities)
         $barang->totalStok = $barang->detailBarang->sum('quantity');
 
-        return view('menu.barang.detail-produk', ['barang' => collect([$barang])]); // so @foreach still works
+        return view('menu.barang.detail-produk', ['barang' => collect([$barang])]); 
     }
 
     function tambahMerek(Request $request)
@@ -154,6 +174,25 @@ class BarangController extends Controller
 
         DB::beginTransaction();
 
+         // Validate image(s)
+        $request->validate([
+            'barang_image.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+        ]);
+
+        dump($request->barang_image);
+
+        $uploadedPaths = [];
+
+        if ($request->hasFile('barang_image')) {
+            foreach ($request->file('barang_image') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('uploads/barang', $filename, 'public');
+                $uploadedPaths[] = $path;
+            }
+            dump($uploadedPaths);
+        }
+
+
         foreach ($request->barang_input as $jsonItem) {
             $item = json_decode($jsonItem, true);
 
@@ -173,4 +212,23 @@ class BarangController extends Controller
         DB::commit();
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
     }
+
+    public function softDeleteBarangDetail(Request $request, $idBarang, $barcode)
+    {
+        $detail = BarangDetail::where('idBarang', $idBarang)
+            ->where('barcode', $barcode)
+            ->where('statusBarang', 1)
+            ->first();
+
+        if (! $detail) {
+            return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
+        }
+
+        // Your soft-delete logic
+        $detail->statusBarang = 0;
+        $detail->save();
+
+        return redirect()->back()->with('success', 'Barang detail berhasil dihapus.');
+    }
+
 }

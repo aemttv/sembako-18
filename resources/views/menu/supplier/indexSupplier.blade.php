@@ -40,6 +40,11 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
+                    @if ($supplier->isEmpty())
+                        <td>
+                            <td class="px-4 py-2 text-center" colspan="9">Data Supplier tidak ditemukan.</td>
+                        </td>
+                    @endif
                     @foreach ($supplier as $data)
                         <tr>
                             <td class="px-4 py-2">{{$data->idSupplier}}</td>

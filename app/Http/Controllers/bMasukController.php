@@ -24,6 +24,7 @@ class bMasukController extends Controller
             $item->hargaBeli = $item->detailMasuk->sum('hargaBeli');
             $item->total = $item->detailMasuk->sum('subtotal');
             $item->expiredDate = $item->detailMasuk->max('tglKadaluarsa');
+            $item->barcode = $item->detailMasuk->max('barcode');
 
             return $item;
         });
@@ -38,67 +39,66 @@ class bMasukController extends Controller
     }
 
     public function tambahBMasuk(Request $request)
-{
-    try {
-        DB::beginTransaction();
+    {
+        try {
+            DB::beginTransaction();
 
-        // Simpan nota_file ke folder publik
-        $notaPath = null;
-        if ($request->hasFile('nota_file')) {
-            // Buat nama file unik
-            $notaName = time() . '_' . $request->file('nota_file')->getClientOriginalName();
-            // Pindahkan ke folder public/assets/nota_file
-            $request->file('nota_file')->move(public_path('assets/nota_file'), $notaName);
-            // Simpan hanya nama filenya, bukan path penuh
-            $notaPath = $notaName;
+            // Simpan nota_file ke folder publik
+            $notaPath = null;
+            if ($request->hasFile('nota_file')) {
+                // Buat nama file unik
+                $notaName = time() . '_' . $request->file('nota_file')->getClientOriginalName();
+                // Pindahkan ke folder public/assets/nota_file
+                $request->file('nota_file')->move(public_path('assets/nota_file'), $notaName);
+                // Simpan hanya nama filenya, bukan path penuh
+                $notaPath = $notaName;
+            }
+
+            // Buat entry utama barang masuk
+            $barangMasuk = new bMasuk();
+            $barangMasuk->idBarangMasuk = bMasuk::generateNewIdBarangMasuk();
+            $barangMasuk->idSupplier = $request->supplier_id; // Bisa dari form
+            $barangMasuk->idAkun = session('user_data')->idAkun; // Ambil dari session
+            $barangMasuk->tglMasuk = now();
+            $barangMasuk->nota = $notaPath; // Simpan nama file
+            $barangMasuk->save();
+
+            // Validasi dan simpan detail barang
+            if (!$request->has('items') || !is_array($request->items)) {
+                return response()->json(['error' => 'Data barang belum dimasukkan.'], 400);
+            }
+
+            foreach ($request->items as $item) {
+                // Simpan detail barang masuk
+                $detail = new bMasukDetail();
+                $detail->idDetailBM = bMasukDetail::generateNewIdDetailBM();
+                $detail->idBarangMasuk = $barangMasuk->idBarangMasuk;
+                $detail->idBarang = $item['barang_id'];
+                $detail->jumlahMasuk = $item['kuantitas_masuk'];
+                $detail->hargaBeli = $item['harga_satuan'];
+                $detail->subtotal = $item['harga_satuan'] * $item['kuantitas_masuk'];
+                $detail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
+                $detail->save();
+
+                // Simpan ke stok detail
+                $newDetail = new BarangDetail();
+                $newDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
+                $newDetail->idBarang = $item['barang_id'];
+                $newDetail->kondisiBarang = 'Baik';
+                $newDetail->satuanBarang = 'PCS';
+                $newDetail->quantity = $item['kuantitas_masuk'];
+                $newDetail->hargaBeli = $item['harga_satuan'];
+                $newDetail->tglMasuk = now();
+                $newDetail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
+                $newDetail->barcode = BarangDetail::generateBarcode();
+                $newDetail->save();
+            }
+
+            DB::commit();
+            return redirect()->route('barang-masuk')->with('success', 'Barang Masuk berhasil disimpan!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
-
-        // Buat entry utama barang masuk
-        $barangMasuk = new bMasuk();
-        $barangMasuk->idBarangMasuk = bMasuk::generateNewIdBarangMasuk();
-        $barangMasuk->idSupplier = 'S001'; // Bisa dari form
-        $barangMasuk->idAkun = 'A001'; // Ambil dari session jika perlu
-        $barangMasuk->tglMasuk = now();
-        $barangMasuk->nota = $notaPath; // Simpan nama file
-        $barangMasuk->save();
-
-        // Validasi dan simpan detail barang
-        if (!$request->has('items') || !is_array($request->items)) {
-            return response()->json(['error' => 'Data barang belum dimasukkan.'], 400);
-        }
-
-        foreach ($request->items as $item) {
-            // Simpan detail barang masuk
-            $detail = new bMasukDetail();
-            $detail->idDetailBM = bMasukDetail::generateNewIdDetailBM();
-            $detail->idBarangMasuk = $barangMasuk->idBarangMasuk;
-            $detail->idBarang = $item['barang_id'];
-            $detail->jumlahMasuk = $item['kuantitas_masuk'];
-            $detail->hargaBeli = $item['harga_satuan'];
-            $detail->subtotal = $item['harga_satuan'] * $item['kuantitas_masuk'];
-            $detail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
-            $detail->save();
-
-            // Simpan ke stok detail
-            $newDetail = new BarangDetail();
-            $newDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
-            $newDetail->idBarang = $item['barang_id'];
-            $newDetail->kondisiBarang = 'Baik';
-            $newDetail->satuanBarang = 'PCS';
-            $newDetail->quantity = $item['kuantitas_masuk'];
-            $newDetail->hargaBeli = $item['harga_satuan'];
-            $newDetail->tglMasuk = now();
-            $newDetail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
-            $newDetail->barcode = '';
-            $newDetail->save();
-        }
-
-        DB::commit();
-        return redirect()->route('barang-masuk')->with('success', 'Barang Masuk berhasil disimpan!');
-    } catch (\Exception $e) {
-        DB::rollback();
-        return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
     }
-}
-
 }

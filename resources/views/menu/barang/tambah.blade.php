@@ -19,6 +19,9 @@
         </div>
 
         <!-- Form Container -->
+        <!-- Form action to store data -->
+        <form action="{{ route('produk.submit') }}" method="POST" enctype="multipart/form-data" id="tambahBarangForm">
+            @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Informasi Barang -->
             <div class="border rounded-lg bg-white shadow-sm">
@@ -101,20 +104,32 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Upload Gambar</label>
                             <div id="uploadArea"
-                                class="border rounded-md h-40 flex items-center justify-center text-gray-400 bg-gray-50 cursor-pointer relative">
-                                <span id="uploadText" class="text-sm text-center">[ Upload area / drag file here or click to
-                                    select ]</span>
-                                <input type="file" id="notaFile" name="nota"
-                                    class="absolute inset-0 opacity-0 cursor-pointer" />
+                                class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center relative cursor-pointer">
+                                <input type="file" id="barangFile" name="barang_image[]" class="hidden" accept="image/*,.pdf,.doc,.docx" multiple />
+                                <div id="previewContainer" class="flex flex-col items-center justify-center">
+                                    <img id="imagePreview" src="" alt="Image Preview"
+                                        class="max-h-40 mb-2 hidden" />
+                                    <span id="fileName" class="text-sm text-gray-600"></span>
+                                    <span id="uploadPrompt" class="text-gray-400">Drag & drop or click to upload a
+                                        file</span>
+                                </div>
                             </div>
                             <p id="fileName" class="text-sm text-gray-600 mt-2"></p>
                         </div>
+                        <!-- Image Modal -->
+                        <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                            <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-4 relative">
+                                <button type="button" id="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-xl">&times;</button>
+                                <img id="modalImage" src="" alt="Uploaded Preview" class="w-full h-auto rounded">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
                 <!-- Buttons -->
                 <div class="px-6 pb-6 flex justify-end gap-4">
-                    <button id="addRow"
+                    <button id="addRow" type="button"
                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Masukkan
                         Barang</button>
                     <button type="button"
@@ -124,9 +139,7 @@
             </div>
         </div>
 
-        <!-- Form action to store data -->
-        <form action="{{ route('produk.submit') }}" method="POST" enctype="multipart/form-data" id="tambahBarangForm">
-            @csrf
+        
             <!-- Hidden fields to store row data -->
             <div id="hiddenRows"></div>
 
@@ -146,8 +159,9 @@
                             </tr>
                         </thead>
                         <tbody id="barangTableBody">
-                            <!-- Rows will be added here dynamically -->
-                            {{-- <input type="hidden" id="supplier_id" name="supplier_id" /> --}}
+                            <tr id="noDataRow">
+                                <td colspan="8" class="text-center text-gray-500 py-2">Tidak ada data</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -162,6 +176,25 @@
         </form>
 
         <script>
+            const uploadedImages = []; // To store uploaded image DataURLs
+            document.getElementById('barangFile').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const dataURL = e.target.result;
+                    document.getElementById('imagePreview').src = dataURL;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                    document.getElementById('fileName').textContent = file.name;
+
+                    uploadedImages.push(dataURL); // Store it for "Lihat" later
+                };
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+            });
+
             // get search inputs - nama barang atau supplier
             document.addEventListener('DOMContentLoaded', function() {
                 setupSearchableInput({
@@ -239,6 +272,88 @@
                 }
             });
 
+            function updateNoDataRow() {
+                const tableBody = document.getElementById('barangTableBody');
+                const noDataRow = document.getElementById('noDataRow');
+                // Count rows that are NOT the placeholder
+                const dataRows = Array.from(tableBody.children).filter(
+                    row => row.id !== 'noDataRow'
+                );
+                if (dataRows.length === 0) {
+                    // Show placeholder if not present
+                    if (!noDataRow) {
+                        const tr = document.createElement('tr');
+                        tr.id = 'noDataRow';
+                        tr.innerHTML = `<td colspan="7" class="text-center text-gray-500 p-2">Tidak ada data</td>`;
+                        tableBody.appendChild(tr);
+                    }
+                } else {
+                    // Remove placeholder if present
+                    if (noDataRow) {
+                        noDataRow.remove();
+                    }
+                }
+            }
+
+            // File upload handling
+            const uploadArea = document.getElementById('uploadArea');
+            const barangFileInput = document.getElementById('barangFile');
+            const fileNameDisplay = document.getElementById('fileName');
+            const imagePreview = document.getElementById('imagePreview');
+            const uploadPrompt = document.getElementById('uploadPrompt');
+
+            // Click to open file dialog
+            uploadArea.addEventListener('click', () => {
+                barangFileInput.click();
+            });
+
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+                if (e.dataTransfer.files.length) {
+                    barangFileInput.files = e.dataTransfer.files;
+                    updateFileNameAndPreview();
+                }
+            });
+
+            // Handle file selection
+            barangFileInput.addEventListener('change', updateFileNameAndPreview);
+
+            function updateFileNameAndPreview() {
+                if (barangFileInput.files.length > 0) {
+                    const file = barangFileInput.files[0];
+                    fileNameDisplay.textContent = `Selected file: ${file.name}`;
+                    // If image, show preview
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.src = e.target.result;
+                            imagePreview.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.src = '';
+                        imagePreview.classList.add('hidden');
+                    }
+                    uploadPrompt.classList.add('hidden');
+                } else {
+                    fileNameDisplay.textContent = '';
+                    imagePreview.src = '';
+                    imagePreview.classList.add('hidden');
+                    uploadPrompt.classList.remove('hidden');
+                }
+            }
+
             // Menambahkan baris baru ke dalam tabel
             document.getElementById('addRow').addEventListener('click', function() {
                 var namaBarang = document.getElementById('nama_barang').value;
@@ -252,18 +367,34 @@
                 var newRow = tableBody.insertRow();
 
                 newRow.innerHTML = `
-                    <td class="px-4 py-2 border-b text-center">*</td>
+                    <td class="px-4 py-2 border-b text-center">${tableBody.rows.length - 1}</td>
                     <td class="px-4 py-2 border-b text-center">${namaBarang}</td>
                     <td class="px-4 py-2 border-b text-center">${namaMerek}</td>
                     <td class="px-4 py-2 border-b text-center">${kategoriBarang}</td>
                     <td class="px-4 py-2 border-b text-center">${hargaSatuan}</td>
                     <td class="px-4 py-2 border-b text-center">${kuantitasMasuk}</td>
                     <td class="px-4 py-2 border-b text-center">
-                        <button class="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600">Lihat</button>
+                        <button type="button" class="lihat-btn bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600" data-index="${uploadedImages.length - 1}">Lihat</button>
                         <button class="bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-600">Edit</button>
                         <button class="bg-red-500 text-white rounded-md px-4 py-2 hover:bg-red-600">Hapus</button>
                     </td>
                 `;
+
+                tableBody.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('lihat-btn')) {
+            const index = e.target.getAttribute('data-index');
+            const imageURL = uploadedImages[index];
+
+            if (imageURL) {
+                document.getElementById('modalImage').src = imageURL;
+                document.getElementById('imageModal').classList.remove('hidden');
+            } else {
+                alert("No image uploaded.");
+            }
+        }
+    });
+
+
 
                 // Menambahkan input tersembunyi untuk setiap row ke dalam form
                 var hiddenRows = document.getElementById('hiddenRows');
@@ -280,12 +411,12 @@
                     kuantitas_masuk: kuantitasMasuk,
                 });
                 hiddenRows.appendChild(hiddenInput);
+                updateNoDataRow();
 
                 // Clear form fields
                 document.getElementById('nama_barang').value = '';
                 document.getElementById('nama_merek').value = '';
                 document.getElementById('harga_satuan').value = '';
-                document.getElementById('kuantitas_masuk').value = '';
                 document.getElementById('tanggal_kadaluwarsa').value = '';
             });
 
@@ -297,10 +428,31 @@
                 document.getElementById('kuantitas_masuk').value = '';
                 document.getElementById('tanggal_kadaluwarsa').value = '';
             });
+            document.getElementById('closeModal').addEventListener('click', function () {
+                document.getElementById('imageModal').classList.add('hidden');
+                document.getElementById('modalImage').src = '';
+            });
+
 
             // Pastikan form bisa submit ke backend
             document.getElementById('submitData').addEventListener('click', function() {
-                // Di sini bisa tambahkan validasi jika diperlukan sebelum submit
+                e.preventDefault();
+
+                // Validate at least one row exists
+                const rowCount = document.getElementById('barangTableBody').rows.length;
+                if (rowCount === 0) {
+                    alert('Please add at least one item');
+                    return;
+                }
+
+                // Create FormData object
+                const formData = new FormData(this);
+
+                // Get the nota file
+                const barangFile = barangFileInput.files[0];
+                if (barangFile) {
+                    formData.append('barang_image[]', barangFile);
+                }
             });
         </script>
 

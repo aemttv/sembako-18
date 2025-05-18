@@ -30,10 +30,6 @@
                         <div class="flex items-center justify-center border border-dashed bg-gray-50 rounded-md h-64">
                             <span class="text-gray-400 text-sm">[Gambar Produk]</span>
                         </div>
-                        <!-- Barcode Image Placeholder -->
-                        <div class="flex items-center justify-center border border-dashed bg-gray-100 rounded-md h-32">
-                            <span class="text-gray-400 text-sm">[Barcode Produk]</span>
-                        </div>
                     </div>
 
                     <!-- Right Column: Product Detail Inputs -->
@@ -48,13 +44,13 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Brand/Merek</label>
                             <input type="text" id="brand" name="brand" class="w-full border rounded-md px-3 py-2"
-                                placeholder="Brand Barang" value="{{ $data->merekBarang }}">
+                                placeholder="Brand Barang" value="{{ $data->merekBarangName }}">
                         </div>
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Kategori</label>
                             <input type="text" id="kategoriBarang" class="w-full border rounded-md px-3 py-2"
-                                value="{{ $data->kategoriBarang }}" />
+                                value="{{ $data->kategoriBarang->namaKategori() ?? '-' }}" />
                         </div>
 
                         <div>
@@ -74,16 +70,6 @@
                                 <option value="1">Aktif</option>
                                 <option value="0">Tidak Aktif</option>
                             </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Stok Awal</label>
-                            <input type="number" id="stok_minimum" class="w-full border rounded-md px-3 py-2"
-                                value="{{ $data->stokAwalBarang }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Stok Minimum</label>
-                            <input type="number" id="stok_minimum" class="w-full border rounded-md px-3 py-2"
-                                value="{{ $data->stokBarangCurrent + $data->quantity - 3 }}" />
                         </div>
                     </div>
                 </div>
@@ -110,13 +96,18 @@
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barcode</th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Masuk</th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Kadaluarsa
-                                        <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kondisi</th>
+                                    <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kondisi</th>
                                     </th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kuantitas</th>
                                     <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @if ($data->detailBarang->isEmpty())
+                                    <tr>
+                                        <td class="px-4 py-2 border-b text-center" colspan="8">Detail Barang tidak ditemukan.</td>
+                                    </tr>
+                                @endif
                                 @foreach ($data->detailBarang as $index => $detail)
                                     <tr>
                                         <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
@@ -130,10 +121,18 @@
                                         <td class="px-4 py-2 border-b">{{ $detail->kondisiBarang }}</td>
                                         <td class="px-4 py-2 border-b">{{ $detail->quantity }}</td>
                                         <td class="px-4 py-2 border-b">
-                                            <button
-                                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</button>
-                                            <button
-                                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Hapus</button>
+                                            {{-- <button
+                                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</button> --}}
+                                            <form
+                                                action="{{ route('soft.delete.detail', ['idBarang' => $detail->idBarang, 'barcode' => $detail->barcode]) }}"
+                                                method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </td>
                                         </td>
                                     </tr>
                                 @endforeach
