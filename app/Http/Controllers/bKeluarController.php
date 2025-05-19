@@ -7,35 +7,28 @@ use App\Models\BarangDetail;
 use App\Models\bKeluar;
 use App\Models\bKeluarDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class bKeluarController extends Controller
 {
     function viewBKeluar() {
+        $bKeluar = bKeluar::with('detailKeluar')->get();
+        return view('menu.manajemen.list-bKeluar', ['bKeluar' => $bKeluar]);
+    }
 
-        // $stokTersedia = Barang::with(['detailBarang', 'merek'])
-        //     ->paginate(10);
+    function viewDetailBKeluar($idBarangKeluar) {
+        Carbon::setLocale('id');
 
-        //     $stokTersedia->getCollection()->transform(function ($item) {
-        //     // Dynamic total stock from detailBarang
-        //     $item->totalStok = $item->detailBarang->sum('quantity');
+        $bKeluar = bKeluar::with('detailKeluar')
+            ->where('idBarangKeluar', $idBarangKeluar)
+            ->firstOrFail(); // Changed from first() to firstOrFail()
 
-        //     // Convert kondisi (only if Barang has this directly)
-        //     $item->kondisiBarangText = match ($item->kondisiBarang) {
-        //         '1' => 'Baik',
-        //         '2' => 'Mendekati Kadaluarsa',
-        //         '3' => 'Kadaluarsa',
-        //         default => 'Baik',
-        //     };
 
-        //     // Access the 'merekBarang' relationship and add a custom attribute
-        //     $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
+        return view('menu.manajemen.detail-bKeluar', compact('bKeluar'));
+    }
 
-        //     return $item;
-        // });
-
-        // $barcode = Barang::where('statusBarang', 1)->pluck('barcode')->toArray();
-
+    function viewBuatBKeluar() {
         return view('menu.manajemen.bKeluar');
     }
 

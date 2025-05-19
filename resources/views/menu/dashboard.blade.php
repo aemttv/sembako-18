@@ -4,11 +4,11 @@
 
 @section('content')
     <div class="p-6 space-y-4">
-
+    {{-- @foreach ($barang as $data) --}}
         <!-- Top Row - 3 Cards -->
         <div class="flex flex-wrap justify-center gap-4 mb-6">
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Total Stok Barang" icon="📦">1,201</x-card>
+                <x-card title="Total Stok Barang" icon="📦">1203</x-card>
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
                 <x-card title="Total Barang Keluar" icon="📤">459</x-card>
@@ -39,6 +39,7 @@
                 <canvas id="monthlySalesChart"></canvas>
             </div>
         </div>
+    {{-- @endforeach --}}
 
     </div>
     <script>

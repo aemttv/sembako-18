@@ -5,9 +5,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\bKeluarController;
 use App\Http\Controllers\bMasukController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return view('signin');
@@ -19,9 +21,7 @@ Route::middleware('web')->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::get('/dashboard', function () {
-    return view('menu.dashboard');
-});
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware('web')->group(function () {
     Route::post('/tambah-produk', [BarangController::class, 'tambahProduk'])->name('produk.submit');
@@ -54,7 +54,9 @@ Route::middleware('web')->group(function () {
 
 Route::middleware('web')->group(function () {
     Route::post('/barang-keluar/store', [bKeluarController::class, 'buatBKeluar'])->name('barang-keluar.submit');
-    Route::get('/barang-keluar', [bKeluarController::class, 'viewBKeluar'])->name('view.bKeluar');
+    Route::get('/daftar-barang-keluar', [bKeluarController::class, 'viewBKeluar'])->name('view.bKeluar');
+    Route::get('/barang-keluar', [bKeluarController::class, 'viewBuatBKeluar'])->name('barang-keluar');
+    Route::get('/barang-keluar/detail/{idBarangKeluar}', [bKeluarController::class, 'viewDetailBKeluar'])->name('detail.bKeluar');
 });
 
 Route::get('/retur-barang', function () {
