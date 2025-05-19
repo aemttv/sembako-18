@@ -15,7 +15,7 @@
 <div class="mb-4">
     <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition:enter="transition-opacity duration-500"
         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-opacity duration-500" x-transition:leave-start="opacity-100"
+        x-transition:leave="transition-opacity duration-800" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="{{ $colorClasses[0] }} border-l-4 {{ $colorClasses[1] }} {{ $colorClasses[2] }} p-4 rounded-lg">
         <p>{{ $message }}</p>

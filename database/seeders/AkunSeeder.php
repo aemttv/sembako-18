@@ -30,11 +30,11 @@ class AkunSeeder extends Seeder
         for ($i = 0; $i < 2; $i++) {
             $akun = new Akun();
             $akun->idAkun = Akun::generateNewId();  // Generate new ID like A001, A002, etc.
-            $akun->nama = 'User ' . ($i + 1);
-            $akun->email = 'user' . ($i + 1) . '@example.com';
-            $akun->password = bcrypt('123123');
+            $akun->nama = 'Staff ' . ($i + 1);
+            $akun->email = 'Staff' . ($i + 1) . '@example.com';
+            $akun->password = bcrypt('staff123');
             $akun->nohp = '0812345678';
-            $akun->alamat = 'Address ' . ($i + 1);
+            $akun->alamat = 'Alamat Default Staff ' . ($i + 1);
             $akun->peran = 2;  // Default role (could be 1 for admin, etc.)
             $akun->statusAkun = 1;  // Active by default
             $akun->save();

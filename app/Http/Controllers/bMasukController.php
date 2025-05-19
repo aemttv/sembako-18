@@ -49,7 +49,7 @@ class bMasukController extends Controller
                 // Buat nama file unik
                 $notaName = time() . '_' . $request->file('nota_file')->getClientOriginalName();
                 // Pindahkan ke folder public/assets/nota_file
-                $request->file('nota_file')->move(public_path('assets/nota_file'), $notaName);
+                $request->file('nota_file')->move(public_path('nota_file'), $notaName);
                 // Simpan hanya nama filenya, bukan path penuh
                 $notaPath = $notaName;
             }

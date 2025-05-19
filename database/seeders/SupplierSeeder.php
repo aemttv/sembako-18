@@ -17,7 +17,7 @@ class SupplierSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         // Let's say we want to create 10 accounts for example
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             $supplier = new Supplier();
             $supplier->idsupplier = Supplier::generateNewIdSupplier();  // Generate new ID like A001, A002, etc.
             $supplier->nama = $faker->name();

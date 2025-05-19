@@ -34,7 +34,7 @@ class BarangSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         // Create 10 barang records
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $barang = new Barang();
             $barang->idBarang = Barang::generateNewIdBarang();  // e.g., B001
             $barang->namaBarang = 'Produk ' . ($i + 1);
