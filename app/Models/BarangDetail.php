@@ -21,7 +21,7 @@ class BarangDetail extends Model
     public $incrementing = false;
 
     // Specify the fillable columns for mass-assignment
-    protected $fillable = ['idDetailBarang', 'idBarang', 'kondisiBarang', 'quantity', 'satuanBarang', 'hargaBeli', 'tglMasuk', 'tglKadaluarsa', 'barcode', 'statusBarang'];
+    protected $fillable = ['idDetailBarang', 'idBarang', 'idSupplier', 'kondisiBarang', 'quantity', 'satuanBarang', 'hargaBeli', 'tglMasuk', 'tglKadaluarsa', 'barcode', 'statusBarang'];
 
     // Specify if you're using timestamps or not
     public $timestamps = true;
@@ -82,6 +82,11 @@ class BarangDetail extends Model
     public function barang()
     {
         return $this->belongsTo(barang::class, 'idBarang');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'idSupplier');
     }
 
 }

@@ -34,7 +34,7 @@ class BarangSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         // Create 10 barang records
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             $barang = new Barang();
             $barang->idBarang = Barang::generateNewIdBarang();  // e.g., B001
             $barang->namaBarang = 'Produk ' . ($i + 1);
@@ -43,6 +43,7 @@ class BarangSeeder extends Seeder
             $barang->stokBarang = 0;
             $barang->hargaJual = $faker->randomElement([5000, 8000, 12000]); // set a fallback if no hargaBeli yet
             $barang->gambarProduk = null;
+            $barang->statusBarang = 1; 
             $barang->save();
 
             // Create 2–5 detail records for each barang
@@ -51,6 +52,7 @@ class BarangSeeder extends Seeder
                 $detail = new BarangDetail();
                 $detail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();  // e.g., DB001
                 $detail->idBarang = $barang->idBarang;
+                $detail->idSupplier = $faker->randomElement(['S001', 'S002']);
                 $detail->kondisiBarang = $faker->randomElement(['Layak', 'Mendekati Kadaluarsa']);
                 $detail->quantity = $faker->numberBetween(1, 10);
                 $detail->satuanBarang = 'PCS';
@@ -58,7 +60,7 @@ class BarangSeeder extends Seeder
                 $detail->tglMasuk = $faker->dateTimeBetween('-1 month', 'now');
                 $detail->tglKadaluarsa = $faker->dateTimeBetween($detail->tglMasuk, '+6 months');
                 $detail->barcode = $faker->ean13();
-                $detail->statusBarang = 1;
+                $detail->statusDetailBarang = 1;
                 $detail->save();
 
                 // Optionally update stok in Barang if needed:

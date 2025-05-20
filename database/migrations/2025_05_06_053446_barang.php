@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('stokBarang');
             $table->float('hargaJual');
             $table->text('gambarProduk')->nullable();
+            $table->integer('statusBarang')->default(1); //aktif
             $table->timestamps();
 
             $table->foreign('merekBarang')->references('idMerek')->on('merek_barang');
@@ -33,17 +34,19 @@ return new class extends Migration
         Schema::create('detail_barang', function (Blueprint $table) {
             $table->string('idDetailBarang', 11)->primary();
             $table->string('idBarang', 11);
+            $table->string('idSupplier', 11);
             $table->string('kondisiBarang', 50);
             $table->integer('quantity');
             $table->string('satuanBarang', 50);
             $table->float('hargaBeli');
             $table->date('tglMasuk');
             $table->date('tglKadaluarsa');
-            $table->string('barcode')->nullable();
-            $table->integer('statusBarang')->default(1);
+            $table->string('barcode')->unique();
+            $table->integer('statusDetailBarang')->default(1); //aktif
             $table->timestamps();
 
             $table->foreign('idBarang')->references('idBarang')->on('barang');
+            $table->foreign('idSupplier')->references('idSupplier')->on('supplier');
         });
     }
 

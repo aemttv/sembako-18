@@ -100,6 +100,7 @@
                             <tr>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">No</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barang ID</th>
+                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Supplier ID</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barcode</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Masuk</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Kadaluarsa
@@ -120,6 +121,7 @@
                                 <tr>
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->idSupplier }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barcode }}</td>
                                     <td class="px-4 py-2 border-b">
                                         {{ \Carbon\Carbon::parse($detail->tglMasuk)->translatedFormat('d F Y') }}</td>

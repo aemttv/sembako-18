@@ -84,6 +84,7 @@ class bMasukController extends Controller
                 $newDetail = new BarangDetail();
                 $newDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
                 $newDetail->idBarang = $item['barang_id'];
+                $newDetail->idSupplier = $request->supplier_id; // Bisa dari form
                 $newDetail->kondisiBarang = 'Baik';
                 $newDetail->satuanBarang = 'PCS';
                 $newDetail->quantity = $item['kuantitas_masuk'];

@@ -60,15 +60,15 @@ class bKeluarController extends Controller
 
                 $barang = BarangDetail::where('barcode', $item['barcode'])->first();
 
+
                 if ($barang) {
                     $barang->quantity -= $detail->jumlahKeluar;
                     // dd($barang);
 
                     if ($barang->quantity <= 0) {
-                        $barang->statusBarang = 0;
-
-                        $barang->save();
+                        $barang->statusDetailBarang = 0;
                     }
+                    $barang->save();
                 } else {
                     return redirect()->back()->with('error', 'Data barang tidak ditemukan.');
                 }

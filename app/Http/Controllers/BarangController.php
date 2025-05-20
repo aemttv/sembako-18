@@ -154,6 +154,8 @@ class BarangController extends Controller
         if ($detail) {
             return response()->json([
                 'idBarang' => $detail->idBarang,
+                'idSupplier' => $detail->idSupplier,
+                'namaSupplier' => $detail->supplier->nama ?? '',
                 'barcode' => $detail->barcode,
                 'nama' => $detail->barang->namaBarang ?? '',
                 'harga' => $detail->barang->hargaJual ?? 0,
@@ -177,7 +179,7 @@ class BarangController extends Controller
 
         $barang = Barang::with([
             'detailBarang' => function ($query) {
-                $query->where('statusBarang', 1);
+                $query->where('statusDetailBarang', 1);
             },
             'merek',
         ])

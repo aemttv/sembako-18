@@ -8,7 +8,7 @@
             <x-ui.alert type="error" :message="session('error')" />
         @endif
         <!-- Header -->
-        <div class="flex justify-between items-center bg-primary">
+        <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold">Barang <span class="text-gray-500">Keluar</span></h1>
                 {{-- <p class="text-sm text-gray-600">Transaction > Sales</p> --}}

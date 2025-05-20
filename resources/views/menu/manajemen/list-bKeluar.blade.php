@@ -41,9 +41,11 @@
                 </thead>
                 <tbody class="bg-white divide-y">
                     @if ($bKeluar->isEmpty())
-                        <td>
-                        <td class="px-4 py-2 text-center" colspan="9">Data Barang Masuk tidak ditemukan.</td>
-                        </td>
+                        <tr>
+                            <td class="px-4 py-2 text-center" colspan="5">
+                                Data Barang Masuk tidak ditemukan.
+                            </td>
+                        </tr>
                     @endif
                     @foreach ($bKeluar as $data)
                         <tr>

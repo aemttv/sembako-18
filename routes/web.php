@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\bKeluarController;
 use App\Http\Controllers\bMasukController;
+use App\Http\Controllers\bReturController;
+use App\Http\Controllers\bRusakController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +37,7 @@ Route::middleware('web')->group(function () {
 Route::middleware('web')->group(function () {
     Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
     Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
+    Route::get('/daftar-produk/search-detail/barcode', [BarangController::class, 'searchSupplierBarcode']);
     Route::get('/daftar-produk/search-detail', [BarangController::class, 'searchDetail']);
     Route::post('/barang-detail/{idBarang}/{barcode}/soft-delete', [BarangController::class, 'softDeleteBarangDetail'])->name('soft.delete.detail');
 });
@@ -58,15 +61,22 @@ Route::middleware('web')->group(function () {
     Route::get('/barang-keluar', [bKeluarController::class, 'viewBuatBKeluar'])->name('barang-keluar');
     Route::get('/barang-keluar/detail/{idBarangKeluar}', [bKeluarController::class, 'viewDetailBKeluar'])->name('detail.bKeluar');
 });
-
-Route::get('/retur-barang', function () {
-    return view('menu.icare.confirm-bRetur');
+Route::middleware('web')->group(function () {
+    Route::post('/ajukan-retur/store', [bReturController::class, 'ajukanBRetur'])->name('AjukanBRetur.submit');
+    Route::post('/retur-valid/{idDetailRetur}', [bReturController::class, 'validBRetur'])->name('detail.bRetur.approve');
+    Route::post('/retur-reject/{idDetailRetur}', [bReturController::class, 'rejectBRetur'])->name('detail.bRetur.reject');
+    Route::get('/konfirmasi-retur', [bReturController::class, 'viewConfirmBRetur'])->name('view.ConfirmBRetur');
+    Route::get('/ajukan-retur', [bReturController::class, 'viewAjukanBRetur'])->name('view.AjukanBRetur');
+    Route::get('/retur-barang/detail/{idBarangRetur}', [bReturController::class, 'viewDetailBKeluar'])->name('detail.bRetur');
 });
 
-Route::get('/barang-rusak', function () {
-    return view('menu.icare.confirm-bRusak');
+Route::middleware('web')->group(function () {
+    // Route::post('/ajukan-retur/store', [bRusakController::class, 'ajukanBRetur'])->name('AjukanBRetur.submit');
+    // Route::post('/retur-valid/{idDetailRetur}', [bRusakController::class, 'validBRetur'])->name('detail.bRetur.approve');
+    Route::get('/konfirmasi-rusak', [bRusakController::class, 'viewConfirmBRusak'])->name('view.ConfirmBRusak');
+    // Route::get('/ajukan-retur', [bRusakController::class, 'viewAjukanBRetur'])->name('view.AjukanBRetur');
+    // Route::get('/retur-barang/detail/{idBarangRetur}', [bRusakController::class, 'viewDetailBKeluar'])->name('detail.bRetur');
 });
-
 
 Route::get('/laporan-stok', function () {
     return view('menu.laporan.stok');

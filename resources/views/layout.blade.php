@@ -17,7 +17,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode = false,
             theme: {
                 extend: {
                     fontFamily: {
@@ -30,10 +29,6 @@
                         background: "#F7F7F7",
                         hoverColor: "#f77b00"
                     }
-                    module.exports = {
-                        darkMode: false, // ← disables dark mode globally
-                        // or use 'class' if you want to control it manually
-                        }
                 }
             }
         }
