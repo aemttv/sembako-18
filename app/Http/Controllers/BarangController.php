@@ -24,7 +24,10 @@ class BarangController extends Controller
     public function viewBarang()
     {
         // Eager load both 'detailBarang' and 'merek' relationships
-        $barang = Barang::with(['detailBarang', 'merek'])->paginate(10);
+        $barang = Barang::with(['detailBarang' => function($query) {
+            $query->where('statusDetailBarang', 1);
+        }, 'merek'])
+        ->paginate(10);
 
         // Transform the collection to include dynamic values
         $barang->getCollection()->transform(function ($item) {

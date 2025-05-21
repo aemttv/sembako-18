@@ -110,7 +110,7 @@
         });
     });
 
-    // FIX: Hide loader when coming back via browser back/forward button
+    // Hide loader when coming back via browser back/forward button
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
             // Page loaded from bfcache (back/forward)

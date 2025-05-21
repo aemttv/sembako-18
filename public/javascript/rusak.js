@@ -11,17 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     setupSearchableInput({
-        inputId: 'nama_supplier',
-        hiddenId: 'supplier_id',
-        suggestionBoxId: 'supplier-suggestions',
-        searchUrl: '/suppliers/search',
-        valueKeys: {
-            id: 'idSupplier',
-            name: 'nama'
-        }
-    });
-
-    setupSearchableInput({
         inputId: 'nama_akun',
         hiddenId: 'akun_id',
         suggestionBoxId: 'akun-suggestions',
@@ -32,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
+    
 /**
  * Initializes a searchable input field with autocomplete suggestions.
  *
@@ -44,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
  * @param {string} config.valueKeys.id - Key for the item ID in the suggestion data.
  * @param {string} config.valueKeys.name - Key for the item name in the suggestion data.
  */
-
+    let stokInput = 1;
     function setupSearchableInput ({
         inputId,
         hiddenId,
@@ -78,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             addSuggestionClickListeners()
                         } else {
                             suggestionBox.classList.add('hidden')
+                            document.getElementById('kuantitas').value = 1
                         }
                     })
                     .catch(error => {
@@ -119,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
-    let selectedSupplierName = ''
     // search popup function
     document
         .getElementById('search-barcode-btn')
@@ -128,10 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopPropagation() // Prevent event from bubbling up to document click handler
 
             const barcode = document.getElementById('nama_barang').value
-            if (!barcode) {
-                alert('Masukan Barcode terlebih dahulu!')
-                return
-            }
+            if (!barcode) return
 
             fetch(
                 `/daftar-produk/search-detail?barcode=${encodeURIComponent(
@@ -140,7 +127,10 @@ document.addEventListener('DOMContentLoaded', function () {
             )
                 .then(res => res.json())
                 .then(data => {
-                    if (!data) return
+                    if (!barcode) {
+                        alert('Masukan Barcode terlebih dahulu!')
+                        return
+                    }
 
                     // Fill popup content
                     document.getElementById('popup-barcode').innerText =
@@ -150,27 +140,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         data.harga || '-'
                     document.getElementById('popup-stock').innerText =
                         data.stok || 0
-                    document.getElementById('popup-id-supplier').innerText =
-                        data.idSupplier || 0
-                    document.getElementById('popup-supplier-nama').innerText =
-                        data.namaSupplier
+                        
+                    if(data.barcode) {
+                        document.getElementById('nama_barang').value = data.barcode;
+                        selectedBarcode = data.barcode;
+                        stokInput = data.stok;
 
-                    if (data.barcode) {
-                        document.getElementById('nama_barang').value = data.barcode
-                        selectedBarcode = data.barcode
-                        stokInput = data.stok
-                        document.getElementById('kuantitas').value = stokInput
-                    }
-
-                    if (data.idSupplier) {
-                        document.getElementById('nama_supplier').value = data.idSupplier;
-                        selectedSupplierName = data.idSupplier
-                    }
+                        document.getElementById('kuantitas').value = stokInput;
+                    } 
 
                     // Toggle popup visibility - no manual positioning needed
                     const popup = document.getElementById('barcode-popup')
                     popup.classList.toggle('hidden')
-
 
                 })
                 .catch(err => console.error('Error loading detail:', err))
@@ -180,22 +161,24 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (e) {
         const popup = document.getElementById('barcode-popup')
         const button = document.getElementById('search-barcode-btn')
-        const namaSupplierInput = document.getElementById('nama_supplier')
-
+        const barcodeInput = document.getElementById('nama_barang')
 
         if (!popup.contains(e.target) && e.target !== button) {
             popup.classList.add('hidden')
-            namaSupplierInput.value = selectedSupplierName || ''
+            if (barcodeInput.value) {
+                document.getElementById('kuantitas').value = stokInput;
+            } else {
+                document.getElementById('kuantitas').value = '1';
+            }
         }
     })
 
-    // Add Row Button Functionality
     const addRowBtn = document.getElementById('addRow');
-    const returTableBody = document.getElementById('returTableBody');
+    const rusakTableBody = document.getElementById('rusakTableBody');
     const hiddenRowsDiv = document.getElementById('hiddenRows');
     let rowCount = 0;
 
-    addRowBtn.addEventListener('click', function() {
+    addRowBtn.addEventListener('click', function () {
         // Get all input values
         const namaAkun = document.getElementById('nama_akun').value;
         const akunId = document.getElementById('akun_id').value;
@@ -203,17 +186,34 @@ document.addEventListener('DOMContentLoaded', function () {
         const barcode = namaBarang;
         const barangId = document.getElementById('barang_id').value;
         const kuantitas = document.getElementById('kuantitas').value;
-        const supplierId = document.getElementById('nama_supplier').value;
         const kategoriKet = document.getElementById('kategoriKet');
         const kategoriKetText = kategoriKet.options[kategoriKet.selectedIndex].text;
         const kategoriKetValue = kategoriKet.value;
-        const tanggalRetur = document.getElementById('tanggal_retur').value;
+        const tanggalRusak = document.getElementById('tanggal_rusak').value;
         const note = document.querySelector('textarea').value;
 
+        console.log([
+            namaAkun,
+            akunId,
+            namaBarang,
+            barangId,
+            kuantitas,
+            kategoriKetText,
+            kategoriKetValue,
+            tanggalRusak,
+            note,
+            stokInput,
+        ]);
+
         // Validate required fields
-        if (!namaBarang || !barangId || !kuantitas || !supplierId) {
+        if (!namaBarang || !barangId || !kuantitas) {
             alert('Please fill in all required fields (Nama Barang, kuantitas, and Nama Supplier)');
             return;
+        }
+
+        if(kuantitas > stokInput) {
+            alert('Stok melebihi batas stok pada saat ini.')
+            return
         }
 
         // Create a new table row
@@ -224,61 +224,57 @@ document.addEventListener('DOMContentLoaded', function () {
             <td class="px-4 py-2 border-b">${namaAkun}</td>
             <td class="px-4 py-2 border-b">${barcode}</td>
             <td class="px-4 py-2 border-b">${kuantitas}</td>
-            <td class="px-4 py-2 border-b">${supplierId}</td>
             <td class="px-4 py-2 border-b">${kategoriKetText}</td>
+            <td class="px-4 py-2 border-b">${tanggalRusak}</td>
             <td class="px-4 py-2 border-b">${note || '-'}</td>
             <td class="px-4 py-2 border-b">
-                <button type="button" class="text-red-600 hover:text-red-800 remove-row">Hapus</button>
+                <button type"button" class="text-red-600 hover:text-red-800 remove-row">Hapus</button>
             </td>
         `;
 
-        // Add the row to the table
-        returTableBody.appendChild(newRow);
+        rusakTableBody.appendChild(newRow);
 
         // Create hidden inputs for form submission
         const hiddenInputs = `
-            <input type="hidden" name="retur[${rowCount}][id_akun]" value="${akunId}">
-            <input type="hidden" name="retur[${rowCount}][id_barang]" value="${barangId}">
-            <input type="hidden" name="retur[${rowCount}][barcode]" value="${barcode}">
-            <input type="hidden" name="retur[${rowCount}][kuantitas]" value="${kuantitas}">
-            <input type="hidden" name="retur[${rowCount}][id_supplier]" value="${supplierId}">
-            <input type="hidden" name="retur[${rowCount}][kategori_ket]" value="${kategoriKetValue}">
-            <input type="hidden" name="retur[${rowCount}][tanggal_retur]" value="${tanggalRetur}">
-            <input type="hidden" name="retur[${rowCount}][note]" value="${note}">
+            <input type="hidden" name="rusak[${rowCount}][id_akun]" value="${akunId}">
+            <input type="hidden" name="rusak[${rowCount}][id_barang]" value="${barangId}">
+            <input type="hidden" name="rusak[${rowCount}][barcode]" value="${barcode}">
+            <input type="hidden" name="rusak[${rowCount}][kuantitas]" value="${kuantitas}">
+            <input type="hidden" name="rusak[${rowCount}][kategori_ket]" value="${kategoriKetValue}">
+            <input type="hidden" name="rusak[${rowCount}][tanggal_rusak]" value="${tanggalRusak}">
+            <input type="hidden" name="rusak[${rowCount}][note]" value="${note}">
         `;
         hiddenRowsDiv.insertAdjacentHTML('beforeend', hiddenInputs);
 
         // Add event listener to the remove button
-        newRow.querySelector('.remove-row').addEventListener('click', function() {
+        newRow.querySelector('.remove-row').addEventListener('click', function () {
             newRow.remove();
             
             updateRowNumbers();
         });
 
-        // Clear the form fields (except for staff and date)
+        // Clear the form fields 
         document.getElementById('nama_barang').value = '';
         document.getElementById('barang_id').value = '';
-        document.getElementById('nama_supplier').value = '';
-        document.getElementById('supplier_id').value = '';
+        document.getElementById('kuantitas').value = '';
         document.querySelector('textarea').value = '';
     });
 
-    // Function to update row numbers after deletion
     function updateRowNumbers() {
-        const rows = returTableBody.querySelectorAll('tr');
+        const rows = rusakTableBody.querySelectorAll('tr');
         rowCount = 0;
         rows.forEach((row, index) => {
             row.cells[0].textContent = index + 1;
             rowCount++;
         });
     }
-
-    // Submit button functionality
     const submitBtn = document.getElementById('submitData');
     submitBtn.addEventListener('click', function(e) {
         if (rowCount === 0) {
             e.preventDefault();
             alert('Please add at least one item to the table before submitting');
         }
-    });
-})
+    })
+
+    
+});

@@ -10,7 +10,7 @@
         <!-- Header -->
         <div class="flex justify-between items-center">
             <div class="flex-1">
-                <h1 class="text-xl font-semibold text-center ">Form Pengajuan Barang Retur</h1>
+                <h1 class="text-xl font-semibold text-center ">Form Pengajuan Barang Rusak</h1>
             </div>
         </div>
 
@@ -21,16 +21,6 @@
                 <div class="p-6 space-y-4">
                     <!-- Row 1: Nama & Email -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="relative flex-grow">
-                            <label class="block text-sm text-gray-600 mb-1">Penanggung Jawab</label>
-                            <input id="nama_akun" type="text" class="w-full border rounded-md px-3 py-2"
-                                value="{{ old('nama_akun') }}" placeholder="Search Akun..." autocomplete="off">
-                            <div id="akun-suggestions"
-                                class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
-                                <!-- Suggestions will appear here -->
-                            </div>
-                            <input type="hidden" id="akun_id" name="idAkun" />
-                        </div>
                         <div class="relative flex-grow">
                             <label class="block text-sm text-gray-600 mb-1">Barcode Barang</label>
                             <div class="flex w-full gap-2">
@@ -55,35 +45,36 @@
                                         <div>Name: <span id="popup-name"></span></div>
                                         <div>Price: <span id="popup-price"></span></div>
                                         <div>Stock: <span id="popup-stock"></span></div>
-                                        <div>Supplier ID: <span id="popup-id-supplier"></span></div>
-                                        <div>Supplier Name: <span id="popup-supplier-nama"></span></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Password -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        
-                        <div class="relative">
-                            <label class="block text-sm text-gray-600 mb-1">Supplier ID</label>
-                            <input type="text" id="nama_supplier" name="nama_supplier"
-                                class="w-full border rounded-md px-3 py-2 cursor-no-drop" placeholder="Search Supplier..."
-                                autocomplete="off" readonly >
-                            <div id="supplier-suggestions"
-                                class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
-                                <!-- Suggestions will appear here -->
-                            </div>
-                            <!-- Hidden input to store supplier ID -->
-                            <input type="hidden" id="supplier_id" name="supplier_id" value="{{ old('supplier_id') }}" />
                         </div>
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Jumlah Pengeluaran</label>
                             <input type="number" id="kuantitas" class="w-full border rounded-md px-3 py-2" min="1"
                                 max="100" value="1" />
-
                         </div>
+                    </div>
+                    
+
+                    <!-- Row 2: Password -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="relative flex-grow">
+                            <label class="block text-sm text-gray-600 mb-1">Penanggung Jawab</label>
+                            <input id="nama_akun" type="text" class="w-full border rounded-md px-3 py-2"
+                                value="{{ old('nama_akun') }}" placeholder="Search Akun..." autocomplete="off">
+                            <div id="akun-suggestions"
+                                class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
+                                <!-- Suggestions will appear here -->
+                            </div>
+                            <input type="hidden" id="akun_id" name="idAkun" />
+                        </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Tanggal Rusak</label>
+                                <input type="date" id="tanggal_rusak" class="w-full border rounded-md px-3 py-2"
+                                    value="{{ now()->format('Y-m-d') }}" />
+                            </div>
+                        
                     </div>
                 </div>
             </div>
@@ -98,14 +89,9 @@
                                 <label class="block text-sm text-gray-600 mb-1">Kategori Keterangan</label>
                                 <select name="kategoriKet" id="kategoriKet"
                                     class="w-full border border-gray-300 rounded p-2">
-                                    <option value="1">Barang Cacat</option>
-                                    <option value="2" selected>Barang Tidak Sesuai</option>
+                                    <option value="1" selected>Kadaluarsa</option>
+                                    <option value="2">Tidak Layak Dipakai</option>
                                 </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Tanggal Retur</label>
-                                <input type="date" id="tanggal_retur" class="w-full border rounded-md px-3 py-2"
-                                    value="{{ now()->format('Y-m-d') }}" />
                             </div>
                         </div>
                         <div>
@@ -124,7 +110,7 @@
 
 
         <!-- Form action to store data -->
-        <form action="{{ route('AjukanBRetur.submit') }}" method="POST" enctype="multipart/form-data" id="returTable">
+        <form action="{{route('AjukanBRusak.submit')}}" method="POST" enctype="multipart/form-data" id="rusakTable">
             @csrf
             <!-- Hidden fields to store row data -->
             <div id="hiddenRows"></div>
@@ -139,13 +125,13 @@
                                 <th class="px-4 py-2 border-b">Penaggung Jawab</th>
                                 <th class="px-4 py-2 border-b">Barcode</th>
                                 <th class="px-4 py-2 border-b">Kuantitas</th>
-                                <th class="px-4 py-2 border-b">Supplier ID</th>
                                 <th class="px-4 py-2 border-b">Kategori Keterangan</th>
+                                <th class="px-4 py-2 border-b">Tanggal Rusak</th>
                                 <th class="px-4 py-2 border-b">Note</th>
                                 <th class="px-4 py-2 border-b">Proses</th>
                             </tr>
                         </thead>
-                        <tbody id="returTableBody">
+                        <tbody id="rusakTableBody">
                             <!-- Rows will be added here dynamically -->
                         </tbody>
                     </table>
@@ -160,7 +146,7 @@
             </div>
         </form>
 
-        <script src="{{ asset('javascript/retur.js') }}"></script>
+        <script src="{{ asset('javascript/rusak.js') }}"></script>
 
     </div>
 @endsection

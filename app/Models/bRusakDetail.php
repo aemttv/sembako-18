@@ -24,6 +24,7 @@ class bRusakDetail extends Model
         'idDetailBR',
         'idBarangRusak',
         'idBarang',
+        'barcode',
         'jumlah',
         'kategoriAlasan',
         'keterangan',
@@ -66,8 +67,8 @@ class bRusakDetail extends Model
         });
     }
 
-    public function barangRusak()
+    public function barang()
     {
-        return $this->belongsTo(bRusak::class, 'idBarangRusak');
+        return $this->belongsTo(Barang::class, 'idBarang', 'idBarang');
     }
 }

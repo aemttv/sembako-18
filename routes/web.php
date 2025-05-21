@@ -71,11 +71,13 @@ Route::middleware('web')->group(function () {
 });
 
 Route::middleware('web')->group(function () {
-    // Route::post('/ajukan-retur/store', [bRusakController::class, 'ajukanBRetur'])->name('AjukanBRetur.submit');
-    // Route::post('/retur-valid/{idDetailRetur}', [bRusakController::class, 'validBRetur'])->name('detail.bRetur.approve');
+    Route::post('/ajukan-barang-rusak/store', [bRusakController::class, 'ajukanBRusak'])->name('AjukanBRusak.submit');
+    Route::post('/rusak-valid/{idDetailBR}', [bRusakController::class, 'validBRusak'])->name('detail.bRusak.approve');
+    // Route::post('/detail-barang-rusak/bulk-approve', [bRusakController::class, 'bulkApproveRusak'])->name('detail.bRusak.bulk-approve');
+    Route::post('/rusak-reject/{idDetailBR}', [bRusakController::class, 'rejectBRusak'])->name('detail.bRusak.reject');
     Route::get('/konfirmasi-rusak', [bRusakController::class, 'viewConfirmBRusak'])->name('view.ConfirmBRusak');
-    // Route::get('/ajukan-retur', [bRusakController::class, 'viewAjukanBRetur'])->name('view.AjukanBRetur');
-    // Route::get('/retur-barang/detail/{idBarangRetur}', [bRusakController::class, 'viewDetailBKeluar'])->name('detail.bRetur');
+    Route::get('/ajukan-barang-rusak', [bRusakController::class, 'viewAjukanBRusak'])->name('view.AjukanBRusak');
+    Route::get('/barang-rusak/detail/{idBarangRusak}', [bRusakController::class, 'viewDetailBKeluar'])->name('detail.bRusak');
 });
 
 Route::get('/laporan-stok', function () {

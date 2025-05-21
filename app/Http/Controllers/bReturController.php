@@ -64,6 +64,9 @@ class bReturController extends Controller
                         ->with('error', 'Jumlah barang retur melebihi stok yang tersedia untuk barang ID: ' . $data['id_barang']);
                 }
 
+                $barang->statusDetailBarang = 2;
+                $barang->save();
+
                 // Step 3: Save detail row
                 $detailRetur = new bReturDetail();
                 $detailRetur->idDetailRetur = bReturDetail::generateNewIdDetailRetur();
@@ -75,15 +78,6 @@ class bReturController extends Controller
                 $detailRetur->keterangan = $data['note'];
                 $detailRetur->statusReturDetail = 2; // pending
                 $detailRetur->save();
-
-                // Step 4: Update stock
-                // $barang->quantity -= $detailRetur->jumlah;
-
-                // if ($barang->quantity == 0) {
-                //     $barang->statusBarang = 0;
-                // }
-
-                // $barang->save();
             }
 
             DB::commit();
@@ -150,7 +144,11 @@ class bReturController extends Controller
         $detail->statusReturDetail = 0;
         $detail->save();
 
-        // Check if all details for this return are validated (status = 1)
+        $barang = BarangDetail::where('barcode', $detail->barcode)->first();
+        $barang->statusDetailBarang = 1;
+        $barang->save();
+
+        // Check if all details for this return are validated (status = 0)
         $allDetailsValidated = bReturDetail::where('idBarangRetur', $detail->idBarangRetur)
             ->where('statusReturDetail', '!=', 0)
             ->doesntExist();
@@ -162,7 +160,7 @@ class bReturController extends Controller
             $bRetur->save();
 
             return redirect()->route('view.ConfirmBRetur')
-                ->with('success', 'Semua barang retur telah divalidasi dan retur telah ditolak');
+                ->with('success', 'Semua barang retur telah ditolak');
         }
 
         return redirect()->route('detail.bRetur', ['idBarangRetur' => $detail->idBarangRetur])

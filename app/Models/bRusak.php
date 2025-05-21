@@ -23,7 +23,8 @@ class bRusak extends Model
     protected $fillable = [
         'idBarangRusak',
         'tglRusak',
-        'penanggungJawab'
+        'penanggungJawab',
+        'statusRusak',
     ];
 
     // Specify if you're using timestamps or not
