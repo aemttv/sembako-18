@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Akun;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AkunController extends Controller
 {
@@ -42,6 +43,30 @@ class AkunController extends Controller
         return redirect()->route('view.akun')->with('success', 'Informasi Staff berhasil disimpan');
         
     }
+
+    function editAkun(Request $request, $idAkun) {
+        // contoh sederhana
+        $akun = Akun::where('idAkun', $idAkun)->first();
+
+        if (!$akun) {
+            return response()->json(['message' => 'Akun not found'], 404);
+        }
+
+        $akun->update([
+            'nama' => $request->nama,
+            'password' => $request->password,
+            'nohp' => $request->nohp,
+            'email' => $request->email,
+            'peran' => $request->peran,
+            'statusAkun' => $request->statusAkun,
+        ]);
+
+        return response()->json(['message' => 'Akun updated successfully']);
+
+    }
+    
+        
+    
 
     public function search(Request $request)
     {

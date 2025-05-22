@@ -88,6 +88,7 @@ Route::get('/laporan-stok', function () {
 
 Route::middleware('web')->group(function () {
     Route::post('/submit-akun', [AkunController::class, 'tambahAkun'])->name('akun.submit');
+    Route::post('/akun/update/{idAkun}', [AkunController::class, 'editAkun'])->name('akun.update');
     Route::get('/daftar-akun', [AkunController::class, 'viewAkun'])->name('view.akun');
     Route::get('/tambah-akun', [AkunController::class, 'viewTambahAkun']);
     Route::get('/akun/search', [AkunController::class, 'search']);

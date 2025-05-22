@@ -137,20 +137,20 @@
                                             class="h-20 w-20">
                                         </a>
                                     </td>
-                                    @php
-                                    
-                                        $dns1d = new Milon\Barcode\DNS1D();
-                                        $barcode = $dns1d->getBarcodePNG(
-                                            $detail->barcode,  // Encode the full URL here
-                                            'C128',
-                                            2, // width scale
-                                            40,  // height
-                                            [0, 0, 0], //black color
-                                            false,
-                                        );
-                                    @endphp
-
                                     <td class="px-4 py-2 border-b">
+                                        <!-- Barcode Generates -->
+                                        @php 
+                                            $dns1d = new Milon\Barcode\DNS1D();
+                                            $barcode = $dns1d->getBarcodePNG(
+                                                $detail->barcode,  // Encode the full URL here
+                                                'C128', //barcode type
+                                                2, // width scale
+                                                40,  // height
+                                                [0, 0, 0], //black color
+                                                false,
+                                            );
+                                        @endphp
+
                                         <a href="{{route('barcode.view.detail', ['barcode' => $detail->barcode])}}" class="mt-1" target="_blank">
                                             <img src="data:image/png;base64, {!! $barcode !!}" alt="Barcode"
                                                 class="w-full h-auto">
