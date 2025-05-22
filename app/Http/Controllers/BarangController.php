@@ -9,6 +9,7 @@ use App\Models\bMerek;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Milon\Barcode\DNS1D;
 
 class BarangController extends Controller
 {

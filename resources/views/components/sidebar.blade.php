@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Facades\Request;
+@endphp
+
 <!-- Sidebar -->
 <aside class="w-80 bg-white shadow-md">
     <div class="fixed top-0 bottom-0 flex flex-col justify-between border-e border-gray-100 bg-white w-80">

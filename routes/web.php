@@ -3,6 +3,7 @@
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\bKeluarController;
 use App\Http\Controllers\bMasukController;
 use App\Http\Controllers\bReturController;
@@ -31,15 +32,16 @@ Route::middleware('web')->group(function () {
     Route::get('/tambah-produk', [BarangController::class, 'viewtambahProduk'])->name('view.tambah-produk');
     Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
-    Route::get('/merek/search', [BarangController::class, 'searchMerek']);
-});
 
-Route::middleware('web')->group(function () {
+    Route::post('/barang-detail/{idBarang}/{barcode}/soft-delete', [BarangController::class, 'softDeleteBarangDetail'])->name('soft.delete.detail');
     Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
     Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
     Route::get('/daftar-produk/search-detail/barcode', [BarangController::class, 'searchSupplierBarcode']);
     Route::get('/daftar-produk/search-detail', [BarangController::class, 'searchDetail']);
-    Route::post('/barang-detail/{idBarang}/{barcode}/soft-delete', [BarangController::class, 'softDeleteBarangDetail'])->name('soft.delete.detail');
+});
+
+Route::middleware('web')->group(function () {
+    Route::get('/barcode/{barcode}', [BarcodeController::class, 'viewDetailProduk'])->name('barcode.view.detail');
 });
 
 Route::middleware('web')->group(function () {

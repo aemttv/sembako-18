@@ -95,19 +95,20 @@
             <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Detail Barang ({{ $barang->idBarang }})</div>
             <div class="p-6">
                 <div class="max-h-80 overflow-y-auto relative">
-                    <table class="min-w-full table-auto border-separate border-spacing-0">
+                    <table class="min-w-full table-auto border-separate border-spacing-0 justify-center text-center items-center">
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">No</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barang ID</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Supplier ID</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barcode</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Masuk</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Tanggal Kadaluarsa
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kondisi</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">No</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Barang ID</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Supplier ID</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">QR Code</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Barcode</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Tanggal Masuk</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Tanggal Kadaluarsa
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Kondisi</th>
                                 </th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kuantitas</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Aksi</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Kuantitas</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,7 +123,41 @@
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idSupplier }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->barcode }}</td>
+                                    <td class="px-4 py-2 border-b">
+                                        <!-- QR Code containing the URL -->
+                                        @php
+                                            $dns2d = new Milon\Barcode\DNS2D();
+                                            $productUrl = url("/barcode/{$detail->barcode}");
+                                        @endphp
+                                        <a href="{{route('barcode.view.detail', ['barcode' => $detail->barcode])}}" class="mt-1" target="_blank">
+                                            <img src="data:image/png;base64, {!! 
+                                                $dns2d->getBarcodePNG($productUrl, 'QRCODE', 4, 4) 
+                                            !!}" 
+                                            alt="QR Code"
+                                            class="h-20 w-20">
+                                        </a>
+                                    </td>
+                                    @php
+                                    
+                                        $dns1d = new Milon\Barcode\DNS1D();
+                                        $barcode = $dns1d->getBarcodePNG(
+                                            $detail->barcode,  // Encode the full URL here
+                                            'C128',
+                                            2, // width scale
+                                            40,  // height
+                                            [0, 0, 0], //black color
+                                            false,
+                                        );
+                                    @endphp
+
+                                    <td class="px-4 py-2 border-b">
+                                        <a href="{{route('barcode.view.detail', ['barcode' => $detail->barcode])}}" class="mt-1" target="_blank">
+                                            <img src="data:image/png;base64, {!! $barcode !!}" alt="Barcode"
+                                                class="w-full h-auto">
+                                            </a>
+                                            {{$detail->barcode}}
+                                    </td>
+
                                     <td class="px-4 py-2 border-b">
                                         {{ \Carbon\Carbon::parse($detail->tglMasuk)->translatedFormat('d F Y') }}</td>
                                     <td class="px-4 py-2 border-b">
