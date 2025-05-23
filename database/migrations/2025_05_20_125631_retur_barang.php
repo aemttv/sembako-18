@@ -27,7 +27,7 @@ return new class extends Migration
         Schema::create('detail_retur_barang', function (Blueprint $table) {
             $table->string('idDetailRetur', 11)->primary();
             $table->string('idBarangRetur', 11);
-            $table->string('barcode')->unique();
+            $table->string('barcode');
             $table->integer('jumlah');
             $table->integer('kategoriAlasan');
             $table->string('keterangan', 100)->nullable();
@@ -36,7 +36,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('idBarangRetur')->references('idBarangRetur')->on('retur_barang');
-            $table->foreign('barcode')->references('barcode')->on('detail_barang');
 
         });
     }

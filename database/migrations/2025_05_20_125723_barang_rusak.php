@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('idDetailBR', 11)->primary();
             $table->string('idBarangRusak', 11);
             $table->string('idBarang', 11);
-            $table->string('barcode')->nullable();
+            $table->string('barcode');
             $table->integer('jumlah');
             $table->integer('kategoriAlasan');
             $table->string('keterangan', 100)->nullable();
@@ -36,7 +36,6 @@ return new class extends Migration
 
             $table->foreign('idBarangRusak')->references('idBarangRusak')->on('barang_rusak');
             $table->foreign('idBarang')->references('idBarang')->on('barang');
-            $table->foreign('barcode')->references('barcode')->on('detail_barang');
         });
     }
 

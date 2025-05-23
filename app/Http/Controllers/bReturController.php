@@ -50,6 +50,7 @@ class bReturController extends Controller
             $retur->penanggungJawab = $request->retur[1]['id_akun']; // Or get from session if needed
             $retur->statusRetur = 2; // pending
             $retur->save();
+            // dd($retur);
 
             // Step 2: Loop over each row submitted
             foreach ($request->retur as $data) {
@@ -60,8 +61,6 @@ class bReturController extends Controller
                     return redirect()->back()->with('error', 'Data barang tidak ditemukan.');
                 }
 
-                // dd($data);
-
                 // Check stock quantity
                 if ($data['kuantitas'] > $barang->quantity) {
                     return redirect()
@@ -69,14 +68,29 @@ class bReturController extends Controller
                         ->with('error', 'Jumlah barang retur melebihi stok yang tersedia untuk barang ID: ' . $data['id_barang']);
                 }
 
-                $barang->statusDetailBarang = 2;
-                $barang->save();
+                if ($data['kuantitas'] < $barang->quantity) {
+                    // 1. Reduce the original's quantity
+                    $barang->quantity -= $data['kuantitas'];
+                    $barang->save();
+
+                    // 2. Create a new BarangDetail for the returned quantity, status pending
+                    $pendingBarang = $barang->replicate();
+                    $pendingBarang->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
+                    $pendingBarang->quantity = $data['kuantitas'];
+                    $pendingBarang->statusDetailBarang = 2; // pending
+                    
+                    $pendingBarang->save();
+                    
+                } else {
+                    // If returning all, just update status to pending
+                    $barang->statusDetailBarang = 2;
+                    $barang->save();
+                }
 
                 // Step 3: Save detail row
                 $detailRetur = new bReturDetail();
                 $detailRetur->idDetailRetur = bReturDetail::generateNewIdDetailRetur();
                 $detailRetur->idBarangRetur = $retur->idBarangRetur;
-                // $detailRetur->idBarang = $data['id_barang'];
                 $detailRetur->barcode = $data['barcode'];
                 $detailRetur->jumlah = $data['kuantitas'];
                 $detailRetur->kategoriAlasan = $data['kategori_ket'];
@@ -95,34 +109,26 @@ class bReturController extends Controller
         }
     }
 
-    function validBRetur($idDetailRetur) {
+    public function validBRetur($idDetailRetur) {
         // Update the detail status
         $detail = bReturDetail::where('idDetailRetur', $idDetailRetur)->first();
-        $detail->statusReturDetail = 1;
-        
-        // Check the barang stock
-        $barang = BarangDetail::where('barcode', $detail->barcode)->first();
-        
-        // dd($detail, $barang);
-        if (!$barang) {
-            return redirect()->back()->with('error', 'Data barang tidak ditemukan.');
+        $detail->statusReturDetail = 1; // approved
+
+        // Find the pending BarangDetail (status 2, matching barcode and quantity)
+        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)
+            ->where('statusDetailBarang', 2)
+            ->where('quantity', $detail->jumlah)
+            ->first();
+
+        if (!$pendingBarang) {
+            return redirect()->back()->with('error', 'Data barang (pending) tidak ditemukan.');
         }
 
-        if ($detail->jumlah > $barang->quantity) {
-            return redirect()
-                ->back()
-                ->with('error', 'Jumlah barang retur melebihi stok yang tersedia untuk barang ID: ' . $detail->idBarang);
-        }
+        // Approve the pendingBarang: remove from stock (delete or set status to approved/removed)
+        $pendingBarang->delete();
+
 
         $detail->save();
-
-        // Update the barang stock
-        $barang->quantity -= $detail->jumlah;
-        if ($barang->quantity == 0) {
-            $barang->statusDetailBarang = 0;
-        }
-
-        $barang->save();
 
         // Check if all details for this return are validated (status = 1)
         $allDetailsValidated = bReturDetail::where('idBarangRetur', $detail->idBarangRetur)
@@ -149,9 +155,29 @@ class bReturController extends Controller
         $detail->statusReturDetail = 0;
         $detail->save();
 
-        $barang = BarangDetail::where('barcode', $detail->barcode)->first();
-        $barang->statusDetailBarang = 1;
-        $barang->save();
+        // Find the pending BarangDetail (status 2, matching barcode and quantity)
+        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)
+            ->where('statusDetailBarang', 2)
+            ->where('quantity', $detail->jumlah)
+            ->first();
+
+        // Find the original active BarangDetail (status 1, same barcode)
+        $activeBarang = BarangDetail::where('barcode', $detail->barcode)
+            ->where('statusDetailBarang', 1)
+            ->first();
+
+        if ($pendingBarang && $activeBarang) {
+            // Restore the quantity
+            $activeBarang->quantity += $pendingBarang->quantity;
+            $activeBarang->save();
+
+            // Delete the pendingBarang row
+            $pendingBarang->delete();
+        } elseif ($pendingBarang && !$activeBarang) {
+            // If no activeBarang exists (maybe all was returned before), just set pendingBarang back to active
+            $pendingBarang->statusDetailBarang = 1;
+            $pendingBarang->save();
+        }
 
         // Check if all details for this return are validated (status = 0)
         $allDetailsValidated = bReturDetail::where('idBarangRetur', $detail->idBarangRetur)

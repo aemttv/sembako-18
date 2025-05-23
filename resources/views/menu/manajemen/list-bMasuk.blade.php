@@ -70,9 +70,7 @@
                             </td>
 
                             <td class="px-4 py-2 flex gap-1">
-                                {{-- <a href="{{route('detail.produk', ['idBarangMasuk' => $data->idBarangMasuk])}}" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a> --}}
-                                <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Edit</a>
-                                <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Hapus</a>
+                                <a href="{{route('detail.bMasuk', ['idBarangMasuk' => $data->idBarangMasuk])}}" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
                             </td>
                         </tr>
                     @endforeach

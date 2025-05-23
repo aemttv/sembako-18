@@ -79,18 +79,8 @@
                                 </td>
                                 <td class="px-4 py-2 border-b flex gap-1 items-center justify-center">
                                     <a href="{{ route('detail.bRetur', ['idBarangRetur' => $retur->idBarangRetur]) }}"
-                                        class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail
+                                        class="px-2 py-1 bg-blue-500 text-white rounded text-xs leading-5 h-8">Detail
                                     </a>
-                                    <form action="" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            class="px-2 py-1 bg-green-500 text-white rounded text-xs">Setuju</button>
-                                    </form>
-                                    <form action="" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Tolak</button>
-                                    </form>
                                 </td>
                             </tr>
                         @endforeach

@@ -270,8 +270,6 @@
                                     <td class="px-4 py-2 border-b">{{ $detail->kondisiBarang }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->quantity }}</td>
                                     <td class="px-4 py-2 border-b">
-                                        {{-- <button
-                                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</button> --}}
                                         <form
                                             action="{{ route('soft.delete.detail', ['idBarang' => $detail->idBarang, 'barcode' => $detail->barcode]) }}"
                                             method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus detail barang ini?')">

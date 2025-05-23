@@ -161,15 +161,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (e) {
         const popup = document.getElementById('barcode-popup')
         const button = document.getElementById('search-barcode-btn')
-        const barcodeInput = document.getElementById('nama_barang')
 
         if (!popup.contains(e.target) && e.target !== button) {
             popup.classList.add('hidden')
-            if (barcodeInput.value) {
-                document.getElementById('kuantitas').value = stokInput;
-            } else {
-                document.getElementById('kuantitas').value = '1';
-            }
         }
     })
 

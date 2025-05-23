@@ -38,6 +38,10 @@ class bMasukController extends Controller
         return view('menu.manajemen.bMasuk', compact('suppliers'));
     }
 
+    function viewDetailBMasuk($idBarangMasuk) {
+        
+    }
+
     public function tambahBMasuk(Request $request)
     {
         try {

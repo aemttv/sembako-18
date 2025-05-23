@@ -41,7 +41,7 @@ return new class extends Migration
             $table->float('hargaBeli');
             $table->date('tglMasuk');
             $table->date('tglKadaluarsa');
-            $table->string('barcode')->unique();
+            $table->string('barcode');
             $table->integer('statusDetailBarang')->default(1); //aktif
             $table->timestamps();
 

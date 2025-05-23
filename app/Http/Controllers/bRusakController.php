@@ -46,21 +46,18 @@ class bRusakController extends Controller
         DB::beginTransaction();
 
         try {
-            // Step 1: Create the main bRetur record
+            // Step 1: Create the main bRusak record
             $rusak = new bRusak();
             $rusak->idBarangRusak = bRusak::generateNewIdBarangRusak();
             $rusak->tglRusak = $request->rusak[1]['tanggal_rusak']; // Use the first row to get the date
             $rusak->penanggungJawab = $request->rusak[1]['id_akun']; // Or get from session if needed
             $rusak->statusRusak = 2; // pending
             $rusak->save();
-            // dump($request->all());
-            // dump($rusak);
 
             // Step 2: Loop over each row submitted
             foreach ($request->rusak as $data) {
                 // Get the item to check available quantity
                 $barang = BarangDetail::where('barcode', $data['barcode'])->first();
-                // dump($barang);
                 if (!$barang) {
                     return redirect()->back()->with('error', 'Data barang tidak ditemukan.');
                 }
@@ -72,8 +69,22 @@ class bRusakController extends Controller
                         ->with('error', 'Jumlah barang rusak melebihi stok yang tersedia untuk barang ID: ' . $data['id_barang']);
                 }
 
-                $barang->statusDetailBarang = 2;
-                $barang->save();
+                if ($data['kuantitas'] < $barang->quantity) {
+                    // 1. Reduce the original's quantity
+                    $barang->quantity -= $data['kuantitas'];
+                    $barang->save();
+
+                    // 2. Create a new BarangDetail for the damaged quantity, status pending rusak
+                    $pendingBarang = $barang->replicate();
+                    $pendingBarang->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
+                    $pendingBarang->quantity = $data['kuantitas'];
+                    $pendingBarang->statusDetailBarang = 2; // pending rusak
+                    $pendingBarang->save();
+                } else {
+                    // If marking all as damaged, just update status to pending rusak
+                    $barang->statusDetailBarang = 2;
+                    $barang->save();
+                }
 
                 // Step 3: Create the detail record
                 $detail = new bRusakDetail();
@@ -85,17 +96,17 @@ class bRusakController extends Controller
                 $detail->kategoriAlasan = $data['kategori_ket'];
                 $detail->keterangan = $data['note'];
                 $detail->statusRusakDetail = 2;
-                // dd($detail);
                 $detail->save();
             }
 
             DB::commit();
-            return redirect()->route('view.AjukanBRusak')->with('success', 'Informasi Barang Retur berhasil disimpan'); 
+            return redirect()->route('view.AjukanBRusak')->with('success', 'Informasi Barang Rusak berhasil disimpan'); 
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Validates a specific damaged item detail and updates the stock accordingly.
@@ -111,185 +122,100 @@ class bRusakController extends Controller
      * @return \Illuminate\Http\RedirectResponse A redirect response indicating success or failure.
      */
 
-
-    function validBRusak($idDetailBR) {
-        
+    public function validBRusak($idDetailBR) {
         $detail = bRusakDetail::where('idDetailBR', $idDetailBR)->first();
-        $detail->statusRusakDetail = 1;
-        
-        // Check the barang stock
-        $barang = BarangDetail::where('barcode', $detail->barcode)->first();
-        
-        // dd($detail, $barang);
-        if (!$barang) {
-            return redirect()->back()->with('error', 'Data barang tidak ditemukan.');
+        $detail->statusRusakDetail = 1; // approved
+
+        // Find the pending BarangDetail (status 2, matching barcode and quantity)
+        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)
+            ->where('statusDetailBarang', 2)
+            ->where('quantity', $detail->jumlah)
+            ->first();
+
+        if (!$pendingBarang) {
+            return redirect()->back()->with('error', 'Data barang (pending) tidak ditemukan.');
         }
 
+        // If kategoriAlasan == '1', only allow if expired
         if ($detail->kategoriAlasan == '1') {
-            if(Carbon::now() > $barang->tglKadaluarsa) { // apakah hari ini melebihi tgl kadaluarsa barang
+            if (Carbon::now() > $pendingBarang->tglKadaluarsa) {
                 $detail->save();
-                $barang->quantity -= $detail->jumlah;
-                if ($barang->quantity == 0) {
-                    $barang->statusDetailBarang = 0;
-                }
-                $barang->save();
+                // Approve the pendingBarang: remove from stock (delete or set status to approved/removed)
+                $pendingBarang->delete();
             } else {
                 return redirect()->back()->with('error', 'Barang Belum melebihi tanggal kadaluarsa.');
             }
         } else {
             $detail->save();
-            $barang->quantity -= $detail->jumlah;
-            if ($barang->quantity == 0) {
-                $barang->statusDetailBarang = 0;
-            }
-            $barang->save();
+            $pendingBarang->delete();
         }
 
-        // Check if all details for this return are validated (status = 1)
+        // Check if all details for this rusak are validated (status = 1)
         $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)
             ->where('statusRusakDetail', '!=', 1)
             ->doesntExist();
 
         if ($allDetailsValidated) {
-            // Update the main return status
+            // Update the main rusak status
             $bRusak = bRusak::find($detail->idBarangRusak);
             $bRusak->statusRusak = 1;
             $bRusak->save();
 
             return redirect()->route('view.ConfirmBRusak')
                 ->with('success', 'Semua barang rusak telah divalidasi dan telah dikonfirmasi');
-        } 
-
+        }
 
         return redirect()->route('detail.bRusak', ['idBarangRusak' => $detail->idBarangRusak])
             ->with('success', 'Informasi Barang Rusak berhasil diubah');
     }
 
-    // public function bulkApproveRusak(Request $request)
-    // {
-    //     $selectedDetails = $request->input('selected_details', []);
-        
-    //     // Validate that at least one item is selected
-    //     if (empty($selectedDetails)) {
-    //         return back()->with('error', 'Pilih setidaknya satu item untuk disetujui.');
-    //     }
-
-    //     $errors = [];
-    //     $approvedDetails = [];
-    //     $idBarangRusak = null;
-
-    //     DB::beginTransaction();
-
-    //     try {
-    //         foreach ($selectedDetails as $idDetailBR) {
-    //             $detail = bRusakDetail::where('idDetailBR', $idDetailBR)->first();
-                
-    //             if (!$detail) {
-    //                 $errors[] = "Detail dengan ID $idDetailBR tidak ditemukan.";
-    //                 continue;
-    //             }
-
-    //             // Store the barang rusak ID for later use
-    //             $idBarangRusak = $detail->idBarangRusak;
-
-    //             $detail->statusRusakDetail = 1;
-                
-    //             $barang = BarangDetail::where('barcode', $detail->barcode)->first();
-                
-    //             if (!$barang) {
-    //                 $errors[] = "Data barang dengan barcode {$detail->barcode} tidak ditemukan.";
-    //                 continue;
-    //             }
-
-    //             if ($detail->kategoriAlasan == '1') {
-    //                 if (Carbon::now() > $barang->tglKadaluarsa) {
-    //                     $detail->save();
-    //                     $barang->quantity -= $detail->jumlah;
-    //                     if ($barang->quantity == 0) {
-    //                         $barang->statusDetailBarang = 0;
-    //                     }
-    //                     $barang->save();
-    //                     $approvedDetails[] = $idDetailBR;
-    //                 } else {
-    //                     $errors[] = "Barang dengan ID {$detail->idDetailBR} belum melebihi tanggal kadaluarsa.";
-    //                     continue;
-    //                 }
-    //             } else {
-    //                 $detail->save();
-    //                 $barang->quantity -= $detail->jumlah;
-    //                 if ($barang->quantity == 0) {
-    //                     $barang->statusDetailBarang = 0;
-    //                 }
-    //                 $barang->save();
-    //                 $approvedDetails[] = $idDetailBR;
-    //             }
-    //         }
-
-    //         // Check if all details for this return are now validated (status = 1)
-    //         if ($idBarangRusak) {
-    //             $allDetailsValidated = bRusakDetail::where('idBarangRusak', $idBarangRusak)
-    //                 ->where('statusRusakDetail', '!=', 1)
-    //                 ->doesntExist();
-
-    //             if ($allDetailsValidated) {
-    //                 // Update the main return status
-    //                 $bRusak = bRusak::find($idBarangRusak);
-    //                 $bRusak->statusRusak = 1;
-    //                 $bRusak->save();
-    //             }
-    //         }
-
-    //         DB::commit();
-
-    //         $response = redirect();
-            
-    //         if (!empty($approvedDetails)) {
-    //             if ($allDetailsValidated ?? false) {
-    //                 $response = $response->route('view.ConfirmBRusak')
-    //                     ->with('success', 'Semua barang rusak telah divalidasi dan telah dikonfirmasi');
-    //             } else {
-    //                 $response = $response->route('detail.bRusak', ['idBarangRusak' => $idBarangRusak])
-    //                     ->with('success', 'Barang rusak yang dipilih berhasil divalidasi');
-    //             }
-    //         }
-
-    //         if (!empty($errors)) {
-    //             $response = $response->with('errors', $errors);
-    //         }
-
-    //         return $response;
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-    //     }
-    // }
-
-    function rejectBRusak($idDetailBR) {
+    public function rejectBRusak($idDetailBR) {
+        // Update the detail status
         $detail = bRusakDetail::where('idDetailBR', $idDetailBR)->first();
-        $detail->statusRusakDetail = 0;
+        $detail->statusRusakDetail = 0; // rejected
         $detail->save();
 
-        $barang = BarangDetail::where('barcode', $detail->barcode)->first();
-        $barang->statusDetailBarang = 1;
-        $barang->save();
+        // Find the pending BarangDetail (status 2, matching barcode and quantity)
+        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)
+            ->where('statusDetailBarang', 2)
+            ->where('quantity', $detail->jumlah)
+            ->first();
 
-        // Check if all details for this return are validated (status = 0)
+        // Find the original active BarangDetail (status 1, same barcode)
+        $activeBarang = BarangDetail::where('barcode', $detail->barcode)
+            ->where('statusDetailBarang', 1)
+            ->first();
+
+        if ($pendingBarang && $activeBarang) {
+            // Restore the quantity
+            $activeBarang->quantity += $pendingBarang->quantity;
+            $activeBarang->save();
+
+            // Delete the pendingBarang row
+            $pendingBarang->delete();
+        } elseif ($pendingBarang && !$activeBarang) {
+            // If no activeBarang exists (maybe all was marked rusak before), just set pendingBarang back to active
+            $pendingBarang->statusDetailBarang = 1;
+            $pendingBarang->save();
+        }
+
+        // Check if all details for this rusak are validated (status = 0)
         $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)
             ->where('statusRusakDetail', '!=', 0)
             ->doesntExist();
 
         if ($allDetailsValidated) {
-            // Update the main return status
+            // Update the main rusak status
             $bRusak = bRusak::find($detail->idBarangRusak);
             $bRusak->statusRusak = 0;
             $bRusak->save();
 
             return redirect()->route('view.ConfirmBRusak')
                 ->with('success', 'Semua barang rusak telah ditolak');
-        } 
+        }
 
         return redirect()->route('detail.bRusak', ['idBarangRusak' => $detail->idBarangRusak])
             ->with('success', 'Informasi Barang Rusak berhasil diubah');
     }
+
 }

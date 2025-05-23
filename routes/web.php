@@ -58,6 +58,7 @@ Route::middleware('web')->group(function () {
     Route::post('/barang-masuk/store', [bMasukController::class, 'tambahBMasuk'])->name('barang-masuk.submit');
     Route::get('/daftar-barang-masuk', [bMasukController::class, 'viewBMasuk'])->name('view.bMasuk');
     Route::get('/barang-masuk', [bMasukController::class, 'viewTambahBMasuk'])->name('barang-masuk');
+    Route::get('/barang-masuk/detail/{idBarangMasuk}', [bMasukController::class, 'viewDetailBMasuk'])->name('detail.bMasuk');
 });
 
 Route::middleware('web')->group(function () {

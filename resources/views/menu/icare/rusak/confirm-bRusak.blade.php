@@ -73,8 +73,6 @@
                                     <a href="{{ route('detail.bRusak', ['idBarangRusak' => $rusak->idBarangRusak]) }}"
                                         class="px-2 py-1 bg-blue-500 text-white rounded">Detail
                                     </a>
-                                    <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded ">Setuju</a>
-                                    <a href="#" class="px-2 py-1 bg-yellow-500 text-white rounded ">Tolak</a>
                                 </td>
                             </tr>
                         @endforeach
