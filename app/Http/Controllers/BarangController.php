@@ -9,7 +9,7 @@ use App\Models\bMerek;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Milon\Barcode\DNS1D;
+use Illuminate\Support\Facades\File;
 
 class BarangController extends Controller
 {
@@ -153,7 +153,7 @@ class BarangController extends Controller
     {
         $barcode = $request->get('barcode');
 
-        $detail = BarangDetail::with('barang')->where('barcode', $barcode)->first();
+        $detail = BarangDetail::with('barang')->where('barcode', $barcode)->where('statusDetailBarang', 1)->first();
 
         if ($detail) {
             return response()->json([
@@ -170,17 +170,27 @@ class BarangController extends Controller
         }
     }
 
+
     /**
-     * Show the detail of a specific product with its details and stock.
+     * Display the details of a specific product.
      *
-     * @param int $idBarang The ID of the product to show.
+     * This method retrieves the product ('Barang') with the given ID, including its active details
+     * and associated brand ('merek'). It also calculates the total stock of the product and retrieves
+     * any inactive details. The product details, along with all available brands and categories, 
+     * are then passed to the 'detail-produk' view.
      *
-     * @return \Illuminate\Http\Response
+     * @param int $idBarang The ID of the product to display.
+     * 
+     * @return \Illuminate\View\View The view displaying the product's details.
+     * 
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If no product with the given ID is found.
      */
+
     public function viewDetailProduk($idBarang)
     {
         Carbon::setLocale('id');
 
+        // Get barang with active details
         $barang = Barang::with([
             'detailBarang' => function ($query) {
                 $query->where('statusDetailBarang', 1);
@@ -188,12 +198,16 @@ class BarangController extends Controller
             'merek',
         ])
             ->where('idBarang', $idBarang)
-            ->firstOrFail(); // Changed from first() to firstOrFail()
+            ->firstOrFail();
+
+        $mereks = bMerek::all();
+        $kategori = KategoriBarang::cases();
 
         $barang->merekBarangName = $barang->merek ? $barang->merek->namaMerek : 'Unknown';
         $barang->totalStok = $barang->detailBarang->sum('quantity');
+        $inactiveDetail = BarangDetail::where('idBarang', $idBarang)->where('statusDetailBarang', 0)->get();
 
-        return view('menu.barang.detail-produk', compact('barang'));
+        return view('menu.barang.detail-produk', compact('barang', 'mereks', 'kategori', 'inactiveDetail'));
     }
 
     /**
@@ -306,18 +320,85 @@ class BarangController extends Controller
         }
     }
 
-    public function softDeleteBarangDetail(Request $request, $idBarang, $barcode)
+    function updateBarangDetail(Request $request, $idBarang) {
+
+        // Validate input
+        $validated = $request->validate([
+            'nama_barang'    => 'required|string|max:255',
+            'idMerek'        => 'required|exists:merek_barang,idMerek',
+            'kategori'       => 'required',
+            'harga_satuan'   => 'required|string', // Will be sanitized
+            'status_produk'  => 'required|in:0,1',
+            'gambarProduk'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Find the product
+        $barang = \App\Models\Barang::findOrFail($idBarang);
+
+        // Handle image upload if present
+        if ($request->hasFile('gambarProduk')) {
+            // Delete the old image if it exists
+            if ($barang->gambarProduk) {
+                $oldImagePath = public_path('produk/' . $barang->gambarProduk);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            // Store the new image
+            $file = $request->file('gambarProduk');
+            $imageName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('produk'), $imageName);
+            $barang->gambarProduk = $imageName;
+        }
+
+
+
+        // Sanitize harga_satuan (remove "Rp.", dots, spaces, etc.)
+        $hargaJual = preg_replace('/[^\d]/', '', $request->input('harga_satuan'));
+
+        // Update fields
+        $barang->namaBarang      = $validated['nama_barang'];
+        $barang->merekBarang     = $validated['idMerek'];
+        $barang->kategoriBarang  = $validated['kategori']; // If enum, cast in model or controller
+        $barang->hargaJual       = $hargaJual;
+        $barang->statusBarang    = $validated['status_produk'];
+
+        // dd($barang);
+
+        $barang->save();
+
+        return redirect()->route('detail.produk', $barang->idBarang)
+            ->with('success', 'Data produk berhasil diperbarui.');
+    }
+
+    public function softDeleteBarangDetail($idBarang, $barcode)
     {
-        $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->where('statusBarang', 1)->first();
+        $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
+        dump($detail);
 
         if (!$detail) {
             return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
         }
 
-        // Your soft-delete logic
-        $detail->statusBarang = 0;
+        $detail->statusDetailBarang = 0;
         $detail->save();
 
         return redirect()->back()->with('success', 'Barang detail berhasil dihapus.');
+    }
+    public function softUpdateBarangDetail($idBarang, $barcode)
+    {
+
+        // dd($request->all(), $idBarang, $barcode);
+        $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
+
+        if (!$detail) {
+            return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
+        }
+
+        $detail->statusDetailBarang = 1;
+        $detail->save();
+
+        return redirect()->back()->with('success', 'Barang detail berhasil dikembalikan.');
     }
 }

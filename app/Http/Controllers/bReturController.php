@@ -16,7 +16,12 @@ class bReturController extends Controller
                     ->where('statusRetur', 2)
                     ->paginate(10);
 
-        return view('menu.icare.retur.confirm-bRetur', ['bRetur' => $bRetur]);
+        $staffBRetur = bRetur::with(['detailRetur', 'detailRetur.barang']) // Load nested relationships
+                    ->where('statusRetur', 2)
+                    ->where('penanggungJawab', session('idAkun'))
+                    ->paginate(10);
+
+        return view('menu.icare.retur.confirm-bRetur', ['bRetur' => $bRetur, 'staffBRetur' => $staffBRetur]);
     }
 
     function viewDetailBKeluar($idBarangRetur) {
@@ -81,7 +86,7 @@ class bReturController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('view.AjukanBRetur')->with('success', 'Informasi Barang Retur berhasil disimpan');
+            return redirect()->route('view.AjukanBRetur')->with('success', 'Barang telah diajukan untuk retur, Silahkan menunggu konfirmasi');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()

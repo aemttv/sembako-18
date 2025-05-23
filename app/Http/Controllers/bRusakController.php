@@ -7,6 +7,7 @@ use App\Models\bRusak;
 use App\Models\bRusakDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class bRusakController extends Controller
@@ -17,7 +18,14 @@ class bRusakController extends Controller
                     ->where('statusRusak', 2)
                     ->paginate(10);
 
-        return view('menu.icare.rusak.confirm-bRusak', ['bRusak' => $bRusak]);
+        $staffBRusak = bRusak::with(['detailRusak', 'detailRusak.barang']) // Load nested relationships
+                    ->where('statusRusak', 2)
+                    ->where('penanggungJawab', session('idAkun'))
+                    ->paginate(10);
+
+        // dd($bRusak->items(),$staffBRusak->items());
+
+        return view('menu.icare.rusak.confirm-bRusak', ['bRusak' => $bRusak, 'staffBRusak' => $staffBRusak]);
     }
 
     public function viewAjukanBRusak() 

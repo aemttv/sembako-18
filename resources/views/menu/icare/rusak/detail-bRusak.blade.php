@@ -19,10 +19,25 @@
         </div>
 
         <div class="mt-6 border rounded-lg bg-white shadow-sm">
-            <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Detail Barang Rusak - ({{ $bRusak->idBarangRusak }})</div>
+
+            <div class="flex items-center justify-between border-b px-6 py-4 bg-white rounded-t-lg shadow-sm mb-2">
+                <div class="flex items-center gap-3">
+                    <a href="{{ url()->previous() }}"
+                        class="inline-flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition text-sm font-medium shadow-sm border border-gray-300">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Kembali
+                    </a>
+                    <span class="text-lg font-semibold text-gray-700">
+                        Daftar Detail Barang Rusak
+                        <span class="text-base font-normal text-gray-500">({{ $bRusak->idBarangRusak }})</span>
+                    </span>
+                </div>
+            </div>
             <div class="p-6">
                 <div class="max-h-80 overflow-y-auto relative">
-                    <table class="min-w-full table-auto border-separate border-spacing-0">
+                    <table class="min-w-full table-auto border-separate border-spacing-0 text-lg text-center items-center justify-center">
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">No</th>
@@ -34,7 +49,9 @@
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Keterangan</th>
                                 </th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Status</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Proses</th>
+                                @if (isOwner())
+                                    <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Proses</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -64,18 +81,24 @@
                                             <span class="text-gray-500">Unknown</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-2 border-b flex gap-1 items-center justify-center">
-                                        <form action="{{ route('detail.bRusak.approve', ['idDetailBR' => $detail->idDetailBR]) }}" method="POST">
-                                            @csrf
-                                            <button type="submit"
-                                                class="px-2 py-1 bg-green-500 text-white rounded text-xs">Setuju</button>
-                                        </form>
-                                        <form action="{{route('detail.bRusak.reject', ['idDetailBR' => $detail->idDetailBR])}}" method="POST">
-                                            @csrf
-                                            <button type="submit"
-                                                class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Tolak</button>
-                                        </form>
-                                    </td>
+                                    @if (isOwner())
+                                        <td class="px-4 py-2 border-b flex gap-1 items-center justify-center">
+                                            <form
+                                                action="{{ route('detail.bRusak.approve', ['idDetailBR' => $detail->idDetailBR]) }}"
+                                                method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyetujui detail barang ini?')">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="px-2 py-1 bg-green-500 text-white rounded text-xs">Setuju</button>
+                                            </form>
+                                            <form
+                                                action="{{ route('detail.bRusak.reject', ['idDetailBR' => $detail->idDetailBR]) }}"
+                                                method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menolak detail barang ini?')">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Tolak</button>
+                                            </form>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

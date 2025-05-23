@@ -1,6 +1,6 @@
 <!-- Top Navbar -->
 
-<header class="fixed top-0 left-80 right-0  bg-white shadow px-4 py-3 flex justify-between items-center z-10">
+<header class="fixed top-0 left-80 right-0 shadow px-4 py-3 flex justify-between items-center z-10 bg-white border-b border-gray-200">
     <!-- Left section: Menu + Search -->
     <div class="flex items-center gap-3">
         <!-- Menu Button -->
@@ -9,11 +9,11 @@
         </button>
 
         <!-- Search Input Group -->
-        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 w-[360px] shadow-sm">
+        {{-- <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 w-[360px] shadow-sm">
             <i class="fas fa-search text-gray-400 mr-2"></i>
             <input type="text" placeholder="Search or type command..."
                 class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
-        </div>
+        </div> --}}
     </div>
 
     <!-- Right section: Dark mode, Notification, Profile -->
@@ -67,8 +67,12 @@
                 <div id="dropdown-menu"
                     class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     <ul class="text-gray-700 text-sm">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li>
+                        <li>
+                            <a href="{{ route('profile', session('idAkun')) }}" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                Profile
+                            </a>
+                        </li>
+                        {{-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li> --}}
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="window.location.href='{{ route('logout') }}'">Logout</li>
                     </ul>
                 </div>

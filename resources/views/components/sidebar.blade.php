@@ -3,12 +3,12 @@
 @endphp
 
 <!-- Sidebar -->
-<aside class="w-80 bg-white shadow-md">
+<aside class="w-80 shadow-md">
     <div class="fixed top-0 bottom-0 flex flex-col justify-between border-e border-gray-100 bg-white w-80">
         <div class="px-4 py-2">
             <div class="flex justify-center">
-                <img src="https://dummyimage.com/1920x1080/000/fff"
-                    class="grid h-32 w-60 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600"></img>
+                <img src="{{ asset('assets/images/logo_1.jpg') }}"
+                    class="grid h-40 w-60 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600"></img>
             </div>
 
             <ul class="mt-6 space-y-1">
@@ -75,17 +75,17 @@
                                     <a href="/daftar-barang-masuk"
                                         class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                         {{ Request::is('daftar-barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        Daftar - Barang Masuk
+                                        Barang Masuk
                                     </a>
                                 </li>
                                 <li>
                                     <a href="/daftar-barang-keluar"
                                         class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                         {{ Request::is('barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        Daftar - Barang Keluar
+                                        Barang Keluar
                                     </a>
                                 </li>
-                                <li>
+                                {{-- <li>
                                     <a href="/barang-masuk"
                                         class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                         {{ Request::is('barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
@@ -98,7 +98,7 @@
                         {{ Request::is('barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                         Form Barang Keluar
                                     </a>
-                                </li>
+                                </li> --}}
                             </ul>
                         </details>
                     </li>
@@ -206,50 +206,52 @@
                             </ul>
                         </details>
                     </li>
-
-
                 </ul>
 
-                <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Account</h2>
-                <ul class="mt-2 space-y-1">
-                    <li>
-                        <a href="/daftar-akun"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
-                                {{ Request::is('daftar-akun') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                            <i
-                                class="fas fa-user-cog w-3 {{ Request::is('daftar-akun') ? 'text-gray-700' : 'text-gray-500' }}"></i>
-                            Manajemen Akun
-                        </a>
-                    </li>
-                </ul>
+                @if(isOwner())
+                    <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Account</h2>
+                    <ul class="mt-2 space-y-1">
+                        <li>
+                            <a href="/daftar-akun"
+                                class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
+                                    {{ Request::is('daftar-akun') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                <i
+                                    class="fas fa-user-cog w-3 {{ Request::is('daftar-akun') ? 'text-gray-700' : 'text-gray-500' }}"></i>
+                                Manajemen Akun
+                            </a>
+                        </li>
+                    </ul>
 
-                <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Others</h2>
-                <ul class="mt-2 space-y-1">
-                    {{-- <li>
-                        <a href="/backup-database"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
-                                {{ Request::is('backup-database') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                            <i
-                                class="fas fa-database w-3 {{ Request::is('backup-database') ? 'text-gray-700' : 'text-gray-500' }}"></i>
-                            Backup Database
-                        </a>
-                    </li> --}}
-                    <li>
-                        <a href="/log"
-                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
-                                {{ Request::is('log') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                            <i
-                                class="fas fa-scroll w-3 {{ Request::is('log') ? 'text-gray-700' : 'text-gray-500' }}"></i>
-                            Log
-                        </a>
-                    </li>
-                </ul>
-
-        </div>
+                    <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Others</h2>
+                    <ul class="mt-2 space-y-1">
+                        {{-- <li>
+                            <a href="/backup-database"
+                                class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
+                                    {{ Request::is('backup-database') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                <i
+                                    class="fas fa-database w-3 {{ Request::is('backup-database') ? 'text-gray-700' : 'text-gray-500' }}"></i>
+                                Backup Database
+                            </a>
+                        </li> --}}
+                        <li>
+                            <a href="/log"
+                                class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
+                                    {{ Request::is('log') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                <i
+                                    class="fas fa-scroll w-3 {{ Request::is('log') ? 'text-gray-700' : 'text-gray-500' }}"></i>
+                                Log
+                            </a>
+                        </li>
+                    </ul>
+                @endif
+            </div>
 
         <div class="sticky inset-x-0 bottom-0 border-t border-gray-100 bg-white p-4 flex items-center gap-4">
-            <img alt="Clock Icon"
+            {{-- <img alt="Clock Icon"
                 src="https://cdn-icons-png.flaticon.com/512/2920/2920244.png"
+                class="size-10 rounded-full object-cover" /> --}}
+            <img alt="Clock Icon"
+                src="{{ asset('assets/images/clock.jpg') }}"
                 class="size-10 rounded-full object-cover" />
 
             <div>

@@ -34,7 +34,7 @@ class BarangSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         // Create 10 barang records
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $barang = new Barang();
             $barang->idBarang = Barang::generateNewIdBarang();  // e.g., B001
             $barang->namaBarang = 'Produk ' . ($i + 1);
@@ -59,7 +59,7 @@ class BarangSeeder extends Seeder
                 $detail->hargaBeli = $faker->randomElement([1000, 3000, 5000, 7000, 10000]);
                 $detail->tglMasuk = $faker->dateTimeBetween('-1 month', 'now');
                 $detail->tglKadaluarsa = $faker->dateTimeBetween($detail->tglMasuk, '+6 months');
-                $detail->barcode = $faker->ean13();
+                $detail->barcode = BarangDetail::generateBarcode();
                 $detail->statusDetailBarang = 1;
                 $detail->save();
 

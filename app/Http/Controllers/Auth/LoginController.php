@@ -23,6 +23,8 @@ class LoginController extends Controller
             // Store manual session
             session(['user_logged_in' => true]);
             session(['user_data' => $user]);
+            session(['idAkun' => $user->idAkun]);
+            session(['last_activity' => time()]);
 
             return redirect('/dashboard');
         }
@@ -45,5 +47,11 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/')->with('message', 'Successfully logged out.');
+    }
+
+    function viewProfile($idAkun) {
+        
+        $akun = \App\Models\Akun::where('idAkun', $idAkun)->first();
+        return view('account.profile', ['akun' => $akun]);
     }
 }

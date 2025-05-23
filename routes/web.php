@@ -22,6 +22,7 @@ Route::middleware('web')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
     Route::get('login', [LoginController::class, 'viewLogin'])->name('login');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/profile/{idAkun}', [LoginController::class, 'viewProfile'])->name('profile');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -34,6 +35,8 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
 
     Route::post('/barang-detail/{idBarang}/{barcode}/soft-delete', [BarangController::class, 'softDeleteBarangDetail'])->name('soft.delete.detail');
+    Route::post('/barang-detail/{idBarang}/{barcode}/soft-update', [BarangController::class, 'softUpdateBarangDetail'])->name('soft.update.detail');
+    Route::post('/barang-detail/{idBarang}/update', [BarangController::class, 'updateBarangDetail'])->name('detail.barang.update');
     Route::get('/detail-produk/{idBarang}', [BarangController::class, 'viewDetailProduk'])->name('detail.produk');
     Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
     Route::get('/daftar-produk/search-detail/barcode', [BarangController::class, 'searchSupplierBarcode']);

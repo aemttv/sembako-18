@@ -28,6 +28,9 @@
                         black: "#000000",
                         background: "#F7F7F7",
                         hoverColor: "#f77b00"
+                        pale: "#f9eeef",
+                        pale2: "#e7e4eb",
+                        pale3: "#cadce9",
                     }
                 }
             }
@@ -48,10 +51,10 @@
         <div class="flex-1 flex flex-col">
 
             <!-- Header -->
-            <x-header /> <!-- Pastikan di komponen x-header sudah ditutup dengan benar -->
+            <x-header /> 
 
             <!-- Page content -->
-            <main class="flex-1 p-4 pt-20 px-4">
+            <main class="flex-1 p-4 pt-20 px-4 bg-[#F9FAFB]">
                 @yield('content')
             </main>
         </div>

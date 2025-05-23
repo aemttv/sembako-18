@@ -18,16 +18,19 @@ class UpdateKondisiBarang extends Command
 
         foreach ($details as $detail) {
             if ($detail->tglKadaluarsa && $detail->tglMasuk) {
-                $tglMasuk = Carbon::parse($detail->tglMasuk);
+                // $tglMasuk = Carbon::parse($detail->tglMasuk);
                 $tglKadaluarsa = Carbon::parse($detail->tglKadaluarsa);
+
+                $daysToExpire = $tglKadaluarsa->diffInDays($now, false);
 
                 if ($tglKadaluarsa->isPast()) {
                     $newKondisi = 'Kadaluarsa';
-                } elseif ($tglMasuk->diffInDays($now, false) < 7 && $tglKadaluarsa->greaterThan($now)) {
+                } elseif ($daysToExpire >= 0 && $daysToExpire < 7) {
                     $newKondisi = 'Mendekati Kadaluarsa';
                 } else {
                     $newKondisi = 'Baik';
                 }
+
 
                 if ($detail->kondisiBarang !== $newKondisi) {
                     $detail->kondisiBarang = $newKondisi;
