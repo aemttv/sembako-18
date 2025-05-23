@@ -224,6 +224,11 @@ class BarangController extends Controller
             'merekBaru' => 'required|string|max:255',
         ]);
 
+        $inputValue = ucwords(trim($request->input('merekBaru')));
+        if (bMerek::where('namaMerek', $inputValue)->exists()) {
+            return redirect()->back()->with('error', 'Merek sudah ada!');
+        }
+
         // Create a new instance of the bMerek model
         $merekBaru = new bMerek();
 

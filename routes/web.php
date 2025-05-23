@@ -49,6 +49,7 @@ Route::middleware('web')->group(function () {
 
 Route::middleware('web')->group(function () {
     Route::post('/submit-supplier', [SupplierController::class, 'tambahSupplier'])->name('supplier.submit');
+    Route::post('/supplier/update/{idSupplier}', [SupplierController::class, 'editSupplier'])->name('supplier.update');
     Route::get('/daftar-supplier', [SupplierController::class, 'viewSupplier'])->name('view.supplier');
     Route::get('/tambah-supplier', [SupplierController::class, 'viewTambahSupplier']);
     Route::get('/suppliers/search', [SupplierController::class, 'search']);

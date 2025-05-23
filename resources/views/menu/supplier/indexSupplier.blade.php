@@ -2,6 +2,11 @@
 
 @section('content')
     <div class="p-6 space-y-4">
+        @if (session('success'))
+            <x-ui.alert type="success" :message="session('success')" />
+        @elseif (session('error'))
+            <x-ui.alert type="error" :message="session('error')" />
+        @endif
 
         <!-- Header -->
         <div class="flex justify-between items-center">
@@ -13,7 +18,6 @@
             </div>
         </div>
 
-
         <!-- Tabs -->
         <div class="flex justify-between items-center gap-2 border rounded-lg p-2 bg-white">
             <!-- Search Input Group -->
@@ -22,7 +26,9 @@
                 <input type="text" placeholder="Search or type command..."
                     class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
             </div>
-            <a href="/tambah-supplier" class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah Supplier</a>
+            <a href="/tambah-supplier"
+                class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah
+                Supplier</a>
         </div>
 
 
@@ -42,18 +48,22 @@
                 <tbody class="bg-white divide-y">
                     @if ($supplier->isEmpty())
                         <td>
-                            <td class="px-4 py-2 text-center" colspan="9">Data Supplier tidak ditemukan.</td>
+                        <td class="px-4 py-2 text-center" colspan="9">Data Supplier tidak ditemukan.</td>
                         </td>
                     @endif
                     @foreach ($supplier as $data)
                         <tr>
-                            <td class="px-4 py-2">{{$data->idSupplier}}</td>
-                            <td class="px-4 py-2">{{$data->nama}}</td>
-                            <td class="px-4 py-2">{{$data->nohp}}</td>
-                            <td class="px-4 py-2">{{$data->alamat}}</td>
+                            <td class="px-4 py-2">{{ $data->idSupplier }}</td>
+                            <td class="px-4 py-2">{{ $data->nama }}</td>
+                            <td class="px-4 py-2">{{ $data->nohp }}</td>
+                            <td class="px-4 py-2">{{ $data->alamat }}</td>
                             <td class="px-4 py-2">{{ $data->status == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
                             <td class="px-4 py-2 flex gap-1">
-                                <a href="#" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Edit</a>
+                                <!-- Edit Button -->
+                                <button onclick="openEditModal('{{ $data->idSupplier }}')" data-id="{{ $data->idSupplier }}"
+                                    class="px-2 py-1 bg-blue-500 text-white rounded text-xs">
+                                    Edit
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -62,17 +72,77 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-between items-center text-sm text-gray-800">
-            <p>Showing 1 to 10 of 59 entries</p>
-            <div class="flex gap-1">
-                <button class="px-3 py-1 border rounded">Previous</button>
-                <button class="px-3 py-1 border rounded bg-blue-200">1</button>
-                <button class="px-3 py-1 border rounded">2</button>
-                <button class="px-3 py-1 border rounded">3</button>
-                <button class="px-3 py-1 border rounded">4</button>
-                <button class="px-3 py-1 border rounded">Next</button>
-            </div>
+        {{ $supplier->links() }}
+    </div>
+
+    <!-- Modal -->
+    <div id="editModal" class="fixed hidden inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-lg font-bold mb-4">Edit Akun</h3>
+
+            <form method="POST" enctype="multipart/form-data" id="editSupplierForm">
+                @csrf
+                <input type="hidden" id="editIdSupplier" name="idSupplier">
+
+                <!-- Row 1: Nama and Password -->
+                <div class="flex gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block text-gray-700 mb-2">Nama</label>
+                        <input type="text" id="editNama" name="nama" class="w-full px-3 py-2 border rounded"
+                            maxlength="100">
+                    </div>
+                </div>
+
+                <!-- Row 2: No HP and Email -->
+                <div class="flex gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block text-gray-700 mb-2">No HP</label>
+                        <input type="text" id="editNoHp" name="nohp" maxlength="15"
+                            class="w-full px-3 py-2 border rounded">
+                        <!-- Example: max 20 characters for phone number -->
+                    </div>
+
+                    <div class="flex-1">
+                        <label class="block text-gray-700 mb-2">Status</label>
+                        <select id="editStatus" class="w-full px-3 py-2 border rounded" name="status">
+                            <option value="1">Aktif</option>
+                            <option value="0">Tidak Aktif</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3: Peran and Status -->
+                <div class="flex gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block text-gray-700 mb-2">Alamat</label>
+                        <textarea id="editAlamat" name="alamat" maxlength="255" class="w-full px-3 py-2 border rounded resize-none"
+                            style="max-height: 100px; min-height: 40px;">{{ old('alamat', $alamat ?? '') }}</textarea>
+                        <!-- Max 255 characters, max height 100px -->
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded" id="saveChanges">
+                        Simpan
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 rounded">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
+    <script src="{{ asset('javascript/supplier.js') }}"></script>
+
+    <style>
+        /* Simple transition for the modal */
+        #editModal {
+            transition: opacity 0.3s ease;
+        }
+
+        #editModal:not(.hidden) {
+            display: flex;
+        }
+    </style>
 @endsection

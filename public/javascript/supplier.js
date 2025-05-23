@@ -1,7 +1,6 @@
-// Modal Functions
-function openEditModal(idAkun) {
+function openEditModal(idSupplier) {
     // Find the clicked row
-    const button = document.querySelector(`button[data-id="${idAkun}"]`);
+    const button = document.querySelector(`button[data-id="${idSupplier}"]`);
     if (!button) {
         console.error('Edit button not found');
         return;
@@ -17,24 +16,20 @@ function openEditModal(idAkun) {
     const cells = row.querySelectorAll('td');
     
     // Populate form with existing data
-    document.getElementById('editIdAkun').value = cells[0].textContent.trim();
+    document.getElementById('editIdSupplier').value = cells[0].textContent.trim();
     document.getElementById('editNama').value = cells[1].textContent.trim();
     document.getElementById('editNoHp').value = cells[2].textContent.trim();
-    document.getElementById('editEmail').value = cells[3].textContent.trim();
-
-    // Set Peran (1=Owner, 2=Staff)
-    const peranText = cells[4].textContent.trim();
-    document.getElementById('editPeran').value = peranText === 'Owner' ? '1' : '2';
+    document.getElementById('editAlamat').value = cells[3].textContent.trim();
 
     // Set Status (1=Aktif, 0=Tidak Aktif)
-    const statusText = cells[5].textContent.trim();
+    const statusText = cells[4].textContent.trim();
     document.getElementById('editStatus').value = statusText === 'Aktif' ? '1' : '0';
 
     // Get the form
-    const form = document.getElementById('editAkunForm');
+    const form = document.getElementById('editSupplierForm');
     
     // Set the action directly
-    form.action = `/akun/update/${idAkun}`;
+    form.action = `/supplier/update/${idSupplier}`;
 
     // Show modal
     document.getElementById('editModal').classList.remove('hidden');
@@ -58,7 +53,6 @@ document.getElementById('editModal').addEventListener('click', function (e) {
     }
 })
 
-//Formatting
 // Formatting and live validation for No HP
 const editNoHp = document.getElementById('editNoHp');
 

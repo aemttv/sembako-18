@@ -39,7 +39,14 @@ class bMasukController extends Controller
     }
 
     function viewDetailBMasuk($idBarangMasuk) {
-        
+        Carbon::setLocale('id');
+
+        $bMasuk = bMasuk::with('detailMasuk')
+            ->where('idBarangMasuk', $idBarangMasuk)
+            ->firstOrFail(); // Changed from first() to firstOrFail()
+
+
+        return view('menu.manajemen.detail-bMasuk', compact('bMasuk'));
     }
 
     public function tambahBMasuk(Request $request)

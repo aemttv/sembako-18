@@ -10,7 +10,7 @@ class SupplierController extends Controller
 {
     function viewSupplier()
     {
-        $supplier = Supplier::where('status', 1)->paginate(10);
+        $supplier = Supplier::orderBy('idSupplier', 'desc')->paginate(10);
 
         return view('menu.supplier.indexSupplier', ['supplier' => $supplier]);
     }
@@ -50,5 +50,33 @@ class SupplierController extends Controller
         DB::commit();    
 
         return redirect()->route('view.supplier')->with('success', 'Supplier berhasil ditambahkan');
+    }
+
+    function editSupplier(Request $request, $idSupplier) {
+        try {
+
+            $supplier = Supplier::where('idSupplier', $idSupplier)->first();
+
+            if (!$supplier) {
+                return redirect()->route('view.akun')->with(['success' => false, 'message' => 'Supplier not found'], 404);
+            }
+
+            $updateData = [
+                'nama' => $request->nama,
+                'nohp' => $request->nohp,
+                'alamat' => $request->alamat,
+                'status' => $request->status,
+            ];
+            // dd($updateData);
+            
+            $supplier->update($updateData);
+
+            return redirect()->route('view.supplier')->with('success', 'Informasi Staff berhasil disimpan');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal mengubah supplier: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 }

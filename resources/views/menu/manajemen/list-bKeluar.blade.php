@@ -21,9 +21,9 @@
                 <input type="text" placeholder="Search or type command..."
                     class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
             </div>
-            <a href="/barang-masuk"
-                class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah Barang
-                Masuk</a>
+            <a href="/barang-keluar"
+                class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Catat Barang
+                Keluar</a>
         </div>
 
 

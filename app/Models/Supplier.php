@@ -19,7 +19,7 @@ class Supplier extends Model
     public $incrementing = false;
 
     // Specify the fillable columns for mass-assignment
-    protected $fillable = ['nama', 'nohp', 'alamat', 'statusAkun'];
+    protected $fillable = ['nama', 'nohp', 'alamat', 'status'];
 
     // Specify if you're using timestamps or not
     public $timestamps = true;

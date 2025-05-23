@@ -42,7 +42,8 @@ class BarangSeeder extends Seeder
             $barang->merekBarang = $faker->numberBetween(1, 10);
             $barang->stokBarang = 0;
             $barang->hargaJual = $faker->randomElement([5000, 8000, 12000]); // set a fallback if no hargaBeli yet
-            $barang->gambarProduk = null;
+            $imagePath = $faker->image(public_path('produk'), 400, 400, 'products', false);
+            $barang->gambarProduk = $imagePath; // just the filename
             $barang->statusBarang = 1; 
             $barang->save();
 

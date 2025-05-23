@@ -4,27 +4,38 @@
 
 @section('content')
     <div class="p-6 space-y-4">
-    {{-- @foreach ($barang as $data) --}}
+        {{-- @foreach ($barang as $data) --}}
         <!-- Top Row - 3 Cards -->
         <div class="flex flex-wrap justify-center gap-4 mb-6">
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Total Stok Barang" icon="📦">1203</x-card>
+                <x-card title="Total Stok Barang" icon="📦"
+                    class="bg-pink-50 border border-pink-200">{{ $totalStok }}</x-card>
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Total Barang Keluar" icon="📤">459</x-card>
+                <x-card title="Total Barang Keluar" icon="📤"
+                    class="bg-blue-50 border ">{{ $totalBarangKeluar }}</x-card>
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Total Barang Masuk" icon="📥">303</x-card>
+                <x-card title="Total Barang Masuk" icon="📥"
+                    class="bg-green-50 border border-green-200">{{ $totalBarangMasuk }}</x-card>
             </div>
         </div>
 
         <!-- Bottom Row - 2 Cards Centered -->
         <div class="flex justify-center gap-4 mb-6">
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Mendekati Masa Simpan" icon="⏳" class="border-blue-500">2</x-card>
+                @if ($totalDekatKadaluarsa > 0)
+                    <x-card title="Mendekati Masa Simpan" icon="⏳" class="bg-yellow-50 border border-yellow-200">
+                        {{ $totalDekatKadaluarsa }} <span class="text-red-500 ml-0.5 top-0.5">⚠️</span>
+                    </x-card>
+                @else
+                    <x-card title="Mendekati Masa Simpan" icon="⏳" class="bg-yellow-50 border border-yellow-200">
+                        {{ $totalDekatKadaluarsa }}
+                    </x-card>
+                @endif
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Stok Rendah" icon="⚠️">Beras Pinpin</x-card>
+                <x-card title="Stok Rendah" icon="⚠️" class="bg-rose-50 border border-rose-200">Beras Pinpin</x-card>
             </div>
         </div>
 
@@ -39,11 +50,10 @@
                 <canvas id="monthlySalesChart"></canvas>
             </div>
         </div>
-    {{-- @endforeach --}}
+        {{-- @endforeach --}}
 
     </div>
     <script>
-        // Only initialize once, or destroy previous instance if exists
         let monthlySalesChart;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -57,10 +67,10 @@
             monthlySalesChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Kebutuhan Harian', 'Perawatan', 'Peralatan Sekolah', 'Aksesoris'],
+                    labels: @json($chartLabels),
                     datasets: [{
-                        label: 'Sales',
-                        data: [150, 370, 190, 290],
+                        label: 'Barang Keluar',
+                        data: @json($chartData),
                         backgroundColor: '#3B82F6',
                         borderRadius: 5,
                         barThickness: 40,
@@ -73,10 +83,10 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                color: '#1F2937' // text-gray-500
+                                color: '#1F2937'
                             },
                             grid: {
-                                color: '#E5E7EB' // bg-gray-100
+                                color: '#E5E7EB'
                             }
                         },
                         x: {

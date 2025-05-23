@@ -27,7 +27,7 @@
                         white: "#FFFFFF",
                         black: "#000000",
                         background: "#F7F7F7",
-                        hoverColor: "#f77b00"
+                        hoverColor: "#f77b00",
                         pale: "#f9eeef",
                         pale2: "#e7e4eb",
                         pale3: "#cadce9",
@@ -121,7 +121,6 @@
         }
     });
 </script>
-
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 </body>

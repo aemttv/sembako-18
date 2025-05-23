@@ -11,7 +11,7 @@ class AkunController extends Controller
 {
     function viewAkun()
     {
-        $akun = Akun::where('statusAkun', 1)->paginate(10);
+        $akun = Akun::paginate(10);
 
         return view('account.akun', ['akun' => $akun]);
     }
@@ -44,25 +44,42 @@ class AkunController extends Controller
         
     }
 
-    function editAkun(Request $request, $idAkun) {
-        // contoh sederhana
-        $akun = Akun::where('idAkun', $idAkun)->first();
+    public function editAkun(Request $request, $idAkun) {
+        try {
+            $request->validate([
+            'nama' => 'required',
+            'nohp' => 'required',
+            'email' => 'required|email|unique:akun,email,' . $idAkun . ',idAkun',
+            ]);
 
-        if (!$akun) {
-            return response()->json(['message' => 'Akun not found'], 404);
+            $akun = Akun::where('idAkun', $idAkun)->first();
+
+            if (!$akun) {
+                return redirect()->route('view.akun')->with(['success' => false, 'message' => 'Akun not found'], 404);
+            }
+
+            $updateData = [
+                'nama' => $request->nama,
+                'nohp' => $request->nohp,
+                'email' => $request->email,
+                'peran' => $request->peran,
+                'statusAkun' => $request->statusAkun,
+            ];
+            
+            if ($request->filled('password')) {
+                $updateData['password'] = bcrypt($request->password);
+            }
+
+            $akun->update($updateData);
+
+            return redirect()->route('view.akun')->with('success', 'Informasi Staff berhasil disimpan');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal mengubah akun: ' . $e->getMessage())
+                ->withInput();
         }
-
-        $akun->update([
-            'nama' => $request->nama,
-            'password' => $request->password,
-            'nohp' => $request->nohp,
-            'email' => $request->email,
-            'peran' => $request->peran,
-            'statusAkun' => $request->statusAkun,
-        ]);
-
-        return response()->json(['message' => 'Akun updated successfully']);
-
+        
     }
     
         

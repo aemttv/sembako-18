@@ -46,9 +46,7 @@
                 </thead>
                 <tbody class="bg-white divide-y">
                     @if ($bMasuk->isEmpty())
-                        <td>
-                        <td class="px-4 py-2 text-center" colspan="9">Data Barang Masuk tidak ditemukan.</td>
-                        </td>
+                        <td class="px-4 py-2 text-center" colspan="10">Data Barang Masuk tidak ditemukan.</td>
                     @endif
                     @foreach ($bMasuk as $data)
                         <tr>
@@ -64,13 +62,12 @@
                             </td>
                             <td class="px-4 py-2 text-center">
                                 <button onclick="showNotaModal('{{ asset('nota_file/' . $data->nota) }}')"
-                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">
                                     Lihat Nota
                                 </button>
                             </td>
-
-                            <td class="px-4 py-2 flex gap-1">
-                                <a href="{{route('detail.bMasuk', ['idBarangMasuk' => $data->idBarangMasuk])}}" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>
+                            <td class="px-4 py-2 text-center">
+                                <a href="{{route('detail.bMasuk', ['idBarangMasuk' => $data->idBarangMasuk])}}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Detail</a>
                             </td>
                         </tr>
                     @endforeach
