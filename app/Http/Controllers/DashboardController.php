@@ -39,13 +39,20 @@ class DashboardController extends Controller
         $totalBarangKeluar = bKeluarDetail::sum('jumlahKeluar');
         $totalDekatKadaluarsa = BarangDetail::where('kondisiBarang', 'Mendekati Kadaluarsa')->sum('quantity');
 
+        $stokRendah = Barang::withSum(['detailBarang as total_quantity' => function($query) {
+        $query->where('statusDetailBarang', 1);
+            }], 'quantity')
+            ->having('total_quantity', '<', 10)
+            ->pluck('namaBarang');
+
         return view('menu.dashboard', [
             'totalStok' => $totalStok,
             'totalBarangMasuk' => $totalBarangMasuk,
             'totalBarangKeluar' => $totalBarangKeluar,
             'chartLabels' => $labels,
             'chartData' => $data,
-            'totalDekatKadaluarsa' => $totalDekatKadaluarsa
+            'totalDekatKadaluarsa' => $totalDekatKadaluarsa,
+            'stokRendah' => $stokRendah
         ]);
     }
 }

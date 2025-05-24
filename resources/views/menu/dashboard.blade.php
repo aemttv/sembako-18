@@ -35,7 +35,7 @@
                 @endif
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Stok Rendah" icon="⚠️" class="bg-rose-50 border border-rose-200">Beras Pinpin</x-card>
+                <x-card title="Stok Rendah" icon="⚠️" class="bg-rose-50 border border-rose-200">{{ $stokRendah->implode(', ') }}</x-card>
             </div>
         </div>
 

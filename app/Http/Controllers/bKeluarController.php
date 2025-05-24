@@ -36,11 +36,13 @@ class bKeluarController extends Controller
 
         DB::beginTransaction();
 
+        // dd($request->all());
+
             $barangKeluar = new bKeluar();
             $barangKeluar->idBarangKeluar = bKeluar::generateNewIdBarangKeluar();
             $barangKeluar->invoice = bKeluar::generateNewInvoiceNumber();
-            $barangKeluar->idAkun = 'A001';
-            $barangKeluar->tglKeluar = now();
+            $barangKeluar->idAkun = session('user_data')->idAkun;
+            $barangKeluar->tglKeluar = $request->tanggal_keluar;
             $barangKeluar->save();
 
             foreach ($request->barang_keluar as $jsonItem) {
@@ -59,7 +61,6 @@ class bKeluarController extends Controller
                 $detail->save();
 
                 $barang = BarangDetail::where('barcode', $item['barcode'])->first();
-
 
                 if ($barang) {
                     $barang->quantity -= $detail->jumlahKeluar;

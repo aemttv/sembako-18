@@ -20,14 +20,29 @@
 
 
         <div class="mt-6 border rounded-lg bg-white shadow-sm">
-            <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Detail Barang ({{ $bKeluar->idBarangKeluar }})</div>
+            <div class="border-b px-6 py-3 font-medium text-gray-700">
+                <div class="flex items-center gap-3">
+                    <a href="{{ url()->previous() }}"
+                        class="inline-flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition text-sm font-medium shadow-sm border border-gray-300">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Kembali
+                    </a>
+                    <span class="text-lg font-semibold text-gray-700">
+                        Daftar Detail Barang
+                        <span class="text-base font-normal text-gray-500">({{ $bKeluar->idBarangKeluar }})</span>
+                    </span>
+                </div>
+            </div>
             <div class="p-6">
                 <div class="max-h-80 overflow-y-auto relative">
                     <table class="min-w-full table-auto border-separate border-spacing-0">
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">No</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Detail Barang Keluar</th>
+                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Detail Barang Keluar
+                                </th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang Keluar</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Quantity
@@ -37,7 +52,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @if ($bKeluar->detailKeluar>isEmpty())
+                            {{-- @if ($bKeluar->detailKeluar > isEmpty())
                                 <tr>
                                     <td class="px-4 py-2 border-b text-center" colspan="8">Detail Barang tidak ditemukan.
                                     </td>

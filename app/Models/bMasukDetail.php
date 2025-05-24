@@ -55,4 +55,9 @@ class bMasukDetail extends Model
     {
         return $this->belongsTo(bMasuk::class, 'idBarangMasuk');
     }
+
+    public function barangDetail()
+    {
+        return $this->belongsTo(BarangDetail::class, 'idBarang', 'idBarang');
+    }
 }

@@ -9,6 +9,8 @@ use App\Http\Controllers\bMasukController;
 use App\Http\Controllers\bReturController;
 use App\Http\Controllers\bRusakController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -87,8 +89,21 @@ Route::middleware('web')->group(function () {
     Route::get('/barang-rusak/detail/{idBarangRusak}', [bRusakController::class, 'viewDetailBKeluar'])->name('detail.bRusak');
 });
 
-Route::get('/laporan-stok', function () {
-    return view('menu.laporan.stok');
+Route::middleware('web')->group(function () {
+    //barang masuk laporan
+    Route::post('/laporan-barang-masuk/pdf/download', [PDFController::class, 'streamPDFbMasuk'])->name('streamPDF.bMasuk.view');
+    Route::get('/laporan-barang-masuk', [LaporanController::class, 'viewbMasuk'])->name('laporan.bMasuk.view');
+    Route::get('/laporan-barang-masuk/search', [LaporanController::class, 'searchBMasuk'])->name('laporan.bMasuk.search');
+
+    //barang keluar laporan
+    Route::post('/laporan-barang-keluar/pdf/download', [PDFController::class, 'streamPDFbKeluar'])->name('streamPDF.bKeluar.view');
+    Route::get('/laporan-barang-keluar', [LaporanController::class, 'viewbKeluar'])->name('laporan.bKeluar.view');
+    Route::get('/laporan-barang-keluar/search', [LaporanController::class, 'searchBKeluar'])->name('laporan.bKeluar.search');
+
+    //stok barang laporan
+    Route::post('/laporan-stok/pdf/download', [PDFController::class, 'streamPDFStokBarang'])->name('streamPDF.StokBarang.view');
+    Route::get('/laporan-stok', [LaporanController::class, 'viewStokBarang'])->name('laporan.StokBarang.view');
+    Route::get('/laporan-stok/search', [LaporanController::class, 'searchStokBarang'])->name('laporan.StokBarang.search');
 });
 
 Route::middleware('web')->group(function () {
@@ -102,4 +117,6 @@ Route::middleware('web')->group(function () {
 Route::get('/log', function () {
     return view('others.log');
 });
+
+
 

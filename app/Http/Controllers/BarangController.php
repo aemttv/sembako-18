@@ -205,7 +205,10 @@ class BarangController extends Controller
 
         $barang->merekBarangName = $barang->merek ? $barang->merek->namaMerek : 'Unknown';
         $barang->totalStok = $barang->detailBarang->sum('quantity');
-        $inactiveDetail = BarangDetail::where('idBarang', $idBarang)->where('statusDetailBarang', 0)->get();
+        $inactiveDetail = BarangDetail::where('idBarang', $idBarang)
+        ->where('statusDetailBarang', 0)
+        ->where('quantity', '>', 0)
+        ->get();
 
         return view('menu.barang.detail-produk', compact('barang', 'mereks', 'kategori', 'inactiveDetail'));
     }

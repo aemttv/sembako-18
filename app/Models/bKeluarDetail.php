@@ -29,6 +29,11 @@ class bKeluarDetail extends Model
         'keterangan',
     ];
 
+    
+    protected $casts = [
+        'kategoriAlasan' => \App\enum\Alasan::class,
+    ];
+
     // Specify if you're using timestamps or not
     public $timestamps = true;
 
@@ -66,5 +71,10 @@ class bKeluarDetail extends Model
     public function barang()
     {
         return $this->belongsTo(Barang::class, 'idBarang', 'idBarang');
+    }
+
+    public function barangDetailKeluar()
+    {
+        return $this->belongsTo(BarangDetail::class, 'idBarang', 'idBarang');
     }
 }

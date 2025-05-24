@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\enum\Alasan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 
 class bKeluar extends Model
 {
-     use Notifiable;
+    use Notifiable;
 
     // Specify the table name
     protected $table = 'barang_keluar';
