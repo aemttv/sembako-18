@@ -39,6 +39,12 @@
                     <p class="text-gray-500">No. HP</p>
                     <p>{{ $akun->nohp }}</p>
                 </div>
+                <div>
+                    <p class="text-gray-500">Peran</p>
+                    <p>
+                        {{ $akun->peran == 1 ? 'Owner' : ($akun->peran == 2 ? 'Staff' : 'Unknown') }}
+                    </p>
+                </div>
                 <div class="md:col-span-2">
                     <p class="text-gray-500">Alamat</p>
                     <p>{{ $akun->alamat }}</p>

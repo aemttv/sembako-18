@@ -150,81 +150,81 @@
                         </details>
                     </li>
 
+                    @if (isOwner())
+                        @php
+                            $laporanOpen =
+                                Request::is('laporan-stok') ||
+                                Request::is('laporan-barang-masuk') ||
+                                Request::is('laporan-barang-keluar');
+                        @endphp
 
-                    @php
-                        $laporanOpen =
-                            Request::is('laporan-stok') ||
-                            Request::is('laporan-barang-masuk') ||
-                            Request::is('laporan-barang-keluar');
-                    @endphp
-
-                    <li>
-                        <details class="group [&_summary::-webkit-details-marker]:hidden"
-                            {{ $laporanOpen ? 'open' : '' }}>
-                            <summary
-                                class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4
+                        <li>
+                            <details class="group [&_summary::-webkit-details-marker]:hidden"
+                                {{ $laporanOpen ? 'open' : '' }}>
+                                <summary
+                                    class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 pl-6 pr-4
             {{ $laporanOpen ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
 
-                                <span class="flex items-center gap-3 text-sm font-medium">
-                                    <i
-                                        class="fas fa-chart-line w-3 {{ $laporanOpen ? 'text-gray-700' : 'text-gray-500' }}"></i>
-                                    Laporan
-                                </span>
+                                    <span class="flex items-center gap-3 text-sm font-medium">
+                                        <i
+                                            class="fas fa-chart-line w-3 {{ $laporanOpen ? 'text-gray-700' : 'text-gray-500' }}"></i>
+                                        Laporan
+                                    </span>
 
-                                <span class="shrink-0 transition duration-300 group-open:-rotate-180">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </span>
-                            </summary>
+                                    <span class="shrink-0 transition duration-300 group-open:-rotate-180">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </span>
+                                </summary>
 
-                            <ul class="mt-2 space-y-1 px-4">
-                                <li>
-                                    <a href="/laporan-stok"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
+                                <ul class="mt-2 space-y-1 px-4">
+                                    <li>
+                                        <a href="/laporan-stok"
+                                            class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-stok') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        L.Stok
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/laporan-barang-masuk"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
+                                            L.Stok
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/laporan-barang-masuk"
+                                            class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        L.Barang Masuk
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/laporan-barang-keluar"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
+                                            L.Barang Masuk
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/laporan-barang-keluar"
+                                            class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        L.Barang Keluar
-                                    </a>
-                                </li>
-                            </ul>
-                        </details>
+                                            L.Barang Keluar
+                                        </a>
+                                    </li>
+                                </ul>
+                            </details>
+                        </li>
+                </ul>
+
+
+                <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Account</h2>
+                <ul class="mt-2 space-y-1">
+                    <li>
+                        <a href="/daftar-akun"
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
+                                    {{ Request::is('daftar-akun') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                            <i
+                                class="fas fa-user-cog w-3 {{ Request::is('daftar-akun') ? 'text-gray-700' : 'text-gray-500' }}"></i>
+                            Manajemen Akun
+                        </a>
                     </li>
                 </ul>
 
-                @if(isOwner())
-                    <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Account</h2>
-                    <ul class="mt-2 space-y-1">
-                        <li>
-                            <a href="/daftar-akun"
-                                class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
-                                    {{ Request::is('daftar-akun') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                <i
-                                    class="fas fa-user-cog w-3 {{ Request::is('daftar-akun') ? 'text-gray-700' : 'text-gray-500' }}"></i>
-                                Manajemen Akun
-                            </a>
-                        </li>
-                    </ul>
-
-                    <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Others</h2>
-                    <ul class="mt-2 space-y-1">
-                        {{-- <li>
+                <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Others</h2>
+                <ul class="mt-2 space-y-1">
+                    {{-- <li>
                             <a href="/backup-database"
                                 class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                     {{ Request::is('backup-database') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
@@ -233,25 +233,24 @@
                                 Backup Database
                             </a>
                         </li> --}}
-                        <li>
-                            <a href="/log"
-                                class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
+                    <li>
+                        <a href="/log"
+                            class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                     {{ Request::is('log') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                <i
-                                    class="fas fa-scroll w-3 {{ Request::is('log') ? 'text-gray-700' : 'text-gray-500' }}"></i>
-                                Log
-                            </a>
-                        </li>
-                    </ul>
+                            <i
+                                class="fas fa-scroll w-3 {{ Request::is('log') ? 'text-gray-700' : 'text-gray-500' }}"></i>
+                            Log
+                        </a>
+                    </li>
+                </ul>
                 @endif
-            </div>
+        </div>
 
         <div class="sticky inset-x-0 bottom-0 border-t border-gray-100 bg-white p-4 flex items-center gap-4">
             {{-- <img alt="Clock Icon"
                 src="https://cdn-icons-png.flaticon.com/512/2920/2920244.png"
                 class="size-10 rounded-full object-cover" /> --}}
-            <img alt="Clock Icon"
-                src="{{ asset('assets/images/clock.jpg') }}"
+            <img alt="Clock Icon" src="{{ asset('assets/images/clock.jpg') }}"
                 class="size-10 rounded-full object-cover" />
 
             <div>
@@ -266,8 +265,15 @@
 <script>
     function updateClock() {
         const now = new Date();
-        const time = now.toLocaleTimeString('en-US', { hour12: false });
-        const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const time = now.toLocaleTimeString('en-US', {
+            hour12: false
+        });
+        const date = now.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
 
         document.getElementById('current-time').textContent = time;
         document.getElementById('current-date').textContent = date;

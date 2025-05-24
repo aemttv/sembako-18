@@ -383,7 +383,7 @@ class BarangController extends Controller
     public function softDeleteBarangDetail($idBarang, $barcode)
     {
         $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
-        dump($detail);
+        // dump($detail);
 
         if (!$detail) {
             return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
