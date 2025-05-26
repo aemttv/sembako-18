@@ -37,7 +37,7 @@
             <div class="p-6">
                 <div class="max-h-80 overflow-y-auto relative">
                     <table class="min-w-full table-auto border-separate border-spacing-0 text-lg text-center items-center">
-                        <thead class="sticky top-0 bg-white z-10">
+                        <thead class="sticky top-0 bg-white">
                             <tr>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">No</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Detail Retur ID</th>

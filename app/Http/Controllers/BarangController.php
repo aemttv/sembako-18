@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class BarangController extends Controller
 {
@@ -347,84 +348,153 @@ class BarangController extends Controller
     }
 
     function updateBarangDetail(Request $request, $idBarang) {
+        
+        try {
+            // Validate input
+            $validated = $request->validate([
+                'nama_barang'    => 'required|string|max:255',
+                'idMerek'        => 'required|exists:merek_barang,idMerek',
+                'kategori'       => 'required',
+                'harga_satuan'   => 'required|string', // Will be sanitized
+                'status_produk'  => 'required|in:0,1',
+                'gambarProduk'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
 
-        // Validate input
-        $validated = $request->validate([
-            'nama_barang'    => 'required|string|max:255',
-            'idMerek'        => 'required|exists:merek_barang,idMerek',
-            'kategori'       => 'required',
-            'harga_satuan'   => 'required|string', // Will be sanitized
-            'status_produk'  => 'required|in:0,1',
-            'gambarProduk'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+            // Find the product
+            $barang = Barang::findOrFail($idBarang);
 
-        // Find the product
-        $barang = \App\Models\Barang::findOrFail($idBarang);
-
-        // Handle image upload if present
-        if ($request->hasFile('gambarProduk')) {
-            // Delete the old image if it exists
-            if ($barang->gambarProduk) {
-                $oldImagePath = public_path('produk/' . $barang->gambarProduk);
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
+            // Handle image upload if present
+            if ($request->hasFile('gambarProduk')) {
+                // Delete the old image if it exists
+                if ($barang->gambarProduk) {
+                    $oldImagePath = public_path('produk/' . $barang->gambarProduk);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
                 }
+
+                // Store the new image
+                $file = $request->file('gambarProduk');
+                $imageName = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('produk'), $imageName);
+                $barang->gambarProduk = $imageName;
             }
 
-            // Store the new image
-            $file = $request->file('gambarProduk');
-            $imageName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('produk'), $imageName);
-            $barang->gambarProduk = $imageName;
+            // Sanitize harga_satuan (remove "Rp.", dots, spaces, etc.)
+            $hargaJual = preg_replace('/[^\d]/', '', $request->input('harga_satuan'));
+
+            // Update fields
+            $barang->namaBarang      = $validated['nama_barang'];
+            $barang->merekBarang     = $validated['idMerek'];
+            $barang->kategoriBarang  = $validated['kategori']; // If enum, cast in model or controller
+            $barang->hargaJual       = $hargaJual;
+            $barang->statusBarang    = $validated['status_produk'];
+
+            $barang->save();
+
+            $owner = Akun::where('peran', 1)->get();
+
+            foreach($owner as $o) {
+                Notifications::create([
+                    'idAkun' => $o->idAkun,
+                    'title' => 'Produk Baru Ditambahkan',
+                    'message' => 'Produk baru telah ditambahkan.',
+                    'data' => json_encode([
+                        'nama_barang' => $barang->namaBarang,
+                        'id_barang' => $barang->idBarang,
+                        'added_by' => session('user_data')->nama
+                    ]),
+                ]);
+            }
+
+            return redirect()->route('detail.produk', $barang->idBarang)
+                ->with('success', 'Data produk berhasil diperbarui.');
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error updating product: ' . $e->getMessage());
+
+            // Redirect back with error message and old input
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat memperbarui data produk. Silakan coba lagi.');
         }
 
-
-
-        // Sanitize harga_satuan (remove "Rp.", dots, spaces, etc.)
-        $hargaJual = preg_replace('/[^\d]/', '', $request->input('harga_satuan'));
-
-        // Update fields
-        $barang->namaBarang      = $validated['nama_barang'];
-        $barang->merekBarang     = $validated['idMerek'];
-        $barang->kategoriBarang  = $validated['kategori']; // If enum, cast in model or controller
-        $barang->hargaJual       = $hargaJual;
-        $barang->statusBarang    = $validated['status_produk'];
-
-        // dd($barang);
-
-        $barang->save();
-
-        return redirect()->route('detail.produk', $barang->idBarang)
-            ->with('success', 'Data produk berhasil diperbarui.');
     }
 
     public function softDeleteBarangDetail($idBarang, $barcode)
     {
-        $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
-        // dump($detail);
+        try {
+            $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
 
-        if (!$detail) {
-            return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
+            if (!$detail) {
+                return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
+            }
+
+            $detail->statusDetailBarang = 0;
+            $detail->save();
+
+            // Fetch the related Barang
+            $barang = $detail->barang ?? \App\Models\Barang::where('idBarang', $idBarang)->first();
+
+            $owner = Akun::where('peran', 1)->get();
+
+            foreach($owner as $o) {
+                Notifications::create([
+                    'idAkun' => $o->idAkun,
+                    'title' => 'Barang Detail Dihapus',
+                    'message' => 'Salah satu detail barang telah dihapus.',
+                    'data' => json_encode([
+                        'barcode' => $detail->barcode,
+                        'nama_barang' => $barang ? $barang->namaBarang : '-',
+                        'id_barang' => $barang ? $barang->idBarang : $idBarang,
+                        'deleted_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Barang detail berhasil dihapus.');
+        } catch (\Exception $e) {
+            Log::error('Error deleting BarangDetail: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus barang detail. Silakan coba lagi.');
         }
 
-        $detail->statusDetailBarang = 0;
-        $detail->save();
-
-        return redirect()->back()->with('success', 'Barang detail berhasil dihapus.');
     }
     public function softUpdateBarangDetail($idBarang, $barcode)
     {
+        try {
+            $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
 
-        // dd($request->all(), $idBarang, $barcode);
-        $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
+            if (!$detail) {
+                return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
+            }
 
-        if (!$detail) {
-            return redirect()->back()->with('error', 'Barang detail tidak ditemukan.');
+            $detail->statusDetailBarang = 1;
+            $detail->save();
+
+            // Fetch the related Barang
+            $barang = $detail->barang ?? \App\Models\Barang::where('idBarang', $idBarang)->first();
+
+            // Notify all owners (peran = 1)
+            $owners = \App\Models\Akun::where('peran', 1)->get();
+
+            foreach ($owners as $owner) {
+                Notifications::create([
+                    'idAkun' => $owner->idAkun,
+                    'title' => 'Barang Detail Dikembalikan',
+                    'message' => 'Salah satu detail barang telah dikembalikan (restore).',
+                    'data' => json_encode([
+                        'nama_barang' => $barang ? $barang->namaBarang : '-',
+                        'id_barang' => $barang ? $barang->idBarang : $idBarang,
+                        'restored_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Barang detail berhasil dikembalikan.');
+        } catch (\Exception $e) {
+            Log::error('Error restoring BarangDetail: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengembalikan barang detail. Silakan coba lagi.');
         }
-
-        $detail->statusDetailBarang = 1;
-        $detail->save();
-
-        return redirect()->back()->with('success', 'Barang detail berhasil dikembalikan.');
     }
+
 }

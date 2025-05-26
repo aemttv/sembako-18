@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Akun;
+use App\Models\Notifications;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SupplierController extends Controller
 {
@@ -33,23 +36,50 @@ class SupplierController extends Controller
 
     function tambahSupplier(Request $request) {
         
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        foreach ($request->supplier_input as $jsonItem) {
-            $item = json_decode($jsonItem, true);
+            $addedSuppliers = [];
 
-            $supplier = new Supplier();
-            $supplier->idSupplier = Supplier::generateNewIdSupplier();
-            $supplier->nama = $item['nama'];
-            $supplier->alamat = $item['alamat'];
-            $supplier->nohp = $item['no_hp'];
-            $supplier->status = 1;
-            $supplier->save();
+            foreach ($request->supplier_input as $jsonItem) {
+                $item = json_decode($jsonItem, true);
+
+                $supplier = new Supplier();
+                $supplier->idSupplier = Supplier::generateNewIdSupplier();
+                $supplier->nama = $item['nama'];
+                $supplier->alamat = $item['alamat'];
+                $supplier->nohp = $item['no_hp'];
+                $supplier->status = 1;
+                $supplier->save();
+
+                $addedSuppliers[] = $supplier;
+            }
+
+            DB::commit();
+
+            $owners = Akun::where('peran', 1)->get();
+
+            foreach ($addedSuppliers as $supplier) {
+                foreach ($owners as $o) {
+                    Notifications::create([
+                        'idAkun' => $o->idAkun,
+                        'title' => 'Supplier Baru Ditambahkan',
+                        'message' => 'Supplier baru telah ditambahkan.',
+                        'data' => json_encode([
+                            'nama_supplier' => $supplier->nama,
+                            'id_supplier' => $supplier->idSupplier,
+                            'added_by' => session('user_data')->nama ?? 'Unknown'
+                        ]),
+                    ]);
+                }
+            }
+
+            return redirect()->route('view.supplier')->with('success', 'Supplier berhasil ditambahkan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error adding supplier: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menambahkan supplier. Silakan coba lagi.');
         }
-
-        DB::commit();    
-
-        return redirect()->route('view.supplier')->with('success', 'Supplier berhasil ditambahkan');
     }
 
     function editSupplier(Request $request, $idSupplier) {
@@ -67,9 +97,23 @@ class SupplierController extends Controller
                 'alamat' => $request->alamat,
                 'status' => $request->status,
             ];
-            // dd($updateData);
             
             $supplier->update($updateData);
+
+            $owners = Akun::where('peran', 1)->get();
+
+            foreach ($owners as $o) {
+                Notifications::create([
+                    'idAkun' => $o->idAkun,
+                    'title' => 'Supplier Diperbarui',
+                    'message' => 'Informasi supplier telah diperbarui.',
+                    'data' => json_encode([
+                        'nama_supplier' => $supplier->nama,
+                        'id_supplier' => $supplier->idSupplier,
+                        'edited_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
 
             return redirect()->route('view.supplier')->with('success', 'Informasi Staff berhasil disimpan');
         } catch (\Exception $e) {

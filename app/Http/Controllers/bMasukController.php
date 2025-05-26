@@ -70,7 +70,7 @@ class bMasukController extends Controller
             $barangMasuk->idBarangMasuk = bMasuk::generateNewIdBarangMasuk();
             $barangMasuk->idSupplier = $request->supplier_id; // Bisa dari form
             $barangMasuk->idAkun = session('user_data')->idAkun; // Ambil dari session
-            $barangMasuk->tglMasuk = now();
+            $barangMasuk->tglMasuk = $request->tglMasuk; // Bisa dari form
             $barangMasuk->nota = $notaPath; // Simpan nama file
             $barangMasuk->save();
 
@@ -100,7 +100,7 @@ class bMasukController extends Controller
                 $newDetail->satuanBarang = 'PCS';
                 $newDetail->quantity = $item['kuantitas_masuk'];
                 $newDetail->hargaBeli = $item['harga_satuan'];
-                $newDetail->tglMasuk = now();
+                $newDetail->tglMasuk = $item['tanggal_masuk'];
                 $newDetail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
                 $newDetail->barcode = BarangDetail::generateBarcode();
                 $newDetail->save();

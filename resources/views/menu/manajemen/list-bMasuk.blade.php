@@ -49,7 +49,7 @@
                         <td class="px-4 py-2 text-center" colspan="10">Data Barang Masuk tidak ditemukan.</td>
                     @endif
                     @foreach ($bMasuk as $data)
-                        <tr>
+                        <tr class="hover:bg-blue-50">
                             <td class="px-4 py-2">{{ $data->idBarangMasuk }}</td>
                             <td class="px-4 py-2">{{ $data->idSupplier }}</td>
                             <td class="px-4 py-2">{{ $data->idAkun }}</td>

@@ -10,6 +10,7 @@ use App\Http\Controllers\bReturController;
 use App\Http\Controllers\bRusakController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Auth;
@@ -119,5 +120,5 @@ Route::get('/log', function () {
     return view('others.log');
 });
 
-
-
+Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');
+Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');

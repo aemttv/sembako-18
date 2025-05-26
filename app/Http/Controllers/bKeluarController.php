@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Akun;
 use App\Models\Barang;
 use App\Models\BarangDetail;
 use App\Models\bKeluar;
 use App\Models\bKeluarDetail;
+use App\Models\Notifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class bKeluarController extends Controller
 {
@@ -33,10 +36,8 @@ class bKeluarController extends Controller
     }
 
     public function buatBKeluar(Request $request) {
-
-        DB::beginTransaction();
-
-        // dd($request->all());
+        try {
+            DB::beginTransaction();
 
             $barangKeluar = new bKeluar();
             $barangKeluar->idBarangKeluar = bKeluar::generateNewIdBarangKeluar();
@@ -51,7 +52,6 @@ class bKeluarController extends Controller
                 // Create detail entry for barang keluar
                 $detail = new bKeluarDetail();
                 $detail->idDetailBK = bKeluarDetail::generateNewIdDetailBK();
-                // $detail->barcode = $item['barcode'];
                 $detail->idBarangKeluar = $barangKeluar->idBarangKeluar;
                 $detail->idBarang = $item['barang_id'];
                 $detail->jumlahKeluar = $item['kuantitas_keluar'];
@@ -64,18 +64,27 @@ class bKeluarController extends Controller
 
                 if ($barang) {
                     $barang->quantity -= $detail->jumlahKeluar;
-                    // dd($barang);
-
                     if ($barang->quantity <= 0) {
                         $barang->statusDetailBarang = 0;
                     }
                     $barang->save();
+
+                    // Collect item names and IDs for notification
+                    $itemNames[] = $barang->namaBarang ?? 'Barang Tidak Diketahui';
+                    $itemIds[] = $barang->idBarang ?? null;
                 } else {
+                    DB::rollBack();
                     return redirect()->back()->with('error', 'Data barang tidak ditemukan.');
                 }
             }
 
-        DB::commit();
-        return redirect()->back()->with('success', 'Data barang keluar berhasil disimpan.');
+            DB::commit();
+            
+            return redirect()->back()->with('success', 'Data barang keluar berhasil disimpan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error saving barang keluar: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data barang keluar. Silakan coba lagi.');
+        }
     }
 }

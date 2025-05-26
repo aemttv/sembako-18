@@ -52,7 +52,7 @@
                         </td>
                     @endif
                     @foreach ($supplier as $data)
-                        <tr>
+                        <tr class="hover:bg-blue-50">
                             <td class="px-4 py-2">{{ $data->idSupplier }}</td>
                             <td class="px-4 py-2">{{ $data->nama }}</td>
                             <td class="px-4 py-2">{{ $data->nohp }}</td>

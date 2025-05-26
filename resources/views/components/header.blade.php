@@ -22,17 +22,37 @@
 
         <!-- Notification Bell with Dropdown -->
         <div class="relative inline-block" id="notification-wrapper">
+            @php
+                // $hasNotifications = isset($globalNotifications) && $globalNotifications->count();
+                $hasUnread = isset($unreadNotifications) && $unreadNotifications->count();
+            @endphp
             <!-- Button -->
             <button id="notification-toggle"
                 class="relative w-14 h-14 flex items-center justify-center rounded-full border hover:bg-gray-100 focus:outline-none">
                 <i class="fas fa-bell text-gray-500"></i>
-                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full"></span>
+                @if($hasUnread)
+                    <span id="notif-dot" class="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full"></span>
+                @endif
             </button>
 
             <!-- Dropdown Menu -->
             <div id="notification-dropdown"
                 class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
-                <div class="p-4 border-b font-medium text-gray-700">Notifications</div>
+                <div class="p-4 border-b font-medium text-gray-700 flex items-center justify-between">
+                    <span class="text-base">Notifications</span>
+                    @if (isset($globalNotifications) && $globalNotifications->count())
+                        <form action="{{ route('notifications.clear') }}" method="POST"
+                            onsubmit="return confirm('Clear all notifications?');" class="h-full flex items-center">
+                            @csrf
+                            <button type="submit"
+                                class="text-xs text-red-500 hover:text-red-700 h-full py-0 px-2 leading-none flex items-center"
+                                title="Clear All Notifications">
+                                Clear Notification
+                            </button>
+                        </form>
+                    @endif
+                </div>
+
                 <ul class="max-h-60 overflow-y-auto divide-y divide-gray-100 text-sm">
                     @if (isset($globalNotifications) && $globalNotifications->count())
                         @foreach ($globalNotifications as $notif)
@@ -44,14 +64,29 @@
                                         $data = is_array($notif->data) ? $notif->data : json_decode($notif->data, true);
                                     @endphp
                                     @if (isset($data['nama_barang']))
-                                        : <span class="font-semibold">{{ $data['nama_barang'] }}</span>
-                                    @elseif(isset($data['retur_id']))
-                                        : <span class="font-semibold">Retur #{{ $data['retur_id'] }}</span>
+                                        : <span class="font-semibold">{{ $data['nama_barang'] }}
+                                            ({{ $data['id_barang'] }})</span>
+                                    @elseif (isset($data['nama_supplier']))
+                                        : <span class="font-semibold">{{ $data['nama_supplier'] }}
+                                            ({{ $data['id_supplier'] }})</span>
                                     @endif
+
+                                    @if (isset($data['idBarangRetur']))
+                                        <span class="font-semibold">: ID Retur ({{ $data['idBarangRetur'] }})</span>
+                                    @endif
+
                                     @if (isset($data['added_by']))
                                         <span class="text-xs text-gray-500"><br>by {{ $data['added_by'] }}</span>
                                     @elseif(isset($data['staff_nama']))
                                         <span class="text-xs text-gray-500"><br>by {{ $data['staff_nama'] }}</span>
+                                    @elseif(isset($data['deleted_by']))
+                                        <span class="text-xs text-gray-500"><br>by {{ $data['deleted_by'] }}</span>
+                                    @elseif(isset($data['restored_by']))
+                                        <span class="text-xs text-gray-500"><br>by {{ $data['restored_by'] }}</span>
+                                    @elseif(isset($data['validated_by']))
+                                        <span class="text-xs text-gray-500"><br>by {{ $data['validated_by'] }}</span>
+                                    @elseif(isset($data['rejected_by']))
+                                        <span class="text-xs text-gray-500"><br>by {{ $data['rejected_by'] }}</span>
                                     @endif
                                 </p>
                                 <span class="text-xs text-gray-400">
@@ -117,13 +152,28 @@
         const notifBtn = document.getElementById('notification-toggle');
         const notifDropdown = document.getElementById('notification-dropdown');
         const notifWrapper = document.getElementById('notification-wrapper');
+        const notifDot = document.getElementById('notif-dot');
+        let notifMarkedRead = false;
+
+        notifBtn.addEventListener('click', function(event) {
+            notifDropdown.classList.toggle('hidden');
+            // Only mark as read the first time dropdown is opened
+            if (!notifMarkedRead && notifDot && !notifDropdown.classList.contains('hidden')) {
+                fetch("{{ route('notifications.markAllRead') }}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Accept": "application/json"
+                    }
+                }).then(response => {
+                    notifMarkedRead = true;
+                    if (notifDot) notifDot.style.display = 'none';
+                });
+            }
+        });
 
         document.addEventListener('click', function(event) {
-            const isClickInside = notifWrapper.contains(event.target);
-
-            if (isClickInside) {
-                notifDropdown.classList.toggle('hidden');
-            } else {
+            if (!notifWrapper.contains(event.target)) {
                 notifDropdown.classList.add('hidden');
             }
         });

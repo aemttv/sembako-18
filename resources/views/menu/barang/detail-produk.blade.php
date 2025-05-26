@@ -60,7 +60,7 @@
                     <div class="space-y-4" x-data="{ imagePreview: null }">
                         <div class="space-y-4">
                             <label
-                                class="flex items-center justify-center border border-dashed bg-gray-50 rounded-md h-64 overflow-hidden relative cursor-pointer transition hover:border-blue-400"
+                                class="flex items-center justify-center border border-dashed bg-gray-50 rounded-md h-64 overflow-hidden relative transition"
                                 :class="editing ? 'hover:shadow-lg' : ''">
                                 <!-- Image or Placeholder -->
                                 <template x-if="!imagePreview">
@@ -219,7 +219,7 @@
                         <tbody>
                             @if ($barang->detailBarang->isEmpty())
                                 <tr>
-                                    <td class="px-4 py-2 border-b text-center" colspan="8">Detail Barang tidak
+                                    <td class="px-4 py-2 border-b text-center" colspan="10">Detail Barang tidak
                                         ditemukan.
                                     </td>
                                 </tr>
@@ -266,10 +266,10 @@
                                     <td class="px-4 py-2 border-b">
                                         <span
                                             @if ($detail->kondisiBarang == 'Kadaluarsa') class="text-red-600 font-bold"
-        @elseif($detail->kondisiBarang == 'Mendekati Kadaluarsa')
-            class="text-orange-500 font-semibold"
-        @else
-            class="text-green-600 font-semibold" @endif>
+                                            @elseif($detail->kondisiBarang == 'Mendekati Kadaluarsa')
+                                                class="text-orange-500 font-semibold"
+                                            @else
+                                                class="text-green-600 font-semibold" @endif>
                                             {{ $detail->kondisiBarang }}
                                         </span>
                                     </td>
@@ -370,12 +370,12 @@
                                             <td class="px-4 py-2 border-b">{{ $detailInactive->quantity }}</td>
                                             <td class="px-4 py-2 border-b">
                                                 <span
-                                                    @if ($detail->kondisiBarang == 'Kadaluarsa') class="text-red-600 font-bold"
-                                                            @elseif($detail->kondisiBarang == 'Mendekati Kadaluarsa')
+                                                    @if ($detailInactive->kondisiBarang == 'Kadaluarsa') class="text-red-600 font-bold"
+                                                            @elseif($detailInactive->kondisiBarang == 'Mendekati Kadaluarsa')
                                                                 class="text-orange-500 font-semibold"
                                                             @else
                                                                 class="text-green-600 font-semibold" @endif>
-                                                    {{ $detail->kondisiBarang }}
+                                                    {{ $detailInactive->kondisiBarang }}
                                                 </span>
                                             </td>
                                             

@@ -66,7 +66,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Tanggal Masuk</label>
-                                <input type="date" id="tanggal_masuk" class="w-full border rounded-md px-3 py-2"
+                                <input type="date" id="tanggal_masuk" name="tglMasuk" class="w-full border rounded-md px-3 py-2"
                                     value="{{ now()->format('Y-m-d') }}" max="{{ now()->addYear()->format('Y-m-d') }}" />
                             </div>
                             <div>

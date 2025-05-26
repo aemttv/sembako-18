@@ -23,7 +23,7 @@
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">No.HP/No.WA</label>
-                            <input type="text" id="no_hp"name="no_hp" class="w-full border rounded-md px-3 py-2"
+                            <input type="text" id="no_hp"name="no_hp" class="w-full border rounded-md px-3 py-2" maxlength="15"
                                 placeholder="08xxxxxxxx" />
                         </div>
                     </div>
