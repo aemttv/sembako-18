@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Notifications;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('*', function ($view) {
+            $notifications = [];
+            $user = session('user_data');
+            $idAkun = $user ? $user->idAkun : null;
+            if ($idAkun) {
+                $notifications = Notifications::where('idAkun', $idAkun)
+                    ->where('read', false)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+            $view->with('globalNotifications', $notifications);
+        });
     }
 }

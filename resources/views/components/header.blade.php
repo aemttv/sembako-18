@@ -1,6 +1,7 @@
 <!-- Top Navbar -->
 
-<header class="fixed top-0 left-80 right-0 shadow px-4 py-3 flex justify-between items-center z-10 bg-white border-b border-gray-200">
+<header
+    class="fixed top-0 left-80 right-0 shadow px-4 py-3 flex justify-between items-center z-10 bg-white border-b border-gray-200">
     <!-- Left section: Menu + Search -->
     <div class="flex items-center gap-3">
         <!-- Menu Button -->
@@ -33,28 +34,40 @@
                 class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
                 <div class="p-4 border-b font-medium text-gray-700">Notifications</div>
                 <ul class="max-h-60 overflow-y-auto divide-y divide-gray-100 text-sm">
-                    <!-- Dummy Notifications -->
-                    <li class="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                        <p class="text-gray-700">New item added: <span class="font-semibold">Susu UHT</span></p>
-                        <span class="text-xs text-gray-400">2 minutes ago</span>
-                    </li>
-                    <li class="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                        <p class="text-gray-700">Item returned: <span class="font-semibold">Ballpoint 0.5</span></p>
-                        <span class="text-xs text-gray-400">10 minutes ago</span>
-                    </li>
-                    <li class="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                        <p class="text-gray-700">Item damaged: <span class="font-semibold">Beras 5kg</span></p>
-                        <span class="text-xs text-gray-400">1 hour ago</span>
-                    </li>
-                    <li class="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                        <p class="text-gray-700">Stock low on <span class="font-semibold">Minyak Goreng</span></p>
-                        <span class="text-xs text-gray-400">3 hours ago</span>
-                    </li>
+                    @if (isset($globalNotifications) && $globalNotifications->count())
+                        @foreach ($globalNotifications as $notif)
+                            <li class="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                                <p class="text-gray-700">
+                                    {{ $notif->title }}
+                                    @php
+                                        // Decode data if it's a JSON string
+                                        $data = is_array($notif->data) ? $notif->data : json_decode($notif->data, true);
+                                    @endphp
+                                    @if (isset($data['nama_barang']))
+                                        : <span class="font-semibold">{{ $data['nama_barang'] }}</span>
+                                    @elseif(isset($data['retur_id']))
+                                        : <span class="font-semibold">Retur #{{ $data['retur_id'] }}</span>
+                                    @endif
+                                    @if (isset($data['added_by']))
+                                        <span class="text-xs text-gray-500"><br>by {{ $data['added_by'] }}</span>
+                                    @elseif(isset($data['staff_nama']))
+                                        <span class="text-xs text-gray-500"><br>by {{ $data['staff_nama'] }}</span>
+                                    @endif
+                                </p>
+                                <span class="text-xs text-gray-400">
+                                    {{ \Carbon\Carbon::parse($notif->created_at)->diffForHumans() }}
+                                </span>
+                            </li>
+                        @endforeach
+                    @else
+                        <li class="px-4 py-3 text-gray-500 text-center">No notifications</li>
+                    @endif
                 </ul>
-                <div class="text-center text-sm p-2 text-blue-500 hover:underline cursor-pointer">View all</div>
             </div>
+
+
         </div>
-        @if(session('user_logged_in'))
+        @if (session('user_logged_in'))
             <!-- Profile Section -->
             <div class="relative inline-block" id="profile-container">
                 <!-- Clickable Profile Area -->
@@ -68,12 +81,14 @@
                     class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     <ul class="text-gray-700 text-sm">
                         <li>
-                            <a href="{{ route('profile', session('idAkun')) }}" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                            <a href="{{ route('profile', session('idAkun')) }}"
+                                class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
                                 Profile
                             </a>
                         </li>
                         {{-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Settings</li> --}}
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="window.location.href='{{ route('logout') }}'">Logout</li>
+                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onclick="window.location.href='{{ route('logout') }}'">Logout</li>
                     </ul>
                 </div>
             </div>

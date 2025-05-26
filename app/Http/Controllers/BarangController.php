@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\enum\KategoriBarang;
+use App\Models\Akun;
 use App\Models\Barang;
 use App\Models\BarangDetail;
 use App\Models\bMerek;
+use App\Models\Notifications;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -318,6 +320,22 @@ class BarangController extends Controller
             }
 
             DB::commit();
+
+            $owner = Akun::where('peran', 1)->get();
+
+            foreach($owner as $o) {
+                Notifications::create([
+                    'idAkun' => $o->idAkun,
+                    'title' => 'Produk Baru Ditambahkan',
+                    'message' => 'Produk baru telah ditambahkan.',
+                    'data' => json_encode([
+                        'nama_barang' => $barang->namaBarang,
+                        'id_barang' => $barang->idBarang,
+                        'added_by' => session('user_data')->nama
+                    ]),
+                ]);
+            }
+
             return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
         } catch (\Exception $e) {
             DB::rollBack();

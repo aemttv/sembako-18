@@ -35,6 +35,7 @@ Route::middleware('web')->group(function () {
     Route::get('/tambah-produk', [BarangController::class, 'viewtambahProduk'])->name('view.tambah-produk');
     Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
+    Route::get('/merek/search', [BarangController::class, 'searchMerek']);
 
     Route::post('/barang-detail/{idBarang}/{barcode}/soft-delete', [BarangController::class, 'softDeleteBarangDetail'])->name('soft.delete.detail');
     Route::post('/barang-detail/{idBarang}/{barcode}/soft-update', [BarangController::class, 'softUpdateBarangDetail'])->name('soft.update.detail');
