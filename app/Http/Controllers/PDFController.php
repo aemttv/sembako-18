@@ -6,6 +6,7 @@ use App\Models\Akun;
 use App\Models\Barang;
 use App\Models\bKeluar;
 use App\Models\bMasuk;
+use App\Models\bRetur;
 use App\Models\Supplier;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -76,7 +77,7 @@ class PDFController extends Controller
             ->values();
 
         $pdf = Pdf::loadView('menu.laporan.pdf.bMasuk', compact('bMasuk', 'tglMasuk', 'tglAkhir', 'grandTotal', 'supplierAkunList'));
-        return $pdf->download('laporan-bmasuk.pdf');
+        return $pdf->stream('laporan-bmasuk.pdf');
     }
 
     function streamPDFbKeluar(Request $request) {
@@ -212,5 +213,73 @@ class PDFController extends Controller
         
         $pdf = Pdf::loadView('menu.laporan.pdf.stok', compact('barang', 'grandTotal', 'tglMasuk', 'tglAkhir'));
         return $pdf->stream('laporan-stok-barang.pdf');
+    }
+
+    function streamPDFbRetur(Request $request) {
+        
+        $query = bRetur::with('detailRetur.detailBarangRetur.barang', 'supplier');
+
+        $tglMasuk = $request->input('tanggal_awal');
+        $tglAkhir = $request->input('tanggal_akhir');
+
+        // Filter by date range if provided
+        if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
+            $query->whereBetween('tglRetur', [$request->tanggal_awal, $request->tanggal_akhir]);
+        } elseif ($request->filled('tanggal_awal')) {
+            $query->where('tglRetur', '>=', $request->tanggal_awal);
+        } elseif ($request->filled('tanggal_akhir')) {
+            $query->where('tglRetur', '<=', $request->tanggal_akhir);
+        }
+
+        // Search by keyword (e.g., namaBarang or idBarang)
+        if ($request->filled('search')) {
+    $search = $request->search;
+    $query->whereHas('detailRetur.detailBarangRetur.barang', function ($q) use ($search) {
+        $q->where('namaBarang', 'like', "%$search%")
+          ->orWhere('barcode', 'like', "%$search%");
+    });
+}
+
+        $bRetur = $query->get();
+
+        // Calculate grand total from all subtotal fields in detailMasuk
+        // $grandTotal = 0;
+        // foreach ($bRetur as $data) {
+        //     foreach ($data->detailRetur as $detail) {
+        //         $grandTotal += $detail->subtotal;
+        //     }
+        // }
+
+        // Collect unique supplier IDs and akun IDs from $bRetur
+        $idSuppliers = $bRetur->pluck('idSupplier')->unique()->filter();
+        $idAkuns = $bRetur->pluck('penanggungJawab')->unique()->filter();
+
+        // Fetch names from DB (Supplier and Akun models)
+        $suppliers = Supplier::whereIn('idSupplier', $idSuppliers)->pluck('nama', 'idSupplier');
+        $akuns = Akun::whereIn('idAkun', $idAkuns)->pluck('nama', 'idAkun');
+
+        // Prepare separate arrays
+        $supplierList = [];
+        foreach ($idSuppliers as $idSupplier) {
+            $supplierList[] = [
+                'idSupplier' => $idSupplier,
+                'namaSupplier' => $suppliers[$idSupplier] ?? '-',
+            ];
+        }
+
+        $akunList = [];
+        foreach ($idAkuns as $idAkun) {
+            $akunList[] = [
+                'idAkun' => $idAkun,
+                'namaAkun' => $akuns[$idAkun] ?? '-',
+            ];
+        }
+
+
+
+        // dd($supplierList, $akunList);
+
+        $pdf = Pdf::loadView('menu.laporan.pdf.bRetur', compact('bRetur', 'tglMasuk', 'tglAkhir', 'supplierList', 'akunList'));
+        return $pdf->stream('laporan-bRetur.pdf');
     }
 }

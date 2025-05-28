@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\bKeluar;
 use App\Models\bMasuk;
+use App\Models\bRetur;
+use App\Models\bRusak;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
@@ -171,5 +173,46 @@ class LaporanController extends Controller
         );
 
         return view('menu.laporan.stok', compact('barang'));
+    }
+
+    function viewbRetur() {
+        $bRetur = bRetur::with('detailRetur.detailBarangRetur.barang')->OrderBy('tglRetur', 'desc')->paginate(10);
+
+        return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
+    }
+
+    function searchBRetur(Request $request) {
+        $query = bRetur::with('detailRetur.detailBarangRetur.barang', 'supplier');
+
+        if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
+            $query->whereBetween('tglRetur', [$request->tanggal_awal, $request->tanggal_akhir]);
+        } elseif ($request->filled('tanggal_awal')) {
+            $query->where('tglRetur', '>=', $request->tanggal_awal);
+        } elseif ($request->filled('tanggal_akhir')) {
+            $query->where('tglRetur', '<=', $request->tanggal_akhir);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->with([
+                'detailRetur' => function ($q) use ($search) {
+                    $q->whereHas('detailBarangRetur.barang', function ($q2) use ($search) {
+                        $q2->where('namaBarang', 'like', "%$search%")->orWhere('barcode', 'like', "%$search%");
+                    });
+                },
+            ]);
+        }
+
+        $bRetur = $query->OrderBy('tglRetur', 'desc')->paginate(10);
+
+
+        return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
+    }
+
+    function viewbRusak() {
+        
+        $bRusak = bRusak::with('detailRusak.detailBarangRusak.barang')->OrderBy('tglRusak', 'desc')->paginate(10);
+
+        return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);
     }
 }

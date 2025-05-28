@@ -77,13 +77,10 @@
                     </div>
 
                     <!-- Buttons -->
-                    <div class="px-6 pb-6 flex justify-end gap-4">
+                    <div class="pt-4 flex justify-end gap-4">
                         <button id="addRow" type="button"
                             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Masukkan
                             Barang</button>
-                        <button type="button"
-                            class="px-4 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-100 transition"
-                            id="clearFields">Kosongkan Field</button>
                     </div>
                 </div>
             </div>
@@ -97,8 +94,8 @@
             <div class="mt-6 border rounded-lg bg-white shadow-sm">
                 <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Simulasi Barang Masuk</div>
                 <div class="p-6">
-                    <table id="barangTable" class="min-w-full table-auto border-separate border-spacing-0">
-                        <thead>
+                    <table id="barangTable" class="min-w-full border border-gray-300 text-sm">
+                        <thead class="bg-gray-100 uppercase text-md">
                             <tr>
                                 <th class="px-4 py-2 border-b">*</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>

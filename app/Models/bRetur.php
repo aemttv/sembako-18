@@ -51,6 +51,10 @@ class bRetur extends Model
         });
     }
 
+    function supplier() {
+        return $this->belongsTo(Supplier::class, 'idSupplier', 'idSupplier');
+    }
+
     public function detailRetur()
     {
         return $this->hasMany(bReturDetail::class, 'idBarangRetur', 'idBarangRetur');

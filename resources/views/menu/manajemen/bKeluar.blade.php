@@ -21,12 +21,13 @@
             <!-- Date, Cashier, Customer -->
             <div class="space-y-2 bg-white rounded-md shadow p-4">
                 <label class="block text-sm font-medium">Date</label>
-                <input type="date" id="tanggal_keluar_external" class="w-full border border-gray-300 rounded p-2" value="{{ now()->format('Y-m-d') }}">
+                <input type="date" id="tanggal_keluar_external" class="w-full border border-gray-300 rounded p-2"
+                    value="{{ now()->format('Y-m-d') }}" min="{{ now()->subMonth()->format('Y-m-d') }}"
+                    max="{{ now()->addYear()->format('Y-m-d') }}">
 
                 <div class="relative flex-grow">
                     <label class="block text-sm font-medium mb-2">Staff</label>
-                    <input id="nama_akun" type="text" class="w-full border border-gray-300 rounded p-2"
-                        value="{{ session('user_data')->nama }} ({{ session('user_data')->idAkun }})">
+                    <input id="nama_akun" type="text" class="w-full border border-gray-300 rounded p-2">
                     <div id="staff-suggestions"
                         class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
                         <!-- Suggestions will appear here -->
@@ -65,8 +66,12 @@
                     </div>
 
                     <label class="block text-sm font-medium">Qty</label>
-                    <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2" value="1"
-                        min="1">
+                    <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2" min="1"
+                        value="1" max="100"
+                        oninput="
+                            if(this.value.length > 3) this.value = this.value.slice(0,3);
+                            if(this.value == 0) this.value = 1;
+                        ">
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -106,7 +111,7 @@
                     </thead>
                     <tbody id="transaction-table-body">
                         <tr id="noDataRow">
-                            <td colspan="7" class="text-center text-gray-500 p-2">Tidak ada data</td>
+                            <td colspan="7" class="text-center text-gray-500 p-2">Tidak ada data barang keluar saat ini..</td>
                         </tr>
                     </tbody>
                 </table>
@@ -137,10 +142,9 @@
                     <label class="block text-sm font-medium">Note</label>
                     <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
 
-                    <div class="flex gap-2 mt-2">
-                        <button class="bg-yellow-500 text-white px-4 py-2 rounded">Cancel</button>
-                        <button id="process-button" class="bg-green-600 text-white px-4 py-2 rounded">Process</button>
-                    </div>
+                    
+                    <button id="process-button" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 mt-2 w-full text-center justify-center items-center">Process</button>
+                    
                 </div>
 
             </div>

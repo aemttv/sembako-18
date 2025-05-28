@@ -56,7 +56,7 @@
                             <tr>
                                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2">{{ $rusak->idBarangRusak }}</td>
-                                <td class="px-4 py-2">{{ $rusak->penanggungJawab }}</td>
+                                <td class="px-4 py-2">{{ $rusak->akun->nama }} ({{ $rusak->akun->idAkun }})</td>
                                 <td class="px-4 py-2">{{ \Carbon\Carbon::parse($rusak->tglRusak)->format('d M Y') }}</td>
                                 <td class="px-4 py-2">
                                     @if ($rusak->statusRusak == 2)

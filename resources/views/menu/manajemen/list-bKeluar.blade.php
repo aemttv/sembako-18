@@ -54,10 +54,8 @@
                             <td class="px-4 py-2">{{ $data->idAkun }}</td>
                             <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}
                             </td>
-                            <td class="px-4 py-2 flex gap-1 text-center items-center">
-                                {{-- <a href="{{route('detail.produk', ['idBarangMasuk' => $data->idBarangMasuk])}}" class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a> --}}
-                                <a href="{{route('detail.bKeluar', ['idBarangKeluar' => $data->idBarangKeluar])}}" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs">Detail</a>
-                                <a href="#" class="px-2 py-1 bg-red-500 text-white rounded text-xs">Hapus</a>
+                            <td class="px-4 py-2 text-center">
+                                <a href="{{route('detail.bKeluar', ['idBarangKeluar' => $data->idBarangKeluar])}}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Detail</a>
                             </td>
                         </tr>
                     @endforeach
@@ -66,7 +64,7 @@
         </div>
 
         <!-- Pagination -->
-        {{-- {{ $bMasuk->links() }} --}}
+        {{ $bKeluar->links() }}
     </div>
 
 @endsection

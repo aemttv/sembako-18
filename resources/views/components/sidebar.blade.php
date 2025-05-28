@@ -6,11 +6,10 @@
 <aside class="w-80 shadow-md">
     <div class="fixed top-0 bottom-0 flex flex-col justify-between border-e border-gray-100 bg-white w-80">
         <div class="px-4 py-2">
-            <div class="flex justify-center">
+            <a href="/dashboard" class="flex justify-center">
                 <img src="{{ asset('assets/images/logo_1.jpg') }}"
                     class="grid h-40 w-60 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600"></img>
-            </div>
-
+            </a>
             <ul class="mt-6 space-y-1">
                 <h2 class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Menu</h2>
                 <ul class="mt-2 space-y-1">
@@ -85,20 +84,6 @@
                                         Barang Keluar
                                     </a>
                                 </li>
-                                {{-- <li>
-                                    <a href="/barang-masuk"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
-                        {{ Request::is('barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        Form Barang Masuk
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/barang-keluar"
-                                        class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
-                        {{ Request::is('barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                        Form Barang Keluar
-                                    </a>
-                                </li> --}}
                             </ul>
                         </details>
                     </li>
@@ -155,7 +140,9 @@
                             $laporanOpen =
                                 Request::is('laporan-stok') ||
                                 Request::is('laporan-barang-masuk') ||
-                                Request::is('laporan-barang-keluar');
+                                Request::is('laporan-barang-keluar') ||
+                                Request::is('laporan-retur-barang') ||
+                                Request::is('laporan-barang-rusak');
                         @endphp
 
                         <li>
@@ -201,6 +188,20 @@
                                             class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                             L.Barang Keluar
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/laporan-barang-retur"
+                                            class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
+                {{ Request::is('laporan-retur-barang') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                            L.Retur Barang
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/laporan-barang-rusak"
+                                            class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
+                {{ Request::is('laporan-barang-rusak') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                            L.Barang Rusak
                                         </a>
                                     </li>
                                 </ul>

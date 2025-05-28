@@ -45,43 +45,39 @@
                                 </th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang Keluar</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Quantity
+                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Nama Barang</th>
+                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barcode</th>
+                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kuantitas
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Subtotal</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kategori Alasan</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Keterangan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @if ($bKeluar->detailKeluar > isEmpty())
+                            @if ($bKeluar->detailKeluar->isEmpty())
                                 <tr>
-                                    <td class="px-4 py-2 border-b text-center" colspan="8">Detail Barang tidak ditemukan.
+                                    <td class="px-4 py-2 border-b text-center" colspan="9">Detail Barang tidak ditemukan.
                                     </td>
                                 </tr>
-                            @endif --}}
+                            @endif
                             @foreach ($bKeluar->detailKeluar as $index => $detail)
-                                <tr>
+                                <tr class="hover:bg-blue-50">
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailBK }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarangKeluar }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->jumlahKeluar }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->subtotal }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->kategoriAlasan }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->keterangan }}</td>
                                     <td class="px-4 py-2 border-b">
-                                        {{-- <button
-                                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</button> --}}
-                                        {{-- <form
-                                            action="{{ route('soft.delete.detail', ['idBarang' => $detail->idBarang, 'barcode' => $detail->barcode]) }}"
-                                            method="POST">
-                                            @csrf
-                                            <button type="submit"
-                                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                                                Hapus
-                                            </button>
-                                        </form> --}}
+                                        {{ $detail->barangDetailKeluar->barang->namaBarang ?? '-' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barcode }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->jumlahKeluar }}</td>
+                                    <td class="px-4 py-2 border-b">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                     </td>
+                                    <td class="px-4 py-2 border-b 
+                                        @if ($detail->kategoriAlasan === \App\enum\Alasan::Terjual) text-green-700
+                                        @elseif($detail->kategoriAlasan) text-orange-700 @endif ">
+                                        {{ $detail->kategoriAlasan?->alasan() ?? '-' }}
                                     </td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->keterangan ?? '-'}}</td>
                                 </tr>
                             @endforeach
                         </tbody>

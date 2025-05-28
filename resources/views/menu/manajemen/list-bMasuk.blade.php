@@ -49,7 +49,7 @@
                         <td class="px-4 py-2 text-center" colspan="10">Data Barang Masuk tidak ditemukan.</td>
                     @endif
                     @foreach ($bMasuk as $data)
-                        <tr class="hover:bg-blue-50">
+                        <tr class="hover:bg-blue-50 h-12">
                             <td class="px-4 py-2">{{ $data->idBarangMasuk }}</td>
                             <td class="px-4 py-2">{{ $data->idSupplier }}</td>
                             <td class="px-4 py-2">{{ $data->idAkun }}</td>
@@ -60,12 +60,18 @@
                             </td>
                             <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->expiredDate)->translatedFormat('d F Y') }}
                             </td>
-                            <td class="px-4 py-2 text-center">
-                                <button onclick="showNotaModal('{{ asset('nota_file/' . $data->nota) }}')"
-                                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">
-                                    Lihat Nota
-                                </button>
-                            </td>
+                            @if ($data->nota != null)
+    <td class="px-4 py-2 text-center">
+        <button onclick="showNotaModal('{{ asset('nota_file/' . $data->nota) }}')"
+            class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">
+            Lihat Nota
+        </button>
+    </td>
+@else
+    <td class="px-4 py-2 text-center text-red-500">
+        <span class="px-4 py-2">Tidak ada nota</span>
+    </td>
+@endif
                             <td class="px-4 py-2 text-center">
                                 <a href="{{route('detail.bMasuk', ['idBarangMasuk' => $data->idBarangMasuk])}}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Detail</a>
                             </td>

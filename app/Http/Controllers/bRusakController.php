@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\enum\Alasan;
 use App\Models\BarangDetail;
 use App\Models\bRusak;
 use App\Models\bRusakDetail;
@@ -14,7 +15,7 @@ class bRusakController extends Controller
 {
     public function viewConfirmBRusak()
     {
-        $bRusak = bRusak::with(['detailRusak', 'detailRusak.barang']) // Load nested relationships
+        $bRusak = bRusak::with(['detailRusak', 'detailRusak.barang', 'akun']) // Load nested relationships
                     ->where('statusRusak', 2)
                     ->paginate(10);
 
@@ -34,11 +35,13 @@ class bRusakController extends Controller
     }
 
     function viewDetailBKeluar($idBarangRusak) {
-        $bRusak = bRusak::with(['detailRusak', 'detailRusak.barang']) // Load nested relationships
+        $bRusak = bRusak::with(['detailRusak.detailBarangRusak.barang']) // Load nested relationships
                     ->where('idBarangRusak', $idBarangRusak)
-                    ->first();
+                    ->firstOrFail();
 
-        return view('menu.icare.rusak.detail-bRusak', ['bRusak' => $bRusak]);
+        $kategoriAlasan = Alasan::cases();
+
+        return view('menu.icare.rusak.detail-bRusak', ['bRusak' => $bRusak, 'kategoriAlasan' => $kategoriAlasan]);
     }
 
     public function ajukanBRusak(Request $request) 

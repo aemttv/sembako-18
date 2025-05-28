@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\enum\Alasan;
+use App\enum\KategoriBarang;
 use App\Models\Akun;
 use App\Models\Barang;
 use App\Models\BarangDetail;
@@ -16,19 +18,23 @@ use Illuminate\Support\Facades\Log;
 class bKeluarController extends Controller
 {
     function viewBKeluar() {
-        $bKeluar = bKeluar::with('detailKeluar')->get();
+        Carbon::setLocale('id');
+        $bKeluar = bKeluar::with('detailKeluar')->paginate(10);
         return view('menu.manajemen.list-bKeluar', ['bKeluar' => $bKeluar]);
     }
 
-    function viewDetailBKeluar($idBarangKeluar) {
+    public function viewDetailBKeluar($idBarangKeluar) {
         Carbon::setLocale('id');
 
-        $bKeluar = bKeluar::with('detailKeluar')
+        $bKeluar = bKeluar::with([
+            'detailKeluar.barangDetailKeluar.barang'
+        ])
             ->where('idBarangKeluar', $idBarangKeluar)
-            ->firstOrFail(); // Changed from first() to firstOrFail()
+            ->firstOrFail(); 
 
+        $kategoriAlasan = Alasan::cases();
 
-        return view('menu.manajemen.detail-bKeluar', compact('bKeluar'));
+        return view('menu.manajemen.detail-bKeluar', compact('bKeluar', 'kategoriAlasan'));
     }
 
     function viewBuatBKeluar() {

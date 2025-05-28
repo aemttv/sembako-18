@@ -167,6 +167,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
+    function updateNoDataRow() {
+        const tableBody = document.getElementById('rusakTableBody');
+        const noDataRow = document.getElementById('noDataRow');
+        // Count rows that are NOT the placeholder
+        const dataRows = Array.from(tableBody.children).filter(
+            row => row.id !== 'noDataRow'
+        );
+        if (dataRows.length === 0) {
+            // Show placeholder if not present
+            if (!noDataRow) {
+                const tr = document.createElement('tr');
+                tr.id = 'noDataRow';
+                tr.innerHTML = `<td colspan="8" class="text-center text-gray-500 p-2">Tidak ada data</td>`;
+                tableBody.appendChild(tr);
+            }
+        } else {
+            // Remove placeholder if present
+            if (noDataRow) {
+                noDataRow.remove();
+            }
+        }
+    }
+
+
     const addRowBtn = document.getElementById('addRow');
     const rusakTableBody = document.getElementById('rusakTableBody');
     const hiddenRowsDiv = document.getElementById('hiddenRows');
@@ -185,19 +209,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const kategoriKetValue = kategoriKet.value;
         const tanggalRusak = document.getElementById('tanggal_rusak').value;
         const note = document.querySelector('textarea').value;
-
-        console.log([
-            namaAkun,
-            akunId,
-            namaBarang,
-            barangId,
-            kuantitas,
-            kategoriKetText,
-            kategoriKetValue,
-            tanggalRusak,
-            note,
-            stokInput,
-        ]);
 
         // Validate required fields
         if (!namaBarang || !barangId || !kuantitas) {
@@ -245,7 +256,10 @@ document.addEventListener('DOMContentLoaded', function () {
             newRow.remove();
             
             updateRowNumbers();
+            updateNoDataRow();
         });
+
+        updateNoDataRow();
 
         // Clear the form fields 
         document.getElementById('nama_barang').value = '';

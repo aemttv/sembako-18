@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\enum\Alasan;
 use App\Models\Akun;
 use App\Models\BarangDetail;
 use App\Models\bRetur;
@@ -28,11 +29,13 @@ class bReturController extends Controller
     }
 
     function viewDetailBKeluar($idBarangRetur) {
-        $bRetur = bRetur::with(['detailRetur', 'detailRetur.barang']) // Load nested relationships
+        $bRetur = bRetur::with(['detailRetur.detailBarangRetur.barang']) // Load nested relationships
                     ->where('idBarangRetur', $idBarangRetur)
-                    ->first();
+                    ->firstOrFail();
 
-        return view('menu.icare.retur.detail-bRetur', ['bRetur' => $bRetur]);
+        $kategoriAlasan = Alasan::cases();
+
+        return view('menu.icare.retur.detail-bRetur', ['bRetur' => $bRetur, 'kategoriAlasan' => $kategoriAlasan]);
     }
 
     function viewAjukanBRetur()

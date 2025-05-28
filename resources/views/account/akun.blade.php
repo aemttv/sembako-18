@@ -32,7 +32,7 @@
 
         <!-- Table -->
         <div class="border rounded-lg overflow-x-auto">
-            <table class="min-w-full text-lg text-left">
+            <table class="min-w-full text-lg text-center">
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-4 py-2">ID Akun</th>
@@ -58,10 +58,10 @@
                             <td class="px-4 py-2">{{ $data->email }}</td>
                             <td class="px-4 py-2">{{ $data->peran == 1 ? 'Owner' : 'Staff' }}</td>
                             <td class="px-4 py-2">{{ $data->statusAkun == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
-                            <td class="px-4 py-2 flex gap-1">
+                            <td class="px-4 py-2    ">
                                 <!-- Edit Button -->
                                 <button onclick="openEditModal('{{ $data->idAkun }}')" data-id="{{ $data->idAkun }}"
-                                    class="px-2 py-1 bg-blue-500 text-white rounded text-xs">
+                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
                                     Edit
                                 </button>
                             </td>

@@ -44,40 +44,29 @@
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Detail Barang Keluar</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang Keluar</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang</th>
+                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Nama Barang</th>
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Harga Beli
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kuantitas
                                 <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @if ($bKeluar->detailKeluar>isEmpty())
+                            @if ($bMasuk->detailMasuk->isEmpty())
                                 <tr>
                                     <td class="px-4 py-2 border-b text-center" colspan="8">Detail Barang tidak ditemukan.
                                     </td>
                                 </tr>
-                            @endif --}}
+                            @endif
                             @foreach ($bMasuk->detailMasuk as $index => $detail)
                                 <tr>
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailBM }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarangMasuk }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->barangDetail->barang->namaBarang }}</td>
                                     <td class="px-4 py-2 border-b">Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlahMasuk }}</td>
                                     <td class="px-4 py-2 border-b">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
-                                    {{-- <td class="px-4 py-2 border-b">
-                                        <button
-                                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</button>
-                                        <form
-                                            action="{{ route('soft.delete.detail', ['idBarang' => $detail->idBarang, 'barcode' => $detail->barcode]) }}"
-                                            method="POST">
-                                            @csrf
-                                            <button type="submit"
-                                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                                                Hapus
-                                            </button>
-                                        </form>
-                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

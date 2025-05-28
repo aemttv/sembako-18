@@ -37,38 +37,44 @@
             </div>
             <div class="p-6">
                 <div class="max-h-80 overflow-y-auto relative">
-                    <table class="min-w-full table-auto border-separate border-spacing-0 text-lg text-center items-center justify-center">
-                        <thead class="sticky top-0 bg-white z-10">
+                    <table class="min-w-full table-auto border-separate border-spacing-0 text-lg text-center items-center">
+                        <thead class="sticky top-0 bg-white">
                             <tr>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">No</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Detail Rusak ID</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barang Rusak ID</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barang Barcode</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Jumlah</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kategori Keterangan
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Keterangan</th>
+                                <th class="px-4 py-2 border-b border-gray-300">No</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Detail Rusak ID</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Barang Rusak ID</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Nama Barang</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Barang Barcode</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Jumlah</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Kategori Keterangan
+                                <th class="px-4 py-2 border-b border-gray-300">Keterangan</th>
                                 </th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Status</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Status</th>
                                 @if (isOwner())
-                                    <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Proses</th>
+                                    <th class="px-4 py-2 border-b border-gray-300">Proses</th>
                                 @endif
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="odd:bg-gray-100">
                             @if ($bRusak->detailRusak->isEmpty())
                                 <tr>
-                                    <td class="px-4 py-2 border-b text-center" colspan="8">Detail Barang tidak ditemukan.
+                                    <td class="px-4 py-2 border-b text-center" colspan="9">Detail Barang tidak ditemukan.
                                     </td>
                                 </tr>
                             @endif
                             @foreach ($bRusak->detailRusak as $index => $detail)
-                                <tr>
+                                <tr class="hover:bg-blue-50">
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailBR }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarangRusak }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->detailBarangRusak->barang->namaBarang ?? '-' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barcode }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlah }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->kategoriAlasan }}</td>
+                                    <td class="px-4 py-2 border-b 
+                                        @if ($detail->kategoriAlasan === \App\enum\Alasan::Terjual) text-green-700
+                                        @elseif($detail->kategoriAlasan) text-orange-700 @endif ">
+                                        {{ $detail->kategoriAlasan?->alasan() ?? '-' }}
+                                    </td>
                                     <td class="px-4 py-2 border-b">{{ $detail->keterangan }}</td>
                                     <td class="px-4 py-2 border-b">
                                         @if ($detail->statusRusakDetail == 2)

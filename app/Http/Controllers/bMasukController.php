@@ -41,7 +41,7 @@ class bMasukController extends Controller
     function viewDetailBMasuk($idBarangMasuk) {
         Carbon::setLocale('id');
 
-        $bMasuk = bMasuk::with('detailMasuk')
+        $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')
             ->where('idBarangMasuk', $idBarangMasuk)
             ->firstOrFail(); // Changed from first() to firstOrFail()
 
@@ -52,6 +52,19 @@ class bMasukController extends Controller
     public function tambahBMasuk(Request $request)
     {
         try {
+
+            $request->validate([
+    'nota_file' => [
+        'nullable',
+        'file',
+        'mimes:jpg,jpeg,png',
+        'max:2048',
+        'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'
+    ]
+], [
+    'nota_file.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
+]);
+
             DB::beginTransaction();
 
             // Simpan nota_file ke folder publik
@@ -110,7 +123,7 @@ class bMasukController extends Controller
             return redirect()->route('barang-masuk')->with('success', 'Barang Masuk berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }

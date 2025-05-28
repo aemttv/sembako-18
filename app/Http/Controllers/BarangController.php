@@ -119,11 +119,13 @@ class BarangController extends Controller
 
         $results = Barang::with([
             'detailBarang' => function ($queryBuilder) use ($query) {
-                $queryBuilder->where('barcode', 'like', "%$query%"); // load barcode
+                $queryBuilder->where('barcode', 'like', "%$query%") // load barcode
+                                ->where('statusDetailBarang', 1);
             },
         ])
             ->whereHas('detailBarang', function ($queryBuilder) use ($query) {
-                $queryBuilder->where('barcode', 'like', "%$query%"); // filterkan parent barang yang barcodenya related sama detailbarang
+                $queryBuilder->where('barcode', 'like', "%$query%")
+                                ->where('statusDetailBarang', 1); // filterkan parent barang yang barcodenya related sama detailbarang
             })
             ->select('idBarang') // barcode is in the relation
             ->get();
@@ -269,13 +271,21 @@ class BarangController extends Controller
         try {
             // Validate the request
             $request->validate([
-                'barang_image.*' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                'barang_image.*' => [
+                    'nullable',
+                    'file',
+                    'mimes:jpg,jpeg,png',
+                    'max:2048',
+                    'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'
+                ],
                 'items' => 'required|array',
                 'items.*.nama_barang' => 'required',
                 'items.*.merek_id' => 'required',
                 'items.*.kategori' => 'required',
                 'items.*.harga_satuan' => 'required|numeric',
                 'items.*.kuantitas_masuk' => 'required|numeric',
+            ],[
+                'barang_image.*.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
             ]);
 
             // Process images if any
@@ -357,7 +367,15 @@ class BarangController extends Controller
                 'kategori'       => 'required',
                 'harga_satuan'   => 'required|string', // Will be sanitized
                 'status_produk'  => 'required|in:0,1',
-                'gambarProduk'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'gambarProduk'   => [
+                    'nullable',
+                    'file',
+                    'mimes:jpg,jpeg,png',
+                    'max:2048',
+                    'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'
+                ],[
+                    'gambarProduk.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
+                ]
             ]);
 
             // Find the product

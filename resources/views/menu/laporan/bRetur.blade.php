@@ -5,17 +5,18 @@
         <!-- Header -->
         <div class="flex justify-between items-center">
             <div class="flex-1">
-                <h1 class="text-xl font-semibold">Laporan Stok</h1>
+                <h1 class="text-xl font-semibold">Laporan Retur Barang</h1>
             </div>
             <div class="text-right">
-                <p class="text-sm text-gray-500">Home > Laporan Stok</p>
+                <p class="text-sm text-gray-500">Home > Laporan Retur Barang</p>
             </div>
         </div>
 
         <!-- Tabs -->
+
         <div class="flex items-end gap-4 border rounded-lg p-4 bg-white flex-wrap">
             <!-- Filter & Actions -->
-            <form action="{{ route('laporan.StokBarang.search') }}" method="get" class="flex items-end gap-4 flex-wrap">
+            <form action="{{ route('laporan.bRetur.search') }}" method="get" class="flex items-end gap-4 flex-wrap">
                 <!-- Tanggal Mulai -->
                 <div class="flex flex-col">
                     <label for="tanggal_awal" class="text-sm text-gray-700 mb-1">Tanggal Mulai</label>
@@ -48,7 +49,7 @@
                 </div>
             </form>
             <!-- PDF Button -->
-            <form action="{{ route('streamPDF.StokBarang.view') }}" method="post" class="flex flex-col justify-end">
+            <form action="{{ route('streamPDF.bRetur.view') }}" method="post" class="flex flex-col justify-end">
                 @csrf
                 <input type="hidden" name="tanggal_awal" value="{{ request('tanggal_awal', '') }}">
                 <input type="hidden" name="tanggal_akhir" value="{{ request('tanggal_akhir', '') }}">
@@ -60,13 +61,13 @@
                 </button>
             </form>
 
-            <div class="flex flex-col justify-end">
-                <a href="{{route('laporan.StokBarang.view')}}" class="px-4 py-1.5 text-sm font-medium text-white bg-pink-500 rounded-md hover:bg-pink-600 h-[42px] text-center justify-center items-center"> Reset Filter </a>
+             <div class="flex flex-col justify-end">
+                <a href="{{route('laporan.bRetur.view')}}" class="px-4 py-1.5 text-sm font-medium text-white bg-pink-500 rounded-md hover:bg-pink-600 h-[42px] text-center justify-center items-center"> Reset Filter </a>
             </div>
 
             <!-- Search Input (Right aligned) -->
             <div class="flex-1 flex justify-end">
-                <form action="{{ route('laporan.StokBarang.search') }}" method="get" class="w-[280px]">
+                <form action="{{ route('laporan.bRetur.search') }}" method="get" class="w-[280px]">
                     <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 shadow-sm">
                         <i class="fas fa-search text-gray-400 mr-2"></i>
                         <input type="text" placeholder="Nama Barang / ID Barang" name="search"
@@ -86,39 +87,64 @@
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-4 py-2">#</th>
-                        <th class="px-4 py-2">ID Barang</th>
+                        <th class="px-4 py-2">ID Retur</th>
+                        <th class="px-4 py-2">ID Supplier</th>
+                        <th class="px-4 py-2">ID Akun</th>
+                        <th class="px-4 py-2">Barcode</th>
                         <th class="px-4 py-2">Nama Barang</th>
-                        <th class="px-4 py-2">Kategori</th>
-                        <th class="px-4 py-2">Merek</th>
-                        <th class="px-4 py-2">Stok Total</th>
-                        <th class="px-4 py-2">Harga Jual</th>
-                        <th class="px-4 py-2">Tanggal Awal Masuk</th>
+                        <th class="px-4 py-2">Kuantitas</th>
+                        <th class="px-4 py-2">Keterangan</th>
+                        <th class="px-4 py-2">Tanggal Retur</th>
+                        <th class="px-4 py-2">Status</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
-                    @php $no = 1; @endphp
-                    @foreach ($barang as $data)
+                    @php
+                        $totalDetails = 0;
+                        foreach ($bRetur as $data) {
+                            $totalDetails += $data->detailRetur->count();
+                        }
+                    @endphp
+                    @if ($totalDetails === 0)
                         <tr>
-                            <td class="px-4 py-2">{{ $no++ }}</td>
-                            <td class="px-4 py-2">{{ $data->idBarang }}</td>
-                            <td class="px-4 py-2 text-left">{{ $data->namaBarang ?? 'Nama Barang' }}</td>
-                            <td class="px-4 py-2">{{ $data->kategoriBarang->namaKategori() }}</td>
-                            <td class="px-4 py-2">{{ $data->merekBarangName }}</td>
-                            <td class="px-4 py-2">{{ $data->totalStok }}</td>
-                            <td class="px-4 py-2 text-right">Rp.{{ number_format($data->hargaJual, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2">
-                                {{ optional($data->detailBarang->sortBy('tglMasuk')->first())->tglMasuk
-                                    ? \Carbon\Carbon::parse($data->detailBarang->sortBy('tglMasuk')->first()->tglMasuk)->translatedFormat('d F Y')
-                                    : '-' }}
-                            </td>
+                            <td colspan="10" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
+                    @else
+                    @php $no = 1; @endphp
+                    @foreach ($bRetur as $data)
+                        @foreach ($data->detailRetur as $detail)
+                            <tr>
+                                <td class="px-4 py-2">{{ $no++ }}</td>
+                                <td class="px-4 py-2">{{ $detail->idBarangRetur }}</td>
+                                <td class="px-4 py-2">{{ $data->idSupplier }}</td>
+                                <td class="px-4 py-2">{{ $data->penanggungJawab }}</td>
+                                <td class="px-4 py-2">{{ $detail->detailBarangRetur->barcode }}</td>
+                                <td class="px-4 py-2  text-left">{{ $detail->detailBarangRetur->barang->namaBarang }}</td>
+                                <td class="px-4 py-2">{{ $detail->jumlah }}</td>
+                                <td>{{ $detail->kategoriAlasan->alasan() }}</td>
+                                <td class="px-4 py-2"> {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') }}</td>
+                                <td class="px-4 py-2">
+                                    @if ($data->statusRetur == 2)
+                                        <span class="text-yellow-500 font-semibold">Pending</span>
+                                    @elseif ($data->statusRetur == 1)
+                                        <span class="text-green-500 font-semibold">Approved</span>
+                                    @elseif ($data->statusRetur == 0)
+                                        <span class="text-red-500 font-semibold">Rejected</span>
+                                    @else
+                                        <span class="text-gray-500">Unknown</span>
+                                    @endif</td>
+                            </tr>
+                        @endforeach
                     @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        {{ $barang->links() }}
+        <div class="flex justify-between items-center text-sm text-gray-800">
+            {{ $bRetur->links() }}
+        </div>
     </div>
 
     <script>

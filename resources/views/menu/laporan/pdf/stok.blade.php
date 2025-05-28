@@ -96,6 +96,7 @@
     <div class="container">
         <div class="header" style="text-align: center; margin-bottom: 16px;">
     <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('assets/images/logo_1.jpg'))) }}" alt="Toko Sembako Logo" style="height: 65px; width: 200px; display: block; margin: 0 auto 10px auto;">
+    <h1 style="margin: 0; font-size: 22px;">TOKO SEMBAKO 18</h1>
     <h1 style="margin: 0; font-size: 22px;">LAPORAN STOK BARANG</h1>
 </div>
         <div class="container">

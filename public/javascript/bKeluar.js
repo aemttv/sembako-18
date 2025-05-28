@@ -74,6 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.addEventListener('click', function(e) {
                     if (!suggestionBox.contains(e.target) && e.target !== input) {
                         suggestionBox.classList.add('hidden');
+
+                        if (!hiddenInput.value) {
+                            input.value = ''
+                        }
                     }
                 });
             }
@@ -107,12 +111,18 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
 
             const barcode = document.getElementById('nama_barang').value;
-            if (!barcode) return;
+            if (!barcode) {
+                alert('Please input barcode.');
+                return;
+            }
 
             fetch(`/daftar-produk/search-detail?barcode=${encodeURIComponent(barcode)}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (!data) return;
+                    if (!data) {
+                        alert('Barcode not found.');
+                        return;
+                    };
 
                     // Fill popup content
                     document.getElementById('popup-barcode').innerText = data.barcode;
@@ -170,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Please enter a valid barcode and quantity.');
                     return;
                 }
-                
+
                 // Fetch detail based on barcode
                 let detail;
                 
@@ -183,7 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Barcode not found.');
                     return;
                 }
-                
+
+                if(qty > detail.stok) {
+                    alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
+                    return;
+                }
+                    
             
             const id = detail.idBarang;
             const name = detail.nama;

@@ -91,29 +91,6 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <!-- Checkbox -->
-                                    <div class="flex items-center justify-between">
-                                        <label for="rememberMe"
-                                            class="flex items-center text-sm font-normal text-gray-400 cursor-pointer select-none">
-                                            <div class="relative">
-                                                <input type="checkbox" id="rememberMe" class="sr-only" />
-                                                <div id="customCheckbox"
-                                                    class="custom-checkbox mr-3 flex h-5 w-5 items-center justify-center rounded-md border-[1.25px] border-gray-300 dark:border-gray-700 transition-colors">
-                                                    <svg width="14" height="14" viewBox="0 0 14 14"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M11.6666 3.5L5.24992 9.91667L2.33325 7" stroke="white"
-                                                            stroke-width="1.94437" stroke-linecap="round"
-                                                            stroke-linejoin="round" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            Keep me logged in
-                                        </label>
-
-                                        <a href="/reset-password.html"
-                                            class="text-sm text-gray-400 hover:text-gray-600">Forgot
-                                            password?</a>
-                                    </div>
                                     <!-- Button -->
                                     <div>
                                         <button type="submit"
@@ -123,14 +100,6 @@
                                     </div>
                                 </div>
                             </form>
-                            {{-- <div class="mt-5">
-                                <p
-                                    class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                                    Don't have an account?
-                                    <a href="/signup.html"
-                                        class="text-brand-500 hover:text-brand-600 dark:text-brand-400">Sign Up</a>
-                                </p>
-                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -141,22 +110,6 @@
 
         </div>
     </div>
-    <!-- ===== Page Wrapper End ===== -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const checkboxInput = document.getElementById('rememberMe');
-            const customCheckbox = document.getElementById('customCheckbox');
-    
-            // Update checkbox visual on click
-            checkboxInput.addEventListener('change', function () {
-                if (checkboxInput.checked) {
-                    customCheckbox.classList.add('checked');
-                } else {
-                    customCheckbox.classList.remove('checked');
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>

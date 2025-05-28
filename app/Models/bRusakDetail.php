@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\enum\Alasan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,10 @@ class bRusakDetail extends Model
 
     // You can also set the default guard if needed
     protected $guard = 'web';
+
+    protected $casts = [
+        'kategoriAlasan' => Alasan::class
+    ];
 
     /**
      * Generates a new idDetailRetur that doesn't already exist in the table.
@@ -70,5 +75,10 @@ class bRusakDetail extends Model
     public function barang()
     {
         return $this->belongsTo(Barang::class, 'idBarang', 'idBarang');
+    }
+
+    public function detailBarangRusak()
+    {
+        return $this->belongsTo(BarangDetail::class, 'idBarang', 'idBarang');
     }
 }

@@ -1,7 +1,13 @@
 @extends('layout')
 
 @section('content')
+
     <div class="p-6 space-y-4">
+        @if (session('success'))
+            <x-ui.alert type="success" :message="session('success')" />
+        @elseif (session('error'))
+            <x-ui.alert type="error" :message="session('error')" />
+        @endif
         <!-- Header -->
         <div class="flex justify-between items-center">
             <div class="flex-1">
@@ -24,7 +30,7 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">No.HP/No.WA</label>
                             <input type="text" id="no_hp"name="no_hp" class="w-full border rounded-md px-3 py-2" maxlength="15"
-                                placeholder="08xxxxxxxx" />
+                                placeholder="08xxxxxxxx/6281xxxxx" />
                         </div>
                     </div>
 
@@ -46,12 +52,9 @@
 
                     <!-- Buttons -->
                     <div class="pt-4 flex justify-end gap-4">
-                        <button id="addRow"
+                        <button id="addRow" type="button"
                             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Masukkan
                             Informasi Supplier</button>
-                        <button type="button"
-                            class="px-4 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-100 transition"
-                            id="clearFields">Kosongkan Field</button>
                     </div>
                 </div>
             </div>
@@ -150,8 +153,37 @@
 
             // Pastikan form bisa submit ke backend
             document.getElementById('submitData').addEventListener('click', function() {
-                // Di sini bisa tambahkan validasi jika diperlukan sebelum submit
+                
             });
+
+            
+            // Formatting and live validation for No HP
+            const inputNoHp = document.getElementById('no_hp');
+
+            // Create or get the error message element
+            let noHpError = document.getElementById('no_hp_error');
+            if (!noHpError && inputNoHp) {
+                noHpError = document.createElement('div');
+                noHpError.id = 'no_hp_error';
+                noHpError.className = 'text-red-500 text-xs mt-1';
+                noHpError.style.display = 'none';
+                inputNoHp.parentNode.appendChild(noHpError);
+            }
+
+            if (inputNoHp) {
+                inputNoHp.addEventListener('input', function() {
+                    const value = this.value.trim();
+                    if (!(value.startsWith('08') || value.startsWith('628'))) {
+                        this.classList.add('border-red-500');
+                        noHpError.textContent = 'No HP harus dimulai dengan 08 atau 628';
+                        noHpError.style.display = '';
+                    } else {
+                        this.classList.remove('border-red-500');
+                        noHpError.textContent = '';
+                        noHpError.style.display = 'none';
+                    }
+                });
+            }
         </script>
 
     </div>

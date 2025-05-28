@@ -29,7 +29,7 @@
                         Kembali
                     </a>
                     <span class="text-lg font-semibold text-gray-700">
-                        Daftar Detail Barang Rusak
+                        Daftar Detail Barang Retur
                         <span class="text-base font-normal text-gray-500">({{ $bRetur->idBarangRetur }})</span>
                     </span>
                 </div>
@@ -42,7 +42,8 @@
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">No</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Detail Retur ID</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Barang Retur ID</th>
-                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Barang Barcode</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Nama Barang</th>
+                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Barcode</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Jumlah</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Kategori Keterangan
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Keterangan</th>
@@ -59,15 +60,20 @@
                                 </tr>
                             @endif
                             @foreach ($bRetur->detailRetur as $index => $detail)
-                                <tr>
+                                <tr class="hover:bg-blue-50">
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailRetur }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarangRetur }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
                                     <td class="px-4 py-2 border-b">
                                         {{ $detail->barcode }}
                                     </td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlah }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->kategoriAlasan }}</td>
+                                    <td class="px-4 py-2 border-b 
+                                        @if ($detail->kategoriAlasan === \App\enum\Alasan::cacat) text-blue-700
+                                        @elseif($detail->kategoriAlasan) text-orange-700 @endif ">
+                                        {{ $detail->kategoriAlasan?->alasan() ?? '-' }}
+                                    </td>
                                     <td class="px-4 py-2 border-b">{{ $detail->keterangan }}</td>
                                     <td class="px-4 py-2 border-b">
                                         @if ($detail->statusReturDetail == 2)

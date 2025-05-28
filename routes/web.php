@@ -106,6 +106,16 @@ Route::middleware('web')->group(function () {
     Route::post('/laporan-stok/pdf/download', [PDFController::class, 'streamPDFStokBarang'])->name('streamPDF.StokBarang.view');
     Route::get('/laporan-stok', [LaporanController::class, 'viewStokBarang'])->name('laporan.StokBarang.view');
     Route::get('/laporan-stok/search', [LaporanController::class, 'searchStokBarang'])->name('laporan.StokBarang.search');
+
+    //barang rusak laporan
+    Route::post('/laporan-barang-rusak/pdf/download', [PDFController::class, 'streamPDFbRusak'])->name('streamPDF.bRusak.view');
+    Route::get('/laporan-barang-rusak', [LaporanController::class, 'viewbRusak'])->name('laporan.bRusak.view');
+    Route::get('/laporan-barang-rusak/search', [LaporanController::class, 'searchBRusak'])->name('laporan.bRusak.search');
+
+    //barang retur laporan
+    Route::post('/laporan-barang-retur/pdf/download', [PDFController::class, 'streamPDFbRetur'])->name('streamPDF.bRetur.view');
+    Route::get('/laporan-barang-retur', [LaporanController::class, 'viewbRetur'])->name('laporan.bRetur.view');
+    Route::get('/laporan-barang-retur/search', [LaporanController::class, 'searchBRetur'])->name('laporan.bRetur.search');
 });
 
 Route::middleware('web')->group(function () {

@@ -46,33 +46,49 @@
                         <div class="grid grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Harga Satuan</label>
-                                <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" />
+                                <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2"
+                                    maxlength="16" />
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Satuan</label>
                                 <input type="text" id="satuan"
-                                    class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="Pcs"
+                                    class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="Pcs/Eceran"
                                     readonly />
-                                {{-- <select id="satuan" class="w-full border rounded-md px-3 py-2">
-                                <option>Pcs</option>
-                                <option>Kg</option>
-                            </select> --}}
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
-                                <input type="number" id="kuantitas_masuk" class="w-full border rounded-md px-3 py-2" />
+                                <input type="number" id="kuantitas_masuk" class="w-full border rounded-md px-3 py-2"
+                                    min="1" value="1" max="100"
+                                    oninput="
+                                        if(this.value.length > 3) this.value = this.value.slice(0,3);
+                                        if(this.value == 0) this.value = 1;
+                                    " />
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Tanggal Masuk</label>
-                                <input type="date" id="tanggal_masuk" name="tglMasuk" class="w-full border rounded-md px-3 py-2"
-                                    value="{{ now()->format('Y-m-d') }}" max="{{ now()->addYear()->format('Y-m-d') }}" />
+                                <input type="date" id="tanggal_masuk" name="tglMasuk"
+                                    class="w-full border rounded-md px-3 py-2 @error('tglMasuk') border-red-500 @enderror"
+                                    value="{{ old('tglMasuk', now()->format('Y-m-d')) }}"
+                                    max="{{ now()->addYear()->format('Y-m-d') }}" onchange="updateMinExpiryDate()"
+                                    />
+                                @error('tglMasuk')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Tanggal Kadaluwarsa</label>
-                                <input type="date" id="tanggal_kadaluwarsa" class="w-full border rounded-md px-3 py-2"
-                                    value="{{ now()->addMonth()->format('Y-m-d') }}" />
+                                <input type="date" id="tanggal_kadaluwarsa" name="tglKadaluwarsa"
+                                    class="w-full border rounded-md px-3 py-2 @error('tglKadaluwarsa') border-red-500 @enderror"
+                                    value="{{ old('tglKadaluwarsa', now()->addMonth()->format('Y-m-d')) }}"
+                                    onchange="validateDates()"/>
+                                @error('tglKadaluwarsa')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
+                                <span id="date_error" class="text-red-500 text-xs" style="display:none;">
+                                    Tanggal kadaluwarsa harus setelah tanggal masuk.
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -111,20 +127,25 @@
                                     </div>
                                 </div>
                                 <p id="fileName" class="text-sm text-gray-600 mt-2"></p>
+                                <span class="text-xs text-orange-500 mt-1">
+                                            Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.
+                                        </span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Buttons -->
-                    <div class="px-6 pb-6 flex justify-end gap-4">
+                    {{-- <div class="px-6 pb-6 flex justify-end gap-4">
                         <button id="addRow" type="button"
                             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Masukkan
                             Barang</button>
-                        <button type="button"
-                            class="px-4 py-2 border border-gray-400 text-gray-700 rounded-md hover:bg-gray-100 transition"
-                            id="clearFields">Kosongkan Field</button>
-                    </div>
+                    </div> --}}
                 </div>
+            </div>
+
+            <div class="mt-6 border rounded-lg shadow-sm bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 text-center cursor-pointer"
+            id="addRow">
+                (+) Tambah Data Barang Ke Tabel
             </div>
 
             <div id="hiddenRows"></div>
@@ -145,7 +166,7 @@
                                 <th class="px-4 py-2 border-b">Proses</th>
                             </tr>
                         </thead>
-                        <tbody id="barangTableBody">
+                        <tbody id="barangTableBody" class="text-center">
                             <!-- Rows will be added here dynamically -->
                             <tr id="noDataRow">
                                 <td colspan="8" class="text-center text-gray-500 py-2">Tidak ada data</td>
@@ -243,6 +264,10 @@
                     document.addEventListener('click', function(e) {
                         if (!suggestionBox.contains(e.target) && e.target !== input) {
                             suggestionBox.classList.add('hidden');
+
+                            if (!hiddenInput.value) {
+                                input.value = ''
+                            }
                         }
                     });
                 }
@@ -327,6 +352,125 @@
                 }
             }
 
+            // Helper to format number as Rupiah
+            function formatRupiah(angka) {
+                if (!angka) return '';
+                let number_string = angka.replace(/[^,\d]/g, '').toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    rupiah += (sisa ? '.' : '') + ribuan.join('.');
+                }
+                rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+                return rupiah ? 'Rp. ' + rupiah : '';
+            }
+
+            // Helper to get only the numeric value
+            function getNumericValue(str) {
+                return str.replace(/[^0-9]/g, '');
+            }
+
+            function updateMinExpiryDate() {
+                const masuk = document.getElementById('tanggal_masuk');
+                const kadaluwarsa = document.getElementById('tanggal_kadaluwarsa');
+
+                // Get the selected date and add one day to it
+                const masukDate = new Date(masuk.value);
+                masukDate.setDate(masukDate.getDate() + 1);
+
+                // Format the date as YYYY-MM-DD
+                const minDate = masukDate.toISOString().split('T')[0];
+
+                // Set the min attribute of the expiry date input
+                kadaluwarsa.min = minDate;
+
+                // Validate the current expiry date
+                validateDates();
+            }
+
+            function validateDates() {
+                const masuk = document.getElementById('tanggal_masuk').value;
+                const kadaluwarsa = document.getElementById('tanggal_kadaluwarsa').value;
+                const errorSpan = document.getElementById('date_error');
+
+                if (masuk && kadaluwarsa) {
+                    const masukDate = new Date(masuk);
+                    const kadaluwarsaDate = new Date(kadaluwarsa);
+
+                    if (kadaluwarsaDate <= masukDate) {
+                        errorSpan.style.display = 'block';
+                        // Reset the expiry date to the minimum allowed date
+                        const minDate = new Date(masuk);
+                        minDate.setDate(minDate.getDate() + 1);
+                        document.getElementById('tanggal_kadaluwarsa').valueAsDate = minDate;
+                    } else {
+                        errorSpan.style.display = 'none';
+                    }
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const hargaSatuan = document.getElementById('harga_satuan');
+
+                // Create or get the error message element
+                let hargaSatuanError = document.getElementById('hargaSatuanError');
+                if (!hargaSatuanError && hargaSatuan) {
+                    hargaSatuanError = document.createElement('div');
+                    hargaSatuanError.id = 'hargaSatuanError';
+                    hargaSatuanError.className = 'text-red-500 text-xs mt-1';
+                    hargaSatuanError.style.display = 'none';
+                    hargaSatuan.parentNode.appendChild(hargaSatuanError);
+                }
+
+                if (hargaSatuan) {
+                    hargaSatuan.addEventListener('input', function(e) {
+                        let value = this.value.replace(/[^0-9]/g, '');
+                        if (value !== '' && !/^\d+$/.test(value)) {
+                            this.value = '';
+                            this.classList.add('border-red-500');
+                            hargaSatuanError.textContent = 'Harga Satuan hanya boleh angka!';
+                            hargaSatuanError.style.display = '';
+                            return;
+                        } else if (value === '' || Number(value) <= 0) {
+                            this.classList.add('border-red-500');
+                            hargaSatuanError.textContent = 'Harga Satuan harus berupa angka positif';
+                            hargaSatuanError.style.display = '';
+                        } else {
+                            this.classList.remove('border-red-500');
+                            hargaSatuanError.textContent = '';
+                            hargaSatuanError.style.display = 'none';
+                        }
+
+                        // Format as Rupiah for display
+                        this.value = formatRupiah(value);
+                    });
+
+                    // On focus, remove formatting for easier editing
+                    hargaSatuan.addEventListener('focus', function() {
+                        this.value = getNumericValue(this.value);
+                    });
+
+                    // On blur, reformat as Rupiah
+                    hargaSatuan.addEventListener('blur', function() {
+                        this.value = formatRupiah(this.value);
+                    });
+                }
+
+                // When adding row, get the numeric value for storage
+                const addRowBtn = document.getElementById('addRow');
+                if (addRowBtn) {
+                    addRowBtn.addEventListener('click', function() {
+                        if (hargaSatuan) {
+                            // Set a data attribute with the numeric value for use in the table/hidden input
+                            hargaSatuan.setAttribute('data-numeric', getNumericValue(hargaSatuan.value));
+                        }
+                    });
+                }
+            });
+
             // Menambahkan baris baru ke dalam tabel
             document.addEventListener('DOMContentLoaded', function() {
                 const addRowBtn = document.getElementById('addRow');
@@ -338,15 +482,28 @@
                 addRowBtn.addEventListener('click', function() {
                     const barangId = document.getElementById('barang_id').value;
                     const namaBarang = document.getElementById('nama_barang').value;
-                    const hargaSatuan = document.getElementById('harga_satuan').value;
+                    const hargaSatuanInput = document.getElementById('harga_satuan');
+                    const hargaSatuanNumeric = hargaSatuanInput.getAttribute('data-numeric') || '';
+                    const hargaSatuanFormatted = formatRupiah(hargaSatuanNumeric);
                     const satuan = document.getElementById('satuan').value;
                     const kuantitas = document.getElementById('kuantitas_masuk').value;
                     const tanggalMasuk = document.getElementById('tanggal_masuk').value;
                     const tanggalKadaluwarsa = document.getElementById('tanggal_kadaluwarsa').value;
 
-                    if (!barangId || !namaBarang || !hargaSatuan || !kuantitas || !tanggalMasuk) {
+                    if (!barangId || !namaBarang || !hargaSatuanFormatted || !kuantitas || !tanggalMasuk || !
+                        tanggalKadaluwarsa) {
                         alert('Mohon lengkapi semua field penting.');
                         return;
+                    }
+
+                    function formatTanggalMasuk(dateStr) {
+                        // dateStr is expected in 'YYYY-MM-DD'
+                        const months = [
+                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                        ];
+                        const [year, month, day] = dateStr.split('-');
+                        return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
                     }
 
                     // Tambahkan ke tabel tampilan
@@ -354,11 +511,11 @@
                     tr.innerHTML = `
                         <td class="px-4 py-2 border-b">${barangId}</td>
                         <td class="px-4 py-2 border-b">${namaBarang}</td>
-                        <td class="px-4 py-2 border-b">${hargaSatuan}</td>
+                        <td class="px-4 py-2 border-b">${hargaSatuanFormatted}</td>
                         <td class="px-4 py-2 border-b">${satuan}</td>
                         <td class="px-4 py-2 border-b">${kuantitas}</td>
-                        <td class="px-4 py-2 border-b">${tanggalMasuk}</td>
-                        <td class="px-4 py-2 border-b">${tanggalKadaluwarsa}</td>
+                        <td class="px-4 py-2 border-b">${formatTanggalMasuk(tanggalMasuk)}</td>
+                        <td class="px-4 py-2 border-b">${formatTanggalMasuk(tanggalKadaluwarsa)}</td>
                         <td class="px-4 py-2 border-b">
                             <button type="button" class="text-red-500 hover:underline remove-row" data-index="${rowIndex}">Hapus</button>
                         </td>
@@ -368,7 +525,7 @@
                     hiddenRows.insertAdjacentHTML('beforeend', `
                         <input type="hidden" name="items[${rowIndex}][barang_id]" value="${barangId}">
                         <input type="hidden" name="items[${rowIndex}][nama_barang]" value="${namaBarang}">
-                        <input type="hidden" name="items[${rowIndex}][harga_satuan]" value="${hargaSatuan}">
+                        <input type="hidden" name="items[${rowIndex}][harga_satuan]" value="${hargaSatuanNumeric}">
                         <input type="hidden" name="items[${rowIndex}][satuan]" value="${satuan}">
                         <input type="hidden" name="items[${rowIndex}][kuantitas_masuk]" value="${kuantitas}">
                         <input type="hidden" name="items[${rowIndex}][tanggal_masuk]" value="${tanggalMasuk}">
@@ -382,7 +539,7 @@
                     document.getElementById('nama_barang').value = '';
                     document.getElementById('barang_id').value = '';
                     document.getElementById('harga_satuan').value = '';
-                    document.getElementById('kuantitas_masuk').value = '';
+                    document.getElementById('kuantitas_masuk').value = '1';
                     document.getElementById('tanggal_kadaluwarsa').value = '';
                 });
 
@@ -406,7 +563,7 @@
                     document.getElementById('nama_barang').value = '';
                     document.getElementById('barang_id').value = '';
                     document.getElementById('harga_satuan').value = '';
-                    document.getElementById('kuantitas_masuk').value = '';
+                    document.getElementById('kuantitas_masuk').value = '1';
                     document.getElementById('tanggal_kadaluwarsa').value = '';
                 });
                 updateNoDataRow();
@@ -437,6 +594,7 @@
                     formData.append('nota_file', notaFile);
                 }
             });
+            updateMinExpiryDate();
         </script>
 
     </div>

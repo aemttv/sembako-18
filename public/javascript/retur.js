@@ -176,6 +176,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 .catch(err => console.error('Error loading detail:', err))
         })
 
+    function updateNoDataRow() {
+        const tableBody = document.getElementById('returTableBody');
+        const noDataRow = document.getElementById('noDataRow');
+        // Count rows that are NOT the placeholder
+        const dataRows = Array.from(tableBody.children).filter(
+            row => row.id !== 'noDataRow'
+        );
+        if (dataRows.length === 0) {
+            // Show placeholder if not present
+            if (!noDataRow) {
+                const tr = document.createElement('tr');
+                tr.id = 'noDataRow';
+                tr.innerHTML = `<td colspan="8" class="text-center text-gray-500 p-2">Tidak ada data</td>`;
+                tableBody.appendChild(tr);
+            }
+        } else {
+            // Remove placeholder if present
+            if (noDataRow) {
+                noDataRow.remove();
+            }
+        }
+    }
+
     // Close popup when clicking outside
     document.addEventListener('click', function (e) {
         const popup = document.getElementById('barcode-popup')
@@ -216,6 +239,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        if(kuantitas > stokInput) {
+            alert('Stok melebihi batas stok pada saat ini.')
+            return
+        }
+
         // Create a new table row
         rowCount++;
         const newRow = document.createElement('tr');
@@ -253,7 +281,10 @@ document.addEventListener('DOMContentLoaded', function () {
             newRow.remove();
             
             updateRowNumbers();
+            updateNoDataRow();
         });
+
+        updateNoDataRow();
 
         // Clear the form fields (except for staff and date)
         document.getElementById('nama_barang').value = '';

@@ -72,7 +72,8 @@
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Tanggal Rusak</label>
                                 <input type="date" id="tanggal_rusak" class="w-full border rounded-md px-3 py-2"
-                                    value="{{ now()->format('Y-m-d') }}" />
+                                    value="{{ now()->format('Y-m-d') }}" min="{{ now()->subMonth()->format('Y-m-d') }}"
+                                    max="{{ now()->addYear()->format('Y-m-d') }}" />
                             </div>
                         
                     </div>
@@ -89,8 +90,8 @@
                                 <label class="block text-sm text-gray-600 mb-1">Kategori Keterangan</label>
                                 <select name="kategoriKet" id="kategoriKet"
                                     class="w-full border border-gray-300 rounded p-2">
-                                    <option value="1" selected>Kadaluarsa</option>
-                                    <option value="2">Tidak Layak Dipakai</option>
+                                    <option value="5" selected>Kadaluarsa</option>
+                                    <option value="6">Tidak Layak Dipakai</option>
                                 </select>
                             </div>
                         </div>
@@ -118,8 +119,8 @@
             <div class="mt-6 border rounded-lg bg-white shadow-sm">
                 <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Simulasi Retur</div>
                 <div class="p-6">
-                    <table id="barangTable" class="min-w-full table-auto text-center">
-                        <thead>
+                    <table id="barangTable" class="min-w-full border border-gray-300 text-sm">
+                        <thead class="bg-gray-100 uppercase text-md">
                             <tr>
                                 <th class="px-4 py-2 border-b">No.</th>
                                 <th class="px-4 py-2 border-b">Penaggung Jawab</th>
@@ -131,8 +132,10 @@
                                 <th class="px-4 py-2 border-b">Proses</th>
                             </tr>
                         </thead>
-                        <tbody id="rusakTableBody">
-                            <!-- Rows will be added here dynamically -->
+                        <tbody id="rusakTableBody" class="text-center">
+                            <tr id="noDataRow">
+                                <td colspan="8" class="text-center text-gray-500 p-2">Tidak ada data</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

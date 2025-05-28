@@ -54,4 +54,8 @@ class bRusak extends Model
     {
         return $this->hasMany(bRusakDetail::class, 'idBarangRusak', 'idBarangRusak');
     }
+
+    function akun() {
+        return $this->belongsTo(Akun::class, 'penanggungJawab', 'idAkun');
+    }
 }
