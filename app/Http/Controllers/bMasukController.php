@@ -38,13 +38,43 @@ class bMasukController extends Controller
         return view('menu.manajemen.bMasuk', compact('suppliers'));
     }
 
-    function viewDetailBMasuk($idBarangMasuk) {
+    public function searchList(Request $request)
+    {
+        \Carbon\Carbon::setLocale('id');
+        $search = $request->input('q');
+
+        $bMasukQuery = \App\Models\bMasuk::with('detailMasuk');
+
+        // Example: search by idBarangMasuk or idSupplier (adjust fields as needed)
+        if ($search) {
+            $bMasukQuery->where(function ($query) use ($search) {
+                $query->where('idBarangMasuk', 'like', '%' . $search . '%')
+                      ->orWhere('idSupplier', 'like', '%' . $search . '%');
+            });
+        }
+
+        $bMasuk = $bMasukQuery->paginate(10)->appends(['q' => $search]);
+
+        $bMasuk->getCollection()->transform(function ($item) {
+            $item->quantity = $item->detailMasuk->sum('jumlahMasuk');
+            $item->hargaBeli = $item->detailMasuk->sum('hargaBeli');
+            $item->total = $item->detailMasuk->sum('subtotal');
+            $item->expiredDate = $item->detailMasuk->max('tglKadaluarsa');
+            $item->barcode = $item->detailMasuk->max('barcode');
+            return $item;
+        });
+
+        return view('menu.manajemen.list-bMasuk', [
+            'bMasuk' => $bMasuk,
+            'search' => $search,
+        ]);
+    }
+
+    function viewDetailBMasuk($idBarangMasuk)
+    {
         Carbon::setLocale('id');
 
-        $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')
-            ->where('idBarangMasuk', $idBarangMasuk)
-            ->firstOrFail(); // Changed from first() to firstOrFail()
-
+        $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')->where('idBarangMasuk', $idBarangMasuk)->firstOrFail(); // Changed from first() to firstOrFail()
 
         return view('menu.manajemen.detail-bMasuk', compact('bMasuk'));
     }
@@ -52,18 +82,14 @@ class bMasukController extends Controller
     public function tambahBMasuk(Request $request)
     {
         try {
-
-            $request->validate([
-    'nota_file' => [
-        'nullable',
-        'file',
-        'mimes:jpg,jpeg,png',
-        'max:2048',
-        'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'
-    ]
-], [
-    'nota_file.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
-]);
+            $request->validate(
+                [
+                    'nota_file' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048', 'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'],
+                ],
+                [
+                    'nota_file.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
+                ],
+            );
 
             DB::beginTransaction();
 
@@ -123,7 +149,9 @@ class bMasukController extends Controller
             return redirect()->route('barang-masuk')->with('success', 'Barang Masuk berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }

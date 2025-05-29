@@ -39,6 +39,43 @@ class bReturController extends Controller
         return view('menu.icare.retur.detail-bRetur', ['bRetur' => $bRetur, 'kategoriAlasan' => $kategoriAlasan]);
     }
 
+    function searchList(Request $request) {
+        $search = $request->input('q');
+
+        // Query for all bRetur with statusRetur = 2
+        $bReturQuery = bRetur::with(['detailRetur', 'detailRetur.barang'])
+            ->where('statusRetur', 2);
+
+        // Query for staff-specific bRetur
+        $staffBReturQuery = bRetur::with(['detailRetur', 'detailRetur.barang'])
+            ->where('statusRetur', 2)
+            ->where('penanggungJawab', session('idAkun'));
+
+        // Apply search filter if provided
+        if ($search) {
+            $bReturQuery->where(function ($query) use ($search) {
+                $query->where('idBarangRetur', 'like', '%' . $search . '%')
+                    ->orWhere('idSupplier', 'like', '%' . $search . '%')
+                    ->orWhere('penanggungJawab', 'like', '%' . $search . '%');
+            });
+
+            $staffBReturQuery->where(function ($query) use ($search) {
+                $query->where('idBarangRetur', 'like', '%' . $search . '%')
+                    ->orWhere('idSupplier', 'like', '%' . $search . '%')
+                    ->orWhere('penanggungJawab', 'like', '%' . $search . '%');
+            });
+        }
+
+        $bRetur = $bReturQuery->paginate(10)->appends(['q' => $search]);
+        $staffBRetur = $staffBReturQuery->paginate(10)->appends(['q' => $search]);
+
+        return view('menu.icare.retur.confirm-bRetur', [
+            'bRetur' => $bRetur,
+            'staffBRetur' => $staffBRetur,
+            'search' => $search,
+        ]);
+    }
+
     function viewAjukanBRetur()
     {
         return view('menu.icare.retur.tambah');

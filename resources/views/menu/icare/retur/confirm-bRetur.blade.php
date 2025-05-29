@@ -8,7 +8,7 @@
             <x-ui.alert type="error" :message="session('error')" />
         @endif
 
-        @if(isOwner())
+        @if (isOwner())
             <!-- Header -->
             <div class="flex justify-between items-center">
                 <div class="flex-1">
@@ -21,16 +21,22 @@
 
 
             <!-- Tabs -->
-            <div class="flex justify-between items-center gap-2 border rounded-lg p-2 bg-white">
-                <!-- Search Input Group -->
-                <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
-                    <i class="fas fa-search text-gray-400 mr-2"></i>
-                    <input type="text" placeholder="Search or type command..."
-                        class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
+            <div class="flex items-center justify-between border rounded-lg p-2 bg-white">
+                <!-- Centered Search Form -->
+                <div class="flex-1 flex justify-center">
+                    <form action="{{ route('bRetur.search') }}" method="GET"
+                        class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm h-11">
+                        <i class="fas fa-search text-gray-400 mr-2"></i>
+                        <input type="text" name="q" placeholder="ID Retur / ID Supplier / Penanggung Jawab..."
+                            value="{{ request('q') }}"
+                            class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400 h-full" />
+                    </form>
                 </div>
+                <!-- Button Far Right -->
                 <a href="/ajukan-retur"
-                    class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Ajukan Retur
-                    Barang</a>
+                    class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-11 flex items-center ml-4">
+                    Ajukan Retur Barang
+                </a>
             </div>
 
 
@@ -49,20 +55,19 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y">
-                    
+
                         @if ($bRetur->isEmpty())
                             <tr>
-                                <td class="px-4 py-2 border-b text-center" colspan="8">Tidak ada barang yang diajukan saat ini..</td>
+                                <td class="px-4 py-2 border-b text-center" colspan="8">Tidak ada barang yang diajukan
+                                    saat ini..</td>
                             </tr>
                         @endif
                         @foreach ($bRetur as $retur)
                             <tr class="hover:bg-blue-50 even:bg-gray-50">
                                 <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border-b">{{ $retur->idBarangRetur }}</td>
-                                <td class="px-4 py-2 border-b">{{ $retur->idSupplier }}</td>
-                                <td class="px-4 py-2 border-b">
-                                    {{ $retur->penanggungJawab ?? 'N/A' }}
-                                </td>
+                                <td class="px-4 py-2 border-b">{{ explode(' ', trim($retur->supplier->nama))[0] }} ({{ $retur->idSupplier ?? 'N/A' }})</td>
+                                <td class="px-4 py-2 border-b"> {{ explode(' ', trim($retur->akun->nama))[0] }} ({{ $retur->penanggungJawab ?? 'N/A' }}) </td>
                                 <td class="px-4 py-2 border-b">
                                     {{ \Carbon\Carbon::parse($retur->tglRetur)->format('d M Y') }}
                                 </td>
@@ -88,9 +93,8 @@
                 </table>
             </div>
 
-         <!-- Pagination -->
-        {{ $bRetur->links() }}
-
+            <!-- Pagination -->
+            {{ $bRetur->links() }}
         @else
             <!-- Header -->
             <div class="flex justify-between items-center">
@@ -103,18 +107,23 @@
             </div>
 
             <!-- Tabs -->
-            <div class="flex justify-between items-center gap-2 border rounded-lg p-2 bg-white">
-                <!-- Search Input Group -->
-                <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
-                    <i class="fas fa-search text-gray-400 mr-2"></i>
-                    <input type="text" placeholder="Search or type command..."
-                        class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
+            <div class="flex items-center justify-between border rounded-lg p-2 bg-white">
+                <!-- Centered Search Form -->
+                <div class="flex-1 flex justify-center">
+                    <form action="{{ route('bRetur.search') }}" method="GET"
+                        class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm h-11">
+                        <i class="fas fa-search text-gray-400 mr-2"></i>
+                        <input type="text" name="q" placeholder="ID Retur / ID Supplier / Penanggung Jawab..."
+                            value="{{ request('q') }}"
+                            class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400 h-full" />
+                    </form>
                 </div>
+                <!-- Button Far Right -->
                 <a href="/ajukan-retur"
-                    class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Ajukan Retur
-                    Barang</a>
+                    class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-11 flex items-center ml-4">
+                    Ajukan Retur Barang
+                </a>
             </div>
-
             <!-- Table -->
             <div class="border rounded-lg overflow-x-auto">
                 <table class="min-w-full text-lg text-center items-center">
@@ -130,10 +139,11 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y">
-                    
+
                         @if ($staffBRetur->isEmpty())
                             <tr>
-                                <td class="px-4 py-2 border-b text-center" colspan="8">Tidak ada barang yang diajukan saat ini..</td>
+                                <td class="px-4 py-2 border-b text-center" colspan="8">Tidak ada barang yang diajukan
+                                    saat ini..</td>
                             </tr>
                         @endif
                         @foreach ($staffBRetur as $retur)

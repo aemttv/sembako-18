@@ -17,31 +17,56 @@ use Illuminate\Support\Facades\Log;
 
 class bKeluarController extends Controller
 {
-    function viewBKeluar() {
+    function viewBKeluar()
+    {
         Carbon::setLocale('id');
         $bKeluar = bKeluar::with('detailKeluar')->paginate(10);
         return view('menu.manajemen.list-bKeluar', ['bKeluar' => $bKeluar]);
     }
 
-    public function viewDetailBKeluar($idBarangKeluar) {
+    public function viewDetailBKeluar($idBarangKeluar)
+    {
         Carbon::setLocale('id');
 
-        $bKeluar = bKeluar::with([
-            'detailKeluar.barangDetailKeluar.barang'
-        ])
+        $bKeluar = bKeluar::with(['detailKeluar.barangDetailKeluar.barang'])
             ->where('idBarangKeluar', $idBarangKeluar)
-            ->firstOrFail(); 
+            ->firstOrFail();
 
         $kategoriAlasan = Alasan::cases();
 
         return view('menu.manajemen.detail-bKeluar', compact('bKeluar', 'kategoriAlasan'));
     }
 
-    function viewBuatBKeluar() {
+    function viewBuatBKeluar()
+    {
         return view('menu.manajemen.bKeluar');
     }
 
-    public function buatBKeluar(Request $request) {
+    public function searchList(Request $request)
+    {
+        \Carbon\Carbon::setLocale('id');
+        $search = $request->input('q');
+
+        $bKeluarQuery = bKeluar::with('detailKeluar');
+
+        if ($search) {
+            $bKeluarQuery->where(function ($query) use ($search) {
+                $query
+                    ->where('invoice', 'like', '%' . $search . '%')
+                    ->orWhere('idAkun', 'like', '%' . $search . '%')
+                    ->orWhere('idBarangKeluar', 'like', '%' . $search . '%');
+            });
+        }
+
+        $bKeluar = $bKeluarQuery->paginate(10)->appends(['q' => $search]);
+
+        return view('menu.manajemen.list-bKeluar', [
+            'bKeluar' => $bKeluar,
+            'search' => $search,
+        ]);
+    }
+    public function buatBKeluar(Request $request)
+    {
         try {
             DB::beginTransaction();
 
@@ -85,7 +110,7 @@ class bKeluarController extends Controller
             }
 
             DB::commit();
-            
+
             return redirect()->back()->with('success', 'Data barang keluar berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();

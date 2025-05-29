@@ -45,6 +45,10 @@ class bMasuk extends Model
         });
     }
 
+    function supplier()  {
+        return $this->belongsTo(Supplier::class, 'idSupplier', 'idSupplier');
+    }
+
     function akun() {
         return $this->belongsTo(Akun::class, 'idAkun', 'idAkun');
     }

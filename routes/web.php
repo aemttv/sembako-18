@@ -38,6 +38,7 @@ Route::middleware('web')->group(function () {
     Route::get('/tambah-produk', [BarangController::class, 'viewtambahProduk'])->name('view.tambah-produk');
     Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
+    Route::get('/daftar-produk/list-search', [BarangController::class, 'searchList']);
     Route::get('/merek/search', [BarangController::class, 'searchMerek']);
 
     Route::post('/barang-detail/{idBarang}/{barcode}/soft-delete', [BarangController::class, 'softDeleteBarangDetail'])->name('soft.delete.detail');
@@ -59,6 +60,7 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-supplier', [SupplierController::class, 'viewSupplier'])->name('view.supplier');
     Route::get('/tambah-supplier', [SupplierController::class, 'viewTambahSupplier']);
     Route::get('/suppliers/search', [SupplierController::class, 'search']);
+    Route::get('/suppliers/list-search', [SupplierController::class, 'searchList']);
 });
 
 Route::middleware('web')->group(function () {
@@ -66,6 +68,7 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-barang-masuk', [bMasukController::class, 'viewBMasuk'])->name('view.bMasuk');
     Route::get('/barang-masuk', [bMasukController::class, 'viewTambahBMasuk'])->name('barang-masuk');
     Route::get('/barang-masuk/detail/{idBarangMasuk}', [bMasukController::class, 'viewDetailBMasuk'])->name('detail.bMasuk');
+    Route::get('/barang-masuk/list-search', [bMasukController::class, 'searchList']);
 });
 
 Route::middleware('web')->group(function () {
@@ -73,6 +76,7 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-barang-keluar', [bKeluarController::class, 'viewBKeluar'])->name('view.bKeluar');
     Route::get('/barang-keluar', [bKeluarController::class, 'viewBuatBKeluar'])->name('barang-keluar');
     Route::get('/barang-keluar/detail/{idBarangKeluar}', [bKeluarController::class, 'viewDetailBKeluar'])->name('detail.bKeluar');
+    Route::get('/barang-keluar/list-search', [bKeluarController::class, 'searchList'])->name('bkeluar.search');
 });
 Route::middleware('web')->group(function () {
     Route::post('/ajukan-retur/store', [bReturController::class, 'ajukanBRetur'])->name('AjukanBRetur.submit');
@@ -81,6 +85,7 @@ Route::middleware('web')->group(function () {
     Route::get('/konfirmasi-retur', [bReturController::class, 'viewConfirmBRetur'])->name('view.ConfirmBRetur');
     Route::get('/ajukan-retur', [bReturController::class, 'viewAjukanBRetur'])->name('view.AjukanBRetur');
     Route::get('/retur-barang/detail/{idBarangRetur}', [bReturController::class, 'viewDetailBKeluar'])->name('detail.bRetur');
+    Route::get('/retur-barang/list-search', [bReturController::class, 'searchList'])->name('bRetur.search');
 });
 
 Route::middleware('web')->group(function () {
@@ -91,6 +96,7 @@ Route::middleware('web')->group(function () {
     Route::get('/konfirmasi-rusak', [bRusakController::class, 'viewConfirmBRusak'])->name('view.ConfirmBRusak');
     Route::get('/ajukan-barang-rusak', [bRusakController::class, 'viewAjukanBRusak'])->name('view.AjukanBRusak');
     Route::get('/barang-rusak/detail/{idBarangRusak}', [bRusakController::class, 'viewDetailBKeluar'])->name('detail.bRusak');
+    Route::get('/barang-rusak/list-search', [bRusakController::class, 'searchList'])->name('bRusak.search');
 });
 
 Route::middleware('web')->group(function () {
@@ -128,7 +134,7 @@ Route::middleware('web')->group(function () {
     Route::get('/akun/search', [AkunController::class, 'search']);
 });
 
-Route::get('/backup', [BackupDBController::class, 'index']);
+Route::get('/backup', [BackupDBController::class, 'backup']);
 Route::get('/log', [LogController::class, 'index']);
 
 Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');

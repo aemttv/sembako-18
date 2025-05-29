@@ -30,27 +30,26 @@
                         Kembali
                     </a>
                     <span class="text-lg font-semibold text-gray-700">
-                        Daftar Detail Barang
+                        Daftar Detail Barang Keluar
                         <span class="text-base font-normal text-gray-500">({{ $bKeluar->idBarangKeluar }})</span>
                     </span>
                 </div>
             </div>
             <div class="p-6">
                 <div class="max-h-80 overflow-y-auto relative">
-                    <table class="min-w-full table-auto border-separate border-spacing-0">
+                    <table class="min-w-full table-auto border-separate border-spacing-0 text-lg text-center items-center">
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">No</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Detail Barang Keluar
-                                </th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang Keluar</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">ID Barang</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Nama Barang</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Barcode</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kuantitas
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Subtotal</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Kategori Alasan</th>
-                                <th class="px-4 py-2 border-b border-gray-300 text-left bg-white">Keterangan</th>
+                                <th class="px-4 py-2 border-b">No</th>
+                                <th class="px-4 py-2 border-b">ID Detail BK</th>
+                                <th class="px-4 py-2 border-b">ID Barang Keluar</th>
+                                <th class="px-4 py-2 border-b">ID Barang</th>
+                                <th class="px-4 py-2 border-b">Nama Barang</th>
+                                <th class="px-4 py-2 border-b">Barcode</th>
+                                <th class="px-4 py-2 border-b">Kuantitas
+                                <th class="px-4 py-2 border-b">Subtotal</th>
+                                <th class="px-4 py-2 border-b">Kategori Alasan</th>
+                                <th class="px-4 py-2 border-b">Keterangan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -66,11 +65,10 @@
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailBK }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarangKeluar }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
-                                    <td class="px-4 py-2 border-b">
-                                        {{ $detail->barangDetailKeluar->barang->namaBarang ?? '-' }}</td>
+                                    <td class="px-4 py-2 border-b text-left">{{ mb_strimwidth($detail->barangDetailKeluar->barang->namaBarang, 0, 40, '...') }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barcode }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlahKeluar }}</td>
-                                    <td class="px-4 py-2 border-b">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
+                                    <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                     </td>
                                     <td class="px-4 py-2 border-b 
                                         @if ($detail->kategoriAlasan === \App\enum\Alasan::Terjual) text-green-700

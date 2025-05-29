@@ -16,10 +16,10 @@ function openEditModal(idSupplier) {
     const cells = row.querySelectorAll('td');
     
     // Populate form with existing data
-    document.getElementById('editIdSupplier').value = cells[0].textContent.trim();
-    document.getElementById('editNama').value = cells[1].textContent.trim();
-    document.getElementById('editNoHp').value = cells[2].textContent.trim();
-    document.getElementById('editAlamat').value = cells[3].textContent.trim();
+    document.getElementById('editIdSupplier').value = cells[1].textContent.trim();
+    document.getElementById('editNama').value = cells[2].textContent.trim();
+    document.getElementById('editNoHp').value = cells[3].textContent.trim();
+    document.getElementById('editAlamat').value = cells[4].textContent.trim();
 
     // Set Status (1=Aktif, 0=Tidak Aktif)
     const statusText = cells[4].textContent.trim();

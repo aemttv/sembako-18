@@ -27,10 +27,6 @@
                 <div class="border rounded-lg bg-white shadow-sm">
                     <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Barang</div>
                     <div class="p-6 space-y-4">
-                        {{-- <div>
-                        <label class="block text-sm text-gray-600 mb-1">ID Barang Masuk</label>
-                        <input type="text" id="id_barang" class="w-full border rounded-md px-3 py-2" />
-                    </div> --}}
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
                             <input type="text" id="nama_barang" name="nama_barang"

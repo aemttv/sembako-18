@@ -27,7 +27,7 @@
                         <div class="relative w-full">
                         <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
                         <input type="text" id="nama_barang" name="nama_barang" class="w-full border rounded-md px-3 py-2"
-                            placeholder="Nama Barang..." autocomplete="off">
+                            placeholder="Nama Barang..." autocomplete="off" maxlength="100">
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Harga Jual</label>

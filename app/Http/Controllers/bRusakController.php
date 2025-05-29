@@ -17,37 +17,70 @@ class bRusakController extends Controller
 {
     public function viewConfirmBRusak()
     {
-        
         $bRusak = bRusak::with(['detailRusak', 'detailRusak.barang', 'akun']) // Load nested relationships
-                    ->where('statusRusak', 2)
-                    ->paginate(10);
+            ->where('statusRusak', 2)
+            ->paginate(10);
 
         $staffBRusak = bRusak::with(['detailRusak', 'detailRusak.barang']) // Load nested relationships
-                    ->where('statusRusak', 2)
-                    ->where('penanggungJawab', session('idAkun'))
-                    ->paginate(10);
+            ->where('statusRusak', 2)
+            ->where('penanggungJawab', session('idAkun'))
+            ->paginate(10);
 
         // dd($bRusak->items(),$staffBRusak->items());
 
         return view('menu.icare.rusak.confirm-bRusak', ['bRusak' => $bRusak, 'staffBRusak' => $staffBRusak]);
     }
 
-    public function viewAjukanBRusak() 
+    public function viewAjukanBRusak()
     {
         return view('menu.icare.rusak.tambah');
     }
 
-    function viewDetailBKeluar($idBarangRusak) {
+    public function searchList(Request $request)
+    {
+        $search = $request->input('q');
+
+        // Owner: all bRusak with statusRusak = 2
+        $bRusakQuery = bRusak::with(['detailRusak', 'detailRusak.barang', 'akun'])->where('statusRusak', 2);
+
+        // Staff: only bRusak assigned to this staff
+        $staffBRusakQuery = bRusak::with(['detailRusak', 'detailRusak.barang'])
+            ->where('statusRusak', 2)
+            ->where('penanggungJawab', session('idAkun'));
+
+        // Apply search filter if provided
+        if ($search) {
+            $bRusakQuery->where(function ($query) use ($search) {
+                $query->where('idBarangRusak', 'like', '%' . $search . '%')->orWhere('penanggungJawab', 'like', '%' . $search . '%');
+            });
+
+            $staffBRusakQuery->where(function ($query) use ($search) {
+                $query->where('idBarangRusak', 'like', '%' . $search . '%')->orWhere('penanggungJawab', 'like', '%' . $search . '%');
+            });
+        }
+
+        $bRusak = $bRusakQuery->paginate(10)->appends(['q' => $search]);
+        $staffBRusak = $staffBRusakQuery->paginate(10)->appends(['q' => $search]);
+
+        return view('menu.icare.rusak.confirm-bRusak', [
+            'bRusak' => $bRusak,
+            'staffBRusak' => $staffBRusak,
+            'search' => $search,
+        ]);
+    }
+
+    function viewDetailBKeluar($idBarangRusak)
+    {
         $bRusak = bRusak::with(['detailRusak.detailBarangRusak.barang']) // Load nested relationships
-                    ->where('idBarangRusak', $idBarangRusak)
-                    ->firstOrFail();
+            ->where('idBarangRusak', $idBarangRusak)
+            ->firstOrFail();
 
         $kategoriAlasan = Alasan::cases();
 
         return view('menu.icare.rusak.detail-bRusak', ['bRusak' => $bRusak, 'kategoriAlasan' => $kategoriAlasan]);
     }
 
-    public function ajukanBRusak(Request $request) 
+    public function ajukanBRusak(Request $request)
     {
         DB::beginTransaction();
 
@@ -120,7 +153,7 @@ class bRusakController extends Controller
                     'message' => 'Terdapat pengajuan rusak barang baru.',
                     'data' => json_encode([
                         'idBarangRusak' => $rusak->idBarangRusak,
-                        'added_by' => session('user_data')->nama ?? 'Unknown'
+                        'added_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
@@ -133,18 +166,19 @@ class bRusakController extends Controller
                     'message' => 'Pengajuan Barang Rusak Anda berhasil diajukan.',
                     'data' => json_encode([
                         'idBarangRusak' => $rusak->idBarangRusak,
-                        'added_by' => session('user_data')->nama ?? 'Unknown'
+                        'added_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
-            
-            return redirect()->route('view.AjukanBRusak')->with('success', 'Informasi Barang Rusak berhasil disimpan'); 
+
+            return redirect()->route('view.AjukanBRusak')->with('success', 'Informasi Barang Rusak berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
         }
     }
-
 
     /**
      * Validates a specific damaged item detail and updates the stock accordingly.
@@ -160,15 +194,13 @@ class bRusakController extends Controller
      * @return \Illuminate\Http\RedirectResponse A redirect response indicating success or failure.
      */
 
-    public function validBRusak($idDetailBR) {
+    public function validBRusak($idDetailBR)
+    {
         $detail = bRusakDetail::where('idDetailBR', $idDetailBR)->first();
         $detail->statusRusakDetail = 1; // approved
 
         // Find the pending BarangDetail (status 2, matching barcode and quantity)
-        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)
-            ->where('statusDetailBarang', 2)
-            ->where('quantity', $detail->jumlah)
-            ->first();
+        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)->where('statusDetailBarang', 2)->where('quantity', $detail->jumlah)->first();
 
         if (!$pendingBarang) {
             return redirect()->back()->with('error', 'Data barang (pending) tidak ditemukan.');
@@ -189,9 +221,7 @@ class bRusakController extends Controller
         }
 
         // Check if all details for this rusak are validated (status = 1)
-        $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)
-            ->where('statusRusakDetail', '!=', 1)
-            ->doesntExist();
+        $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)->where('statusRusakDetail', '!=', 1)->doesntExist();
 
         if ($allDetailsValidated) {
             // Update the main rusak status
@@ -212,7 +242,7 @@ class bRusakController extends Controller
                     'message' => 'Pengajuan rusak telah divalidasi.',
                     'data' => json_encode([
                         'idBarangRusak' => $bRusak->idBarangRusak,
-                        'validated_by' => session('user_data')->nama ?? 'Unknown'
+                        'validated_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
@@ -225,35 +255,31 @@ class bRusakController extends Controller
                     'message' => 'Pengajuan Barang Rusak Anda telah divalidasi.',
                     'data' => json_encode([
                         'idBarangRusak' => $bRusak->idBarangRusak,
-                        'validated_by' => session('user_data')->nama ?? 'Unknown'
+                        'validated_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
 
-            return redirect()->route('view.ConfirmBRusak')
-                ->with('success', 'Semua barang rusak telah divalidasi dan telah dikonfirmasi');
+            return redirect()->route('view.ConfirmBRusak')->with('success', 'Semua barang rusak telah divalidasi dan telah dikonfirmasi');
         }
 
-        return redirect()->route('detail.bRusak', ['idBarangRusak' => $detail->idBarangRusak])
+        return redirect()
+            ->route('detail.bRusak', ['idBarangRusak' => $detail->idBarangRusak])
             ->with('success', 'Informasi Barang Rusak berhasil diubah');
     }
 
-    public function rejectBRusak($idDetailBR) {
+    public function rejectBRusak($idDetailBR)
+    {
         // Update the detail status
         $detail = bRusakDetail::where('idDetailBR', $idDetailBR)->first();
         $detail->statusRusakDetail = 0; // rejected
         $detail->save();
 
         // Find the pending BarangDetail (status 2, matching barcode and quantity)
-        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)
-            ->where('statusDetailBarang', 2)
-            ->where('quantity', $detail->jumlah)
-            ->first();
+        $pendingBarang = BarangDetail::where('barcode', $detail->barcode)->where('statusDetailBarang', 2)->where('quantity', $detail->jumlah)->first();
 
         // Find the original active BarangDetail (status 1, same barcode)
-        $activeBarang = BarangDetail::where('barcode', $detail->barcode)
-            ->where('statusDetailBarang', 1)
-            ->first();
+        $activeBarang = BarangDetail::where('barcode', $detail->barcode)->where('statusDetailBarang', 1)->first();
 
         if ($pendingBarang && $activeBarang) {
             // Restore the quantity
@@ -269,9 +295,7 @@ class bRusakController extends Controller
         }
 
         // Check if all details for this rusak are validated (status = 0)
-        $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)
-            ->where('statusRusakDetail', '!=', 0)
-            ->doesntExist();
+        $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)->where('statusRusakDetail', '!=', 0)->doesntExist();
 
         if ($allDetailsValidated) {
             // Update the main rusak status
@@ -292,7 +316,7 @@ class bRusakController extends Controller
                     'message' => 'Pengajuan rusak telah ditolak.',
                     'data' => json_encode([
                         'idBarangRusak' => $bRusak->idBarangRusak,
-                        'rejected_by' => session('user_data')->nama ?? 'Unknown'
+                        'rejected_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
@@ -305,17 +329,16 @@ class bRusakController extends Controller
                     'message' => 'Pengajuan rusak telah ditolak.',
                     'data' => json_encode([
                         'idBarangRusak' => $bRusak->idBarangRusak,
-                        'rejected_by' => session('user_data')->nama ?? 'Unknown'
+                        'rejected_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
 
-            return redirect()->route('view.ConfirmBRusak')
-                ->with('success', 'Semua barang rusak telah ditolak');
+            return redirect()->route('view.ConfirmBRusak')->with('success', 'Semua barang rusak telah ditolak');
         }
 
-        return redirect()->route('detail.bRusak', ['idBarangRusak' => $detail->idBarangRusak])
+        return redirect()
+            ->route('detail.bRusak', ['idBarangRusak' => $detail->idBarangRusak])
             ->with('success', 'Informasi Barang Rusak berhasil diubah');
     }
-
 }

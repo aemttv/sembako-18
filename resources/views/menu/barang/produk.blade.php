@@ -22,11 +22,16 @@
         <!-- Tabs -->
         <div class="flex justify-between items-center gap-2 border rounded-lg p-2 bg-white">
             <!-- Search Input Group -->
-            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
+            <form action="{{ url('/daftar-produk/list-search') }}" method="GET" class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
                 <i class="fas fa-search text-gray-400 mr-2"></i>
-                <input type="text" placeholder="Search or type command..."
-                    class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
-            </div>
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Nama Barang / ID Barang"
+                    class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400"
+                    value="{{ request('q') }}"
+                />
+            </form>
             <a href="/tambah-produk"
                 class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah
                 Produk</a>
@@ -78,7 +83,7 @@
                     @foreach ($barang as $data)
                         <tr class="hover:bg-blue-50 even:bg-gray-50">
                             <td class="px-4 py-2">{{ $data->idBarang }}</td>
-                            <td class="px-4 py-2">{{ $data->namaBarang }}</td>
+                            <td class="px-4 py-2 text-left">{{ mb_strimwidth($data->namaBarang, 0, 65, '...') }}</td>
                             <td class="px-4 py-2">{{ $data->merekBarangName }}</td>
                             <td class="px-4 py-2">{{ $data->kategoriBarang->namaKategori() ?? '-'}}</td>
                             <td class="px-4 py-2">{{ $data->totalStok }}</td>

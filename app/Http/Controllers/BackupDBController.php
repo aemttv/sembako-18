@@ -6,64 +6,45 @@ use Illuminate\Http\Request;
 
 class BackupDBController extends Controller
 {
-    public function index()
+    public function backup()
     {
+        // Define backup file name and path
         $fileName = 'backup-' . date('Y-m-d_H-i-s') . '.sql';
         $storagePath = storage_path('app/backup');
         $filePath = $storagePath . '/' . $fileName;
 
+        // Ensure backup directory exists
         if (!is_dir($storagePath)) {
             mkdir($storagePath, 0755, true);
         }
 
+        // Get DB connection config
         $connection = config('database.default');
         $db = config("database.connections.$connection.database");
         $user = config("database.connections.$connection.username");
         $pass = config("database.connections.$connection.password");
         $host = config("database.connections.$connection.host");
 
-        // Use full path to mysqldump if needed (especially on Windows/XAMPP)
-        $mysqldump = 'mysqldump';
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            // Adjust this path if your mysqldump.exe is elsewhere
-            $mysqldump = 'C:\\xampp\\mysql\\bin\\mysqldump.exe';
-        }
+        // Build the mysqldump command (for MySQL)
+        $command = sprintf(
+            'mysqldump --user=%s --password=%s --host=%s %s > %s',
+            escapeshellarg($user),
+            escapeshellarg($pass),
+            escapeshellarg($host),
+            escapeshellarg($db),
+            escapeshellarg($filePath)
+        );
 
-        // Build the command, omitting --password if empty
-        if (!empty($pass)) {
-            $command = sprintf(
-                '"%s" --user=%s --password=%s --host=%s %s > "%s"',
-                $mysqldump,
-                escapeshellarg($user),
-                escapeshellarg($pass),
-                escapeshellarg($host),
-                escapeshellarg($db),
-                $filePath
-            );
-        } else {
-            $command = sprintf(
-                '"%s" --user=%s --host=%s %s > "%s"',
-                $mysqldump,
-                escapeshellarg($user),
-                escapeshellarg($host),
-                escapeshellarg($db),
-                $filePath
-            );
-        }
-
+        // Execute the command
         $result = null;
         $output = null;
         exec($command . ' 2>&1', $output, $result);
 
         if ($result !== 0) {
-            dd([
-                'command' => $command,
-                'output' => $output,
-                'result' => $result,
-                'file_exists' => file_exists($filePath),
-            ]);
+            return back()->with('error', 'Database backup failed. Please check server permissions and configuration.');
         }
 
-        return redirect()->back()->with('success', 'Database backup created successfully! File: ' . $fileName);
+        // Return the backup file as a download response
+        return response()->download($filePath)->deleteFileAfterSend(true);
     }
 }

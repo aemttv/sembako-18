@@ -65,7 +65,7 @@
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailRetur }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarangRetur }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ mb_strimwidth($detail->detailBarangRetur->barang->namaBarang, 0, 40, '...' ?? '-')}}</td>
                                     <td class="px-4 py-2 border-b">
                                         {{ $detail->barcode }}
                                     </td>

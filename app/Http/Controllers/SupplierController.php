@@ -18,7 +18,8 @@ class SupplierController extends Controller
         return view('menu.supplier.indexSupplier', ['supplier' => $supplier]);
     }
 
-    function viewTambahSupplier() {
+    function viewTambahSupplier()
+    {
         return view('menu.supplier.tambah');
     }
 
@@ -28,14 +29,33 @@ class SupplierController extends Controller
 
         // Search for suppliers with names that contain the query string
         $suppliers = Supplier::where('nama', 'like', "%$query%")
-                            ->select('idSupplier', 'nama')
-                            ->get();  // Only retrieve id and name fields for efficiency
+            ->select('idSupplier', 'nama')
+            ->get(); // Only retrieve id and name fields for efficiency
 
         return response()->json($suppliers); // Return matched suppliers as JSON
     }
 
-    function tambahSupplier(Request $request) {
-        
+    function searchList(Request $request)
+    {
+        $search = $request->input('q');
+
+        $supplier = Supplier::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama', 'like', '%' . $search . '%')->orWhere('idSupplier', 'like', '%' . $search . '%');
+                });
+            })
+            ->paginate(10)
+            ->appends(['q' => $search]);
+
+        return view('menu.supplier.indexSupplier', [
+            'supplier' => $supplier,
+            'search' => $search,
+        ]);
+    }
+
+    function tambahSupplier(Request $request)
+    {
         try {
             DB::beginTransaction();
 
@@ -68,7 +88,7 @@ class SupplierController extends Controller
                         'data' => json_encode([
                             'nama_supplier' => $supplier->nama,
                             'id_supplier' => $supplier->idSupplier,
-                            'added_by' => session('user_data')->nama ?? 'Unknown'
+                            'added_by' => session('user_data')->nama ?? 'Unknown',
                         ]),
                     ]);
                 }
@@ -82,13 +102,15 @@ class SupplierController extends Controller
         }
     }
 
-    function editSupplier(Request $request, $idSupplier) {
+    function editSupplier(Request $request, $idSupplier)
+    {
         try {
-
             $supplier = Supplier::where('idSupplier', $idSupplier)->first();
 
             if (!$supplier) {
-                return redirect()->route('view.akun')->with(['success' => false, 'message' => 'Supplier not found'], 404);
+                return redirect()
+                    ->route('view.akun')
+                    ->with(['success' => false, 'message' => 'Supplier not found'], 404);
             }
 
             $updateData = [
@@ -97,7 +119,7 @@ class SupplierController extends Controller
                 'alamat' => $request->alamat,
                 'status' => $request->status,
             ];
-            
+
             $supplier->update($updateData);
 
             $owners = Akun::where('peran', 1)->get();
@@ -110,7 +132,7 @@ class SupplierController extends Controller
                     'data' => json_encode([
                         'nama_supplier' => $supplier->nama,
                         'id_supplier' => $supplier->idSupplier,
-                        'edited_by' => session('user_data')->nama ?? 'Unknown'
+                        'edited_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }

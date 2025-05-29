@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Log;
 
 class BarangController extends Controller
 {
-
     /**
      * View all products with their details and stock.
      *
@@ -28,10 +27,12 @@ class BarangController extends Controller
     public function viewBarang()
     {
         // Eager load both 'detailBarang' and 'merek' relationships
-        $barang = Barang::with(['detailBarang' => function($query) {
-            $query->where('statusDetailBarang', 1);
-        }, 'merek'])
-        ->paginate(10);
+        $barang = Barang::with([
+            'detailBarang' => function ($query) {
+                $query->where('statusDetailBarang', 1);
+            },
+            'merek',
+        ])->paginate(10);
 
         // Transform the collection to include dynamic values
         $barang->getCollection()->transform(function ($item) {
@@ -40,7 +41,7 @@ class BarangController extends Controller
 
             // Determine kondisiBarangText based on string value in detailBarang
             // Priority: Kadaluarsa > Mendekati Kadaluarsa > Baik
-            // pluck -> extract semua value dari kondisiBarang dan return sebagai array baru 
+            // pluck -> extract semua value dari kondisiBarang dan return sebagai array baru
             $kondisiList = $item->detailBarang->pluck('kondisiBarang')->all();
 
             if (in_array('Kadaluarsa', $kondisiList, true)) {
@@ -107,6 +108,50 @@ class BarangController extends Controller
 
         return response()->json($results);
     }
+    public function searchList(Request $request)
+    {
+        $search = $request->input('q');
+
+        $barangQuery = Barang::with([
+            'detailBarang' => function ($query) {
+                $query->where('statusDetailBarang', 1);
+            },
+            'merek',
+        ]);
+
+        // Only search by namaBarang and idBarang
+        $barangQuery->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('namaBarang', 'like', '%' . $search . '%')->orWhere('idBarang', 'like', '%' . $search . '%');
+            });
+        });
+
+        $barang = $barangQuery->paginate(10)->appends($request->only(['q']));
+
+        // Transform the collection to include dynamic values
+        $barang->getCollection()->transform(function ($item) {
+            $item->totalStok = $item->detailBarang->sum('quantity');
+            $kondisiList = $item->detailBarang->pluck('kondisiBarang')->all();
+
+            if (in_array('Kadaluarsa', $kondisiList, true)) {
+                $item->kondisiBarangText = 'Kadaluarsa';
+            } elseif (in_array('Mendekati Kadaluarsa', $kondisiList, true)) {
+                $item->kondisiBarangText = 'Mendekati Kadaluarsa';
+            } else {
+                $item->kondisiBarangText = 'Baik';
+            }
+
+            $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
+
+            return $item;
+        });
+
+        return view('menu.barang.produk', [
+            'barang' => $barang,
+            'search' => $search,
+        ]);
+    }
+
     /**
      * Search for a barcode in the Barang's detailBarang relation.
      *
@@ -119,13 +164,13 @@ class BarangController extends Controller
 
         $results = Barang::with([
             'detailBarang' => function ($queryBuilder) use ($query) {
-                $queryBuilder->where('barcode', 'like', "%$query%") // load barcode
-                                ->where('statusDetailBarang', 1);
+                $queryBuilder
+                    ->where('barcode', 'like', "%$query%") // load barcode
+                    ->where('statusDetailBarang', 1);
             },
         ])
             ->whereHas('detailBarang', function ($queryBuilder) use ($query) {
-                $queryBuilder->where('barcode', 'like', "%$query%")
-                                ->where('statusDetailBarang', 1); // filterkan parent barang yang barcodenya related sama detailbarang
+                $queryBuilder->where('barcode', 'like', "%$query%")->where('statusDetailBarang', 1); // filterkan parent barang yang barcodenya related sama detailbarang
             })
             ->select('idBarang') // barcode is in the relation
             ->get();
@@ -175,19 +220,18 @@ class BarangController extends Controller
         }
     }
 
-
     /**
      * Display the details of a specific product.
      *
      * This method retrieves the product ('Barang') with the given ID, including its active details
      * and associated brand ('merek'). It also calculates the total stock of the product and retrieves
-     * any inactive details. The product details, along with all available brands and categories, 
+     * any inactive details. The product details, along with all available brands and categories,
      * are then passed to the 'detail-produk' view.
      *
      * @param int $idBarang The ID of the product to display.
-     * 
+     *
      * @return \Illuminate\View\View The view displaying the product's details.
-     * 
+     *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If no product with the given ID is found.
      */
 
@@ -210,10 +254,7 @@ class BarangController extends Controller
 
         $barang->merekBarangName = $barang->merek ? $barang->merek->namaMerek : 'Unknown';
         $barang->totalStok = $barang->detailBarang->sum('quantity');
-        $inactiveDetail = BarangDetail::where('idBarang', $idBarang)
-        ->where('statusDetailBarang', 0)
-        ->where('quantity', '>', 0)
-        ->get();
+        $inactiveDetail = BarangDetail::where('idBarang', $idBarang)->where('statusDetailBarang', 0)->where('quantity', '>', 0)->get();
 
         return view('menu.barang.detail-produk', compact('barang', 'mereks', 'kategori', 'inactiveDetail'));
     }
@@ -270,23 +311,20 @@ class BarangController extends Controller
 
         try {
             // Validate the request
-            $request->validate([
-                'barang_image.*' => [
-                    'nullable',
-                    'file',
-                    'mimes:jpg,jpeg,png',
-                    'max:2048',
-                    'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'
+            $request->validate(
+                [
+                    'barang_image.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048', 'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'],
+                    'items' => 'required|array',
+                    'items.*.nama_barang' => 'required',
+                    'items.*.merek_id' => 'required',
+                    'items.*.kategori' => 'required',
+                    'items.*.harga_satuan' => 'required|numeric',
+                    'items.*.kuantitas_masuk' => 'required|numeric',
                 ],
-                'items' => 'required|array',
-                'items.*.nama_barang' => 'required',
-                'items.*.merek_id' => 'required',
-                'items.*.kategori' => 'required',
-                'items.*.harga_satuan' => 'required|numeric',
-                'items.*.kuantitas_masuk' => 'required|numeric',
-            ],[
-                'barang_image.*.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
-            ]);
+                [
+                    'barang_image.*.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
+                ],
+            );
 
             // Process images if any
             $uploadedImages = [];
@@ -334,7 +372,7 @@ class BarangController extends Controller
 
             $owner = Akun::where('peran', 1)->get();
 
-            foreach($owner as $o) {
+            foreach ($owner as $o) {
                 Notifications::create([
                     'idAkun' => $o->idAkun,
                     'title' => 'Produk Baru Ditambahkan',
@@ -342,7 +380,7 @@ class BarangController extends Controller
                     'data' => json_encode([
                         'nama_barang' => $barang->namaBarang,
                         'id_barang' => $barang->idBarang,
-                        'added_by' => session('user_data')->nama
+                        'added_by' => session('user_data')->nama,
                     ]),
                 ]);
             }
@@ -357,25 +395,20 @@ class BarangController extends Controller
         }
     }
 
-    function updateBarangDetail(Request $request, $idBarang) {
-        
+    function updateBarangDetail(Request $request, $idBarang)
+    {
         try {
             // Validate input
             $validated = $request->validate([
-                'nama_barang'    => 'required|string|max:255',
-                'idMerek'        => 'required|exists:merek_barang,idMerek',
-                'kategori'       => 'required',
-                'harga_satuan'   => 'required|string', // Will be sanitized
-                'status_produk'  => 'required|in:0,1',
-                'gambarProduk'   => [
-                    'nullable',
-                    'file',
-                    'mimes:jpg,jpeg,png',
-                    'max:2048',
-                    'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'
-                ],[
+                'nama_barang' => 'required|string|max:255',
+                'idMerek' => 'required|exists:merek_barang,idMerek',
+                'kategori' => 'required',
+                'harga_satuan' => 'required|string', // Will be sanitized
+                'status_produk' => 'required|in:0,1',
+                'gambarProduk' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048', 'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'],
+                [
                     'gambarProduk.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
-                ]
+                ],
             ]);
 
             // Find the product
@@ -402,17 +435,17 @@ class BarangController extends Controller
             $hargaJual = preg_replace('/[^\d]/', '', $request->input('harga_satuan'));
 
             // Update fields
-            $barang->namaBarang      = $validated['nama_barang'];
-            $barang->merekBarang     = $validated['idMerek'];
-            $barang->kategoriBarang  = $validated['kategori']; // If enum, cast in model or controller
-            $barang->hargaJual       = $hargaJual;
-            $barang->statusBarang    = $validated['status_produk'];
+            $barang->namaBarang = $validated['nama_barang'];
+            $barang->merekBarang = $validated['idMerek'];
+            $barang->kategoriBarang = $validated['kategori']; // If enum, cast in model or controller
+            $barang->hargaJual = $hargaJual;
+            $barang->statusBarang = $validated['status_produk'];
 
             $barang->save();
 
             $owner = Akun::where('peran', 1)->get();
 
-            foreach($owner as $o) {
+            foreach ($owner as $o) {
                 Notifications::create([
                     'idAkun' => $o->idAkun,
                     'title' => 'Produk Baru Ditambahkan',
@@ -420,23 +453,19 @@ class BarangController extends Controller
                     'data' => json_encode([
                         'nama_barang' => $barang->namaBarang,
                         'id_barang' => $barang->idBarang,
-                        'added_by' => session('user_data')->nama
+                        'added_by' => session('user_data')->nama,
                     ]),
                 ]);
             }
 
-            return redirect()->route('detail.produk', $barang->idBarang)
-                ->with('success', 'Data produk berhasil diperbarui.');
+            return redirect()->route('detail.produk', $barang->idBarang)->with('success', 'Data produk berhasil diperbarui.');
         } catch (\Exception $e) {
             // Log the error for debugging
             Log::error('Error updating product: ' . $e->getMessage());
 
             // Redirect back with error message and old input
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Terjadi kesalahan saat memperbarui data produk. Silakan coba lagi.');
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data produk. Silakan coba lagi.');
         }
-
     }
 
     public function softDeleteBarangDetail($idBarang, $barcode)
@@ -456,7 +485,7 @@ class BarangController extends Controller
 
             $owner = Akun::where('peran', 1)->get();
 
-            foreach($owner as $o) {
+            foreach ($owner as $o) {
                 Notifications::create([
                     'idAkun' => $o->idAkun,
                     'title' => 'Barang Detail Dihapus',
@@ -465,7 +494,7 @@ class BarangController extends Controller
                         'barcode' => $detail->barcode,
                         'nama_barang' => $barang ? $barang->namaBarang : '-',
                         'id_barang' => $barang ? $barang->idBarang : $idBarang,
-                        'deleted_by' => session('user_data')->nama ?? 'Unknown'
+                        'deleted_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
@@ -475,7 +504,6 @@ class BarangController extends Controller
             Log::error('Error deleting BarangDetail: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus barang detail. Silakan coba lagi.');
         }
-
     }
     public function softUpdateBarangDetail($idBarang, $barcode)
     {
@@ -503,7 +531,7 @@ class BarangController extends Controller
                     'data' => json_encode([
                         'nama_barang' => $barang ? $barang->namaBarang : '-',
                         'id_barang' => $barang ? $barang->idBarang : $idBarang,
-                        'restored_by' => session('user_data')->nama ?? 'Unknown'
+                        'restored_by' => session('user_data')->nama ?? 'Unknown',
                     ]),
                 ]);
             }
@@ -514,5 +542,4 @@ class BarangController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengembalikan barang detail. Silakan coba lagi.');
         }
     }
-
 }

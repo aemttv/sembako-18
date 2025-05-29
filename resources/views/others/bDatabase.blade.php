@@ -1,4 +1,4 @@
-@extends('layout')
+{{-- @extends('layout')
 
 @section('content')
     <div class="flex flex-col items-center justify-center h-full px-4 py-8">
@@ -29,4 +29,5 @@
             </div>
         </div>
     </div>
-@endsection
+@endsection --}}
+

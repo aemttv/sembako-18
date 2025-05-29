@@ -15,12 +15,13 @@
 
         <!-- Tabs -->
         <div class="flex justify-between items-center gap-2 border rounded-lg p-2 bg-white">
-            <!-- Search Input Group -->
-            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
+            <!-- Search Input Group as Form -->
+            <form action="{{ url('/barang-masuk/list-search') }}" method="GET"
+                class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
                 <i class="fas fa-search text-gray-400 mr-2"></i>
-                <input type="text" placeholder="Search or type command..."
+                <input type="text" name="q" placeholder="ID Barang Masuk / ID Supplier" value="{{ request('q') }}"
                     class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
-            </div>
+            </form>
             <a href="/barang-masuk"
                 class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah Barang
                 Masuk</a>
@@ -29,7 +30,7 @@
 
         <!-- Table -->
         <div class="border rounded-lg overflow-x-auto">
-            <table class="min-w-full text-lg text-center items-center">
+            <table class="min-w-full text-md text-center items-center">
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-4 py-2">ID Barang Masuk</th>
@@ -51,8 +52,8 @@
                     @foreach ($bMasuk as $data)
                         <tr class="hover:bg-blue-50 h-12 even:bg-gray-50">
                             <td class="px-4 py-2">{{ $data->idBarangMasuk }}</td>
-                            <td class="px-4 py-2">{{ $data->idSupplier }}</td>
-                            <td class="px-4 py-2">{{ $data->idAkun }}</td>
+                            <td class="px-4 py-2">{{ explode(' ', trim($data->supplier->nama))[0] }} ({{ $data->idSupplier }})</td>
+                            <td class="px-4 py-2">{{ explode(' ', trim($data->akun->nama))[0] }} ({{ $data->idAkun }})</td>
                             <td class="px-4 py-2">Rp.{{ number_format($data->hargaBeli, 0, ',', '.') }}</td>
                             <td class="px-4 py-2">{{ $data->quantity }}</td>
                             <td class="px-4 py-2">Rp.{{ number_format($data->total, 0, ',', '.') }}</td>
@@ -69,7 +70,7 @@
                                 </td>
                             @else
                                 <td class="px-4 py-2 text-center text-red-500">
-                                    <span class="px-4 py-2">Tidak ada nota</span>
+                                    <span>Tidak ada nota</span>
                                 </td>
                             @endif
                             <td class="px-4 py-2 text-center">

@@ -25,7 +25,7 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Nama Lengkap</label>
                             <input type="text" id="nama" name="nama" class="w-full border rounded-md px-3 py-2"
-                                placeholder="Nama Lengkap" autocomplete="off" />
+                                placeholder="Nama Lengkap" autocomplete="off" maxlength="50"/>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">No.HP/No.WA</label>
@@ -46,7 +46,7 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Alamat</label>
                             <textarea type="text" id="alamat"name="alamat" class="w-full border rounded-md px-3 py-2 min-h-[100px] max-h-[200px]"
-                                placeholder="Jl..." > </textarea>
+                                placeholder="Jl..." maxlength="255"> </textarea>
                         </div>
                     </div>
 
@@ -97,6 +97,36 @@
         </form>
 
         <script>
+            // Formatting and live validation for No HP
+            const inputNoHp = document.getElementById('no_hp');
+
+            // Create or get the error message element
+            let noHpError = document.getElementById('no_hp_error');
+            if (!noHpError && inputNoHp) {
+                noHpError = document.createElement('div');
+                noHpError.id = 'no_hp_error';
+                noHpError.className = 'text-red-500 text-xs mt-1';
+                noHpError.style.display = 'none';
+                inputNoHp.parentNode.appendChild(noHpError);
+            }
+
+            if (inputNoHp) {
+                inputNoHp.addEventListener('input', function() {
+                    const value = this.value.trim();
+                    // Only allow digits, and must start with 08 or 628
+                    const isNumeric = /^\d+$/.test(value);
+                    if (!(isNumeric && (value.startsWith('08') || value.startsWith('628')))) {
+                        this.classList.add('border-red-500');
+                        noHpError.textContent = 'No HP harus berupa angka dan dimulai dengan 08 atau 628';
+                        noHpError.style.display = '';
+                    } else {
+                        this.classList.remove('border-red-500');
+                        noHpError.textContent = '';
+                        noHpError.style.display = 'none';
+                    }
+                });
+            }
+
             // Menambahkan baris baru ke dalam tabel
             document.getElementById('addRow').addEventListener('click', function() {
                 var namaLengkap = document.getElementById('nama').value;
@@ -108,11 +138,17 @@
                 var tableBody = document.getElementById('supplierTableBody');
                 var newRow = tableBody.insertRow();
 
-                if(!namaLengkap || !noHp || !alamat || !status) {
+                const isNumeric = /^\d+$/.test(noHp);
+
+                if (!namaLengkap || !noHp || !alamat || !status) {
                     alert('Please fill in all required fields');
                     return;
                 }
-
+                if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
+                    alert('No HP harus berupa angka dan dimulai dengan 08 atau 628');
+                    return;
+                }
+                
                 newRow.innerHTML = `
                     <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
                     <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>
@@ -162,33 +198,7 @@
             });
 
             
-            // Formatting and live validation for No HP
-            const inputNoHp = document.getElementById('no_hp');
-
-            // Create or get the error message element
-            let noHpError = document.getElementById('no_hp_error');
-            if (!noHpError && inputNoHp) {
-                noHpError = document.createElement('div');
-                noHpError.id = 'no_hp_error';
-                noHpError.className = 'text-red-500 text-xs mt-1';
-                noHpError.style.display = 'none';
-                inputNoHp.parentNode.appendChild(noHpError);
-            }
-
-            if (inputNoHp) {
-                inputNoHp.addEventListener('input', function() {
-                    const value = this.value.trim();
-                    if (!(value.startsWith('08') || value.startsWith('628'))) {
-                        this.classList.add('border-red-500');
-                        noHpError.textContent = 'No HP harus dimulai dengan 08 atau 628';
-                        noHpError.style.display = '';
-                    } else {
-                        this.classList.remove('border-red-500');
-                        noHpError.textContent = '';
-                        noHpError.style.display = 'none';
-                    }
-                });
-            }
+            
         </script>
 
     </div>
