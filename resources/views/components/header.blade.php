@@ -73,6 +73,8 @@
 
                                     @if (isset($data['idBarangRetur']))
                                         <span class="font-semibold">: ID Retur ({{ $data['idBarangRetur'] }})</span>
+                                    @elseif (isset($data['idBarangRusak']))
+                                        <span class="font-semibold">: ID Rusak ({{ $data['idBarangRusak'] }})</span>
                                     @endif
 
                                     @if (isset($data['added_by']))

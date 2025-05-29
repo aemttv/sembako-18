@@ -234,14 +234,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const note = document.querySelector('textarea').value;
 
         // Validate required fields
-        if (!namaBarang || !barangId || !kuantitas || !supplierId) {
-            alert('Please fill in all required fields (Nama Barang, kuantitas, and Nama Supplier)');
+        if (!namaAkun || !namaBarang || !barangId || !kuantitas || !supplierId) {
+            alert('Silakan mengisi field yang dibutuhkan (Penanggung Jawab, Nama Barang, kuantitas, and Nama Supplier)');
             return;
         }
 
         if(kuantitas > stokInput) {
             alert('Stok melebihi batas stok pada saat ini.')
             return
+        }
+
+        let totalKuantitasForBarcode = 0;
+        Array.from(returTableBody.querySelectorAll('tr')).forEach(row => {
+            const rowBarcode = row.cells[2]?.textContent.trim();
+            const rowKuantitas = parseInt(row.cells[3]?.textContent.trim(), 10) || 0;
+            if (rowBarcode === barcode) {
+                totalKuantitasForBarcode += rowKuantitas;
+            }
+        });
+        const newTotal = totalKuantitasForBarcode + parseInt(kuantitas, 10);
+        if (newTotal > stokInput) {
+            alert(`Total kuantitas untuk barcode ini (${newTotal}) melebihi stok (${stokInput})!`);
+            return;
         }
 
         // Create a new table row

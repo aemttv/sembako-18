@@ -16,6 +16,7 @@ class bReturController extends Controller
 {
     public function viewConfirmBRetur()
     {
+
         $bRetur = bRetur::with(['detailRetur', 'detailRetur.barang']) // Load nested relationships
                     ->where('statusRetur', 2)
                     ->paginate(10);

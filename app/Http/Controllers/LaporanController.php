@@ -13,6 +13,10 @@ class LaporanController extends Controller
 {
     function viewbMasuk()
     {
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')->OrderBy('tglMasuk', 'desc')->paginate(10);
 
         return view('menu.laporan.bMasuk', ['bMasuk' => $bMasuk]);
@@ -20,6 +24,11 @@ class LaporanController extends Controller
 
     function searchBMasuk(Request $request)
     {
+
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = bMasuk::with('detailMasuk.barangDetail.barang');
 
         // Filter by date range if provided
@@ -50,6 +59,10 @@ class LaporanController extends Controller
 
     function viewbKeluar()
     {
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+        
         $bKeluar = bKeluar::with('detailKeluar.barangDetailKeluar.barang')->OrderBy('tglKeluar', 'desc')->paginate(10);
 
         return view('menu.laporan.bKeluar', ['bKeluar' => $bKeluar]);
@@ -57,6 +70,10 @@ class LaporanController extends Controller
 
     function searchBKeluar(Request $request)
     {
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = bKeluar::with('detailKeluar.barangDetailKeluar.barang');
 
         // Filter by date range if provided
@@ -87,6 +104,10 @@ class LaporanController extends Controller
 
     function viewStokBarang(Request $request)
     {
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $barang = Barang::with([
             'detailBarang' => function ($query) {
                 $query->where('statusDetailBarang', 1);
@@ -112,6 +133,10 @@ class LaporanController extends Controller
 
     public function searchStokBarang(Request $request)
     {
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
         // Start with the query builder, not paginate yet!
         $query = Barang::with([
             'detailBarang' => function ($query) {
@@ -176,12 +201,24 @@ class LaporanController extends Controller
     }
 
     function viewbRetur() {
-        $bRetur = bRetur::with('detailRetur.detailBarangRetur.barang')->OrderBy('tglRetur', 'desc')->paginate(10);
+
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
+        $bRetur = bRetur::with('detailRetur.detailBarangRetur.barang')
+        ->where('statusRetur', 1)->orWhere('statusRetur', 0)
+        ->OrderBy('tglRetur', 'desc')->paginate(10);
 
         return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
     }
 
     function searchBRetur(Request $request) {
+
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = bRetur::with('detailRetur.detailBarangRetur.barang', 'supplier');
 
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
@@ -210,8 +247,47 @@ class LaporanController extends Controller
     }
 
     function viewbRusak() {
+
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
+
+        $bRusak = bRusak::with('detailRusak.detailBarangRusak.barang')
+        ->where('statusRusak', 1)->orWhere('statusRusak', 0)
+        ->OrderBy('tglRusak', 'desc')
+        ->paginate(10);
+
+        return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);
+    }
+
+    function searchBRusak(Request $request) {
+
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
         
-        $bRusak = bRusak::with('detailRusak.detailBarangRusak.barang')->OrderBy('tglRusak', 'desc')->paginate(10);
+        $query = bRusak::with('detailRusak.detailBarangRusak.barang');
+
+        if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
+            $query->whereBetween('tglRusak', [$request->tanggal_awal, $request->tanggal_akhir]);
+        } elseif ($request->filled('tanggal_awal')) {
+            $query->where('tglRusak', '>=', $request->tanggal_awal);
+        } elseif ($request->filled('tanggal_akhir')) {
+            $query->where('tglRusak', '<=', $request->tanggal_akhir);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->with([
+                'detailRusak' => function ($q) use ($search) {
+                    $q->whereHas('detailBarangRusak.barang', function ($q2) use ($search) {
+                        $q2->where('namaBarang', 'like', "%$search%")->orWhere('barcode', 'like', "%$search%");
+                    });
+                },
+            ]);
+        }
+
+        $bRusak = $query->OrderBy('tglRusak', 'desc')->paginate(10);
 
         return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);
     }

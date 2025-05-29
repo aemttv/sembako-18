@@ -113,8 +113,9 @@
                     </div>
 
                     <!-- Right Column: Product Detail Inputs -->
-                    <div class="grid grid-cols-2 gap-4 font-semibold">
-                        <div>
+                    <div class="grid gap-4 font-semibold">
+                        {{-- Row 1: Nama Barang (full width) --}}
+                        <div class="w-full">
                             <label class="block text-sm mb-1">Nama Barang</label>
                             <input type="text" id="nama_barang" name="nama_barang"
                                 class="w-full border rounded-md px-3 py-2 transition"
@@ -123,58 +124,56 @@
                                 :readonly="!editing">
                             <input type="hidden" id="barang_id" name="barang_id" value="{{ $barang->idBarang }}" />
                         </div>
-                        <div>
-                            <label class="block text-sm mb-1">Brand/Merek</label>
-                            <select id="brand" name="idMerek" class="w-full border rounded-md px-3 py-2 transition"
-                                :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
-                                :disabled="!editing">
-                                @foreach ($mereks as $merek)
-                                    <option value="{{ $merek->idMerek }}"
-                                        {{ $barang->merekBarang == $merek->idMerek ? 'selected' : '' }}>
-                                        {{ $merek->namaMerek }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                        {{-- Row 2: Brand/Merek and Kategori --}}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm mb-1">Brand/Merek</label>
+                                <select id="brand" name="idMerek" class="w-full border rounded-md px-3 py-2 transition"
+                                    :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
+                                    :disabled="!editing">
+                                    @foreach ($mereks as $merek)
+                                        <option value="{{ $merek->idMerek }}"
+                                            {{ $barang->merekBarang == $merek->idMerek ? 'selected' : '' }}>
+                                            {{ $merek->namaMerek }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Kategori</label>
+                                <select name="kategori" class="w-full border rounded-md px-3 py-2 transition"
+                                    :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
+                                    :disabled="!editing">
+                                    @foreach ($kategori as $kat)
+                                        <option value="{{ $kat->value }}"
+                                            {{ old('kategori', $barang->kategoriBarang ?? null) == $kat->value ? 'selected' : '' }}>
+                                            {{ $kat->namaKategori() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm mb-1">Kategori</label>
-                            <select name="kategori" class="w-full border rounded-md px-3 py-2 transition"
-                                :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
-                                :disabled="!editing">
-                                @foreach ($kategori as $kat)
-                                    <option value="{{ $kat->value }}"
-                                        {{ old('kategori', $barang->kategoriBarang ?? null) == $kat->value ? 'selected' : '' }}>
-                                        {{ $kat->namaKategori() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm mb-1">Harga Jual</label>
-                            <input type="text" id="harga_satuan" name="harga_satuan"
-                                class="w-full border rounded-md px-3 py-2 transition"
-                                :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
-                                value="Rp.{{ number_format($barang->hargaJual, 0, ',', '.') }}" :readonly="!editing" />
-                        </div>
-                        <div>
-                            <label class="block text-sm mb-1">Jumlah Stok</label>
-                            <input type="text" id="jumlah_stok" name="jumlah_stok"
-                                class="w-full border rounded-md px-3 py-2 transition bg-gray-50 text-gray-500 cursor-not-allowed"
-                                value="{{ $barang->totalStok }}" readonly />
-                        </div>
-                        <div>
-                            <label class="block text-sm mb-1">Produk</label>
-                            <select name="status_produk" class="w-full border rounded-md px-3 py-2 transition"
-                                :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
-                                :disabled="!editing">
-                                <option value="1" {{ $barang->statusBarang == 1 ? 'selected' : '' }}>Aktif</option>
-                                <option value="0" {{ $barang->statusBarang == 0 ? 'selected' : '' }}>Tidak Aktif
-                                </option>
-                            </select>
+                        {{-- Row 3: Harga Jual and Jumlah Stok --}}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm mb-1">Harga Jual</label>
+                                <input type="text" id="harga_satuan" name="harga_satuan"
+                                    class="w-full border rounded-md px-3 py-2 transition"
+                                    :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
+                                    value="Rp.{{ number_format($barang->hargaJual, 0, ',', '.') }}"
+                                    :readonly="!editing" />
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Jumlah Stok</label>
+                                <input type="text" id="jumlah_stok" name="jumlah_stok"
+                                    class="w-full border rounded-md px-3 py-2 transition bg-gray-50 text-gray-500 cursor-not-allowed"
+                                    value="{{ $barang->totalStok }}" readonly />
+                            </div>
                         </div>
                     </div>
+                    <input type="hidden" name="status_produk" value="1" />
                 </div>
 
                 <!-- Buttons -->
@@ -378,7 +377,7 @@
                                                     {{ $detailInactive->kondisiBarang }}
                                                 </span>
                                             </td>
-                                            
+
                                             <td class="px-4 py-2 border-b">
                                                 <form
                                                     action="{{ route('soft.update.detail', ['idBarang' => $detailInactive->idBarang, 'barcode' => $detailInactive->barcode]) }}"

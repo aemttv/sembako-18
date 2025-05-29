@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\enum\Alasan;
+use App\Models\Akun;
 use App\Models\BarangDetail;
 use App\Models\bRusak;
 use App\Models\bRusakDetail;
+use App\Models\Notifications;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +17,7 @@ class bRusakController extends Controller
 {
     public function viewConfirmBRusak()
     {
+        
         $bRusak = bRusak::with(['detailRusak', 'detailRusak.barang', 'akun']) // Load nested relationships
                     ->where('statusRusak', 2)
                     ->paginate(10);
@@ -103,6 +106,38 @@ class bRusakController extends Controller
             }
 
             DB::commit();
+
+            //notification sending to all users
+            $owners = Akun::where('peran', 1)->get();
+            $ownerIds = $owners->pluck('idAkun');
+            $staffId = $rusak->penanggungJawab;
+
+            //owner
+            foreach ($owners as $o) {
+                Notifications::create([
+                    'idAkun' => $o->idAkun,
+                    'title' => 'Pengajuan Barang Rusak',
+                    'message' => 'Terdapat pengajuan rusak barang baru.',
+                    'data' => json_encode([
+                        'idBarangRusak' => $rusak->idBarangRusak,
+                        'added_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
+
+            // Only notify the staff if they are not already an owner
+            if (!$ownerIds->contains($staffId)) {
+                Notifications::create([
+                    'idAkun' => $staffId,
+                    'title' => 'Pengajuan Barang Rusak Anda Berhasil',
+                    'message' => 'Pengajuan Barang Rusak Anda berhasil diajukan.',
+                    'data' => json_encode([
+                        'idBarangRusak' => $rusak->idBarangRusak,
+                        'added_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
+            
             return redirect()->route('view.AjukanBRusak')->with('success', 'Informasi Barang Rusak berhasil disimpan'); 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -164,6 +199,37 @@ class bRusakController extends Controller
             $bRusak->statusRusak = 1;
             $bRusak->save();
 
+            //notification sending to all users
+            $owners = Akun::where('peran', 1)->get();
+            $ownerIds = $owners->pluck('idAkun');
+            $staffId = $bRusak->penanggungJawab;
+
+            //owner
+            foreach ($owners as $o) {
+                Notifications::create([
+                    'idAkun' => $o->idAkun,
+                    'title' => 'Pengajuan Barang Rusak Divalidasi',
+                    'message' => 'Pengajuan rusak telah divalidasi.',
+                    'data' => json_encode([
+                        'idBarangRusak' => $bRusak->idBarangRusak,
+                        'validated_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
+
+            // Only notify the staff if they are not already an owner
+            if (!$ownerIds->contains($staffId)) {
+                Notifications::create([
+                    'idAkun' => $staffId,
+                    'title' => 'Pengajuan Barang Rusak Divalidasi',
+                    'message' => 'Pengajuan Barang Rusak Anda telah divalidasi.',
+                    'data' => json_encode([
+                        'idBarangRusak' => $bRusak->idBarangRusak,
+                        'validated_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
+
             return redirect()->route('view.ConfirmBRusak')
                 ->with('success', 'Semua barang rusak telah divalidasi dan telah dikonfirmasi');
         }
@@ -212,6 +278,37 @@ class bRusakController extends Controller
             $bRusak = bRusak::find($detail->idBarangRusak);
             $bRusak->statusRusak = 0;
             $bRusak->save();
+
+            //notification sending to all users
+            $owners = Akun::where('peran', 1)->get();
+            $ownerIds = $owners->pluck('idAkun');
+            $staffId = $bRusak->penanggungJawab;
+
+            //owner
+            foreach ($owners as $o) {
+                Notifications::create([
+                    'idAkun' => $o->idAkun,
+                    'title' => 'Pengajuan Barang Rusak Ditolak',
+                    'message' => 'Pengajuan rusak telah ditolak.',
+                    'data' => json_encode([
+                        'idBarangRusak' => $bRusak->idBarangRusak,
+                        'rejected_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
+
+            // Only notify the staff if they are not already an owner
+            if ($staffId && !$ownerIds->contains($staffId)) {
+                Notifications::create([
+                    'idAkun' => $staffId,
+                    'title' => 'Pengajuan Barang Rusak Ditolak',
+                    'message' => 'Pengajuan rusak telah ditolak.',
+                    'data' => json_encode([
+                        'idBarangRusak' => $bRusak->idBarangRusak,
+                        'rejected_by' => session('user_data')->nama ?? 'Unknown'
+                    ]),
+                ]);
+            }
 
             return redirect()->route('view.ConfirmBRusak')
                 ->with('success', 'Semua barang rusak telah ditolak');

@@ -23,10 +23,16 @@
             <div class="border rounded-lg bg-white shadow-sm">
                 <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Barang</div>
                 <div class="p-6 space-y-4">
-                    <div class="relative">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative w-full">
                         <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
                         <input type="text" id="nama_barang" name="nama_barang" class="w-full border rounded-md px-3 py-2"
                             placeholder="Nama Barang..." autocomplete="off">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Harga Jual</label>
+                            <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" maxlength="16"/>
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative w-full">
@@ -57,24 +63,8 @@
                         </div>
 
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Harga Jual</label>
-                            <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" />
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Satuan</label>
-                            <input type="text" id="satuan"
-                                class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="Pcs"
-                                readonly />
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
-                            <input type="number" id="kuantitas_masuk"
-                                class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="0"
-                                readonly />
-                        </div>
-                    </div>
+
+                        <input type="hidden" id="kuantitas_masuk" value="0" readonly />
 
                     <!-- Buttons -->
                     <div class="pt-4 flex justify-end gap-4">
@@ -222,6 +212,86 @@
                 }
             });
 
+            // Helper to format number as Rupiah
+            function formatRupiah(angka) {
+                if (!angka) return '';
+                let number_string = angka.replace(/[^,\d]/g, '').toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    rupiah += (sisa ? '.' : '') + ribuan.join('.');
+                }
+                rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+                return rupiah ? 'Rp. ' + rupiah : '';
+            }
+
+            // Helper to get only the numeric value
+            function getNumericValue(str) {
+                return str.replace(/[^0-9]/g, '');
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const hargaSatuan = document.getElementById('harga_satuan');
+
+                // Create or get the error message element
+                let hargaSatuanError = document.getElementById('hargaSatuanError');
+                if (!hargaSatuanError && hargaSatuan) {
+                    hargaSatuanError = document.createElement('div');
+                    hargaSatuanError.id = 'hargaSatuanError';
+                    hargaSatuanError.className = 'text-red-500 text-xs mt-1';
+                    hargaSatuanError.style.display = 'none';
+                    hargaSatuan.parentNode.appendChild(hargaSatuanError);
+                }
+
+                if (hargaSatuan) {
+                    hargaSatuan.addEventListener('input', function(e) {
+                        let value = this.value.replace(/[^0-9]/g, '');
+                        if (value !== '' && !/^\d+$/.test(value)) {
+                            this.value = '';
+                            this.classList.add('border-red-500');
+                            hargaSatuanError.textContent = 'Harga jual hanya boleh angka!';
+                            hargaSatuanError.style.display = '';
+                            return;
+                        } else if (value === '' || Number(value) <= 0) {
+                            this.classList.add('border-red-500');
+                            hargaSatuanError.textContent = 'Harga jual harus berupa angka positif';
+                            hargaSatuanError.style.display = '';
+                        } else {
+                            this.classList.remove('border-red-500');
+                            hargaSatuanError.textContent = '';
+                            hargaSatuanError.style.display = 'none';
+                        }
+
+                        // Format as Rupiah for display
+                        this.value = formatRupiah(value);
+                    });
+
+                    // On focus, remove formatting for easier editing
+                    hargaSatuan.addEventListener('focus', function() {
+                        this.value = getNumericValue(this.value);
+                    });
+
+                    // On blur, reformat as Rupiah
+                    hargaSatuan.addEventListener('blur', function() {
+                        this.value = formatRupiah(this.value);
+                    });
+                }
+
+                // When adding row, get the numeric value for storage
+                const addRowBtn = document.getElementById('addRow');
+                if (addRowBtn) {
+                    addRowBtn.addEventListener('click', function() {
+                        if (hargaSatuan) {
+                            // Set a data attribute with the numeric value for use in the table/hidden input
+                            hargaSatuan.setAttribute('data-numeric', getNumericValue(hargaSatuan.value));
+                        }
+                    });
+                }
+            });
+
             function updateNoDataRow() {
                 const tableBody = document.getElementById('barangTableBody');
                 const noDataRow = document.getElementById('noDataRow');
@@ -270,11 +340,13 @@
                 const namaBarang = document.getElementById('nama_barang').value;
                 const namaMerek = document.getElementById('nama_merek').value;
                 const kategoriBarang = document.getElementById('kategori').value;
-                const hargaSatuan = document.getElementById('harga_satuan').value;
+                const hargaSatuanInput = document.getElementById('harga_satuan');
+                const hargaSatuanNumeric = getNumericValue(hargaSatuanInput.value);
+                const hargaSatuanFormatted = formatRupiah(hargaSatuanNumeric);
                 const kuantitasMasuk = document.getElementById('kuantitas_masuk').value;
                 const merekId = document.getElementById('merek_id').value;
 
-                if (!namaBarang || !namaMerek || !hargaSatuan) {
+                if (!namaBarang || !namaMerek ) {
                     alert('Please fill in all required fields');
                     return;
                 }
@@ -304,14 +376,14 @@
                     <td class="px-4 py-2 border-b text-center">${namaBarang}</td>
                     <td class="px-4 py-2 border-b text-center">${namaMerek}</td>
                     <td class="px-4 py-2 border-b text-center">${kategoriBarang}</td>
-                    <td class="px-4 py-2 border-b text-center">${hargaSatuan}</td>
+                    <td class="px-4 py-2 border-b text-center">${hargaSatuanFormatted}</td>
                     <td class="px-4 py-2 border-b text-center">${kuantitasMasuk}</td>
                     <td class="px-4 py-2 border-b">
                         <div class="flex flex-col items-center justify-center gap-2">
                             <!-- Preview container with border placeholder -->
                             <div id="${previewId}" class="border-2 border-dashed border-gray-300 rounded-lg w-1/2 min-h-[80px] flex flex-wrap items-center justify-center gap-2">
                                 <!-- Images will appear here -->
-                                <span class="text-gray-400 text-sm text-center ${previewContainer.innerHTML ? 'hidden' : ''}">No images uploaded</span>
+                                <span class="text-gray-400 text-sm text-center ${previewContainer.innerHTML ? 'hidden' : ''}">No images uploaded (max 1200x1200px)</span>
                             </div>
                             
                             <!-- Upload button -->
@@ -393,7 +465,7 @@
                     <input type="hidden" name="items[${rowIndex}][nama_barang]" value="${namaBarang}">
                     <input type="hidden" name="items[${rowIndex}][merek_id]" value="${merekId}">
                     <input type="hidden" name="items[${rowIndex}][kategori]" value="${kategoriBarang}">
-                    <input type="hidden" name="items[${rowIndex}][harga_satuan]" value="${hargaSatuan}">
+                    <input type="hidden" name="items[${rowIndex}][harga_satuan]" value="${hargaSatuanNumeric}">
                     <input type="hidden" name="items[${rowIndex}][kuantitas_masuk]" value="${kuantitasMasuk}">
                 `;
                 document.getElementById('hiddenRows').appendChild(hiddenInputs);

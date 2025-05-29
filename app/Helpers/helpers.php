@@ -15,3 +15,4 @@ if (!function_exists('userRole')) {
         return $user ? $user->peran : null;
     }
 }
+

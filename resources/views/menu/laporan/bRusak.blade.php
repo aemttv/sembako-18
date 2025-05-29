@@ -88,13 +88,14 @@
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-4 py-2">#</th>
-                        <th class="px-4 py-2">Invoice</th>
-                        <th class="px-4 py-2">ID Barang</th>
+                        <th class="px-4 py-2">ID Barang Rusak</th>
+                        <th class="px-4 py-2">Penanggung Jawab</th>
+                        <th class="px-4 py-2">Barcode</th>
                         <th class="px-4 py-2">Nama Barang</th>
                         <th class="px-4 py-2">Kuantitas</th>
-                        <th class="px-4 py-2">Subtotal</th>
-                        <th class="px-4 py-2">Kategori Keterangan</th>
-                        <th class="px-4 py-2">Tanggal Keluar</th>
+                        <th class="px-4 py-2">Keterangan</th>
+                        <th class="px-4 py-2">Tanggal Rusak</th>
+                        <th class="px-4 py-2">Status</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
@@ -106,7 +107,7 @@
                     @endphp
                     @if ($totalDetails === 0)
                         <tr>
-                            <td colspan="8" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
+                            <td colspan="10" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
                     @php $no = 1; @endphp
@@ -114,13 +115,23 @@
                         @foreach ($data->detailRusak as $detail)
                             <tr>
                                 <td class="px-4 py-2">{{ $no++ }}</td>
-                                <td class="px-4 py-2">{{ $data->invoice }}</td>
-                                <td class="px-4 py-2">{{ $detail->idBarang }}</td>
-                                <td class="px-4 py-2  text-left">{{ $detail->barang->namaBarang }}</td>
-                                <td class="px-4 py-2">{{ $detail->jumlahKeluar }}</td>
-                                <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                                <td class="px-4 py-2">{{ $data->idBarangRusak }}</td>
+                                <td class="px-4 py-2">{{ $data->penanggungJawab }}</td>
+                                <td class="px-4 py-2">{{ $detail->barcode }}</td>
+                                <td class="px-4 py-2  text-left">{{ $detail->detailBarangRusak->barang->namaBarang ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ $detail->jumlah }}</td>
                                 <td>{{ $detail->kategoriAlasan->alasan() }}</td>
-                                <td class="px-4 py-2"> {{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}</td>
+                                <td class="px-4 py-2"> {{ \Carbon\Carbon::parse($data->tglRusak)->translatedFormat('d F Y') }}</td>
+                                <td class="px-4 py-2">
+                                    @if ($data->statusRusak == 2)
+                                        <span class="text-yellow-500 font-semibold">Pending</span>
+                                    @elseif ($data->statusRusak == 1)
+                                        <span class="text-green-500 font-semibold">Approved</span>
+                                    @elseif ($data->statusRusak == 0)
+                                        <span class="text-red-500 font-semibold">Rejected</span>
+                                    @else
+                                        <span class="text-gray-500">Unknown</span>
+                                    @endif</td>
                             </tr>
                         @endforeach
                     @endforeach

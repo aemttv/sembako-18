@@ -132,3 +132,10 @@ Route::get('/log', function () {
 
 Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');
 Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+
+// Route::get('/test-error', function () {
+//     return view('errors.custom', [
+//         'message' => 'Ini halaman error custom.',
+//         'error' => 'Contoh error detail.'
+//     ]);
+// });

@@ -47,9 +47,10 @@
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Jumlah</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Kategori Keterangan
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Keterangan</th>
-                                </th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Status</th>
-                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Proses</th>
+                                @if (isOwner())   
+                                    <th class="px-4 py-2 border-b border-gray-300 bg-white">Proses</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody class="odd:bg-gray-100">
@@ -86,6 +87,7 @@
                                             <span class="text-gray-500">Unknown</span>
                                         @endif
                                     </td>
+                                    @if (isOwner())                                       
                                     <td class="px-4 py-2 border-b flex gap-1 items-center justify-center">
                                         <form action="{{ route('detail.bRetur.approve', ['idDetailRetur' => $detail->idDetailRetur]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyetujui detail barang ini?')">
                                             @csrf
@@ -98,6 +100,7 @@
                                                 class="px-2 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded text-xs">Tolak</button>
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

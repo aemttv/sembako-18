@@ -207,6 +207,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const tableBody = document.getElementById('transaction-table-body');
 
+            let totalKuantitasForBarcode = 0;
+            Array.from(tableBody.querySelectorAll('tr')).forEach(row => {
+                const rowBarcode = row.cells[2]?.textContent.trim();
+                const rowKuantitas = parseInt(row.cells[3]?.textContent.trim(), 10) || 0;
+                if (rowBarcode === barcode) {
+                    totalKuantitasForBarcode += rowKuantitas;
+                }
+            });
+
             // Create new row
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -228,17 +237,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add remove event
             row.querySelector('.remove-item').addEventListener('click', function() {
                 row.remove();
-                if (tableBody.querySelectorAll('tr').length === 0) {
-                    const noItemRow = document.createElement('tr');
-                    noItemRow.id = 'no-items-row';
-                    noItemRow.innerHTML = `
-                <td class="p-2 border text-center" colspan="8">Tidak ada item</td>
-            `;
-                    tableBody.appendChild(noItemRow);
-                }
 
                 // Update the total invoice after removal
                 updateTotalInvoice();
+                updateNoDataRow()
             });
 
             // Update the total invoice after adding the row

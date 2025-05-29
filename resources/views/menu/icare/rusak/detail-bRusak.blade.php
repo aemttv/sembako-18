@@ -44,7 +44,7 @@
                                 <th class="px-4 py-2 border-b border-gray-300">Detail Rusak ID</th>
                                 <th class="px-4 py-2 border-b border-gray-300">Barang Rusak ID</th>
                                 <th class="px-4 py-2 border-b border-gray-300">Nama Barang</th>
-                                <th class="px-4 py-2 border-b border-gray-300">Barang Barcode</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Barcode</th>
                                 <th class="px-4 py-2 border-b border-gray-300">Jumlah</th>
                                 <th class="px-4 py-2 border-b border-gray-300">Kategori Keterangan
                                 <th class="px-4 py-2 border-b border-gray-300">Keterangan</th>
