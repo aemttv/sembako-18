@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BackupDBController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\bKeluarController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\bReturController;
 use App\Http\Controllers\bRusakController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SupplierController;
@@ -126,16 +128,8 @@ Route::middleware('web')->group(function () {
     Route::get('/akun/search', [AkunController::class, 'search']);
 });
 
-Route::get('/log', function () {
-    return view('others.log');
-});
+Route::get('/backup', [BackupDBController::class, 'index']);
+Route::get('/log', [LogController::class, 'index']);
 
 Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');
 Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
-
-// Route::get('/test-error', function () {
-//     return view('errors.custom', [
-//         'message' => 'Ini halaman error custom.',
-//         'error' => 'Contoh error detail.'
-//     ]);
-// });

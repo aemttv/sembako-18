@@ -37,6 +37,7 @@
             <table class="min-w-full text-lg text-center">
                 <thead class="bg-gray-800 text-white">
                     <tr>
+                        <th class="px-4 py-2">No.</th>
                         <th class="px-4 py-2">ID Supplier</th>
                         <th class="px-4 py-2">Nama Lengkap</th>
                         <th class="px-4 py-2">No.HP</th>
@@ -47,14 +48,13 @@
                 </thead>
                 <tbody class="bg-white divide-y">
                     @if ($supplier->isEmpty())
-                        <td>
-                        <td class="px-4 py-2 text-center" colspan="9">Data Supplier tidak ditemukan.</td>
-                        </td>
+                        <td class="px-4 py-2 text-center" colspan="7">Data Supplier tidak ditemukan.</td>
                     @endif
-                    @foreach ($supplier as $data)
-                        <tr class="hover:bg-blue-50">
+                    @foreach ($supplier as $index => $data)
+                        <tr class="hover:bg-blue-50 even:bg-gray-50">
+                            <td class="px-4 py-2">{{ $supplier->firstItem() + $index }}</td>
                             <td class="px-4 py-2">{{ $data->idSupplier }}</td>
-                            <td class="px-4 py-2">{{ $data->nama }}</td>
+                            <td class="px-4 py-2 text-left">{{ $data->nama }}</td>
                             <td class="px-4 py-2">{{ $data->nohp }}</td>
                             <td class="px-4 py-2">{{ $data->alamat }}</td>
                             <td class="px-4 py-2">{{ $data->status == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>

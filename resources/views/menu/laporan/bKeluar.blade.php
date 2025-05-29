@@ -120,7 +120,7 @@
                         @php $no = 1; @endphp
                         @foreach ($bKeluar as $data)
                             @foreach ($data->detailKeluar as $detail)
-                                <tr>
+                                <tr class="hover:bg-blue-50 even:bg-gray-50">
                                     <td class="px-4 py-2">{{ $no++ }}</td>
                                     <td class="px-4 py-2">{{ $data->invoice }}</td>
                                     <td class="px-4 py-2">{{ $detail->idBarang }}</td>
@@ -141,9 +141,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-between items-center text-sm text-gray-800">
             {{ $bKeluar->links() }}
-        </div>
     </div>
 
     <script>

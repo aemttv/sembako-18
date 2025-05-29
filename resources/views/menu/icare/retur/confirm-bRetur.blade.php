@@ -56,7 +56,7 @@
                             </tr>
                         @endif
                         @foreach ($bRetur as $retur)
-                            <tr>
+                            <tr class="hover:bg-blue-50 even:bg-gray-50">
                                 <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border-b">{{ $retur->idBarangRetur }}</td>
                                 <td class="px-4 py-2 border-b">{{ $retur->idSupplier }}</td>
@@ -87,6 +87,10 @@
                     </tbody>
                 </table>
             </div>
+
+         <!-- Pagination -->
+        {{ $bRetur->links() }}
+
         @else
             <!-- Header -->
             <div class="flex justify-between items-center">
@@ -164,9 +168,10 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            {{ $staffBRetur->links() }}
         @endif
 
-        <!-- Pagination -->
-        {{ $bRetur->links() }}
     </div>
 @endsection

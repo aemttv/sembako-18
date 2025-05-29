@@ -13,40 +13,37 @@
         </div>
 
         <!-- Filters -->
-        <div
-            class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 border rounded-lg p-4 bg-white flex-wrap w-full">
+        <div class="flex items-start sm:items-end gap-4 border rounded-lg p-4 bg-white flex-wrap">
             <!-- Main Filter Form (Dates & Tampilkan) -->
             <form id="laporanForm" action="{{ route('laporan.bMasuk.search') }}" method="get"
-                class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 w-full sm:w-auto sm:flex-wrap">
+                class="flex items-end gap-4 flex-wrap">
                 <!-- Tanggal Mulai -->
-                <div class="flex flex-col w-full sm:w-auto">
-                    <label for="tanggal_awal" class="text-sm text-gray-700 mb-1 text-center sm:text-left">Tanggal
-                        Mulai</label>
+                <div class="flex flex-col">
+                    <label for="tanggal_awal" class="text-sm text-gray-700 mb-1">Tanggal Mulai</label>
                     <input type="date" name="tanggal_awal" id="tanggal_awal"
-                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_awal') border-red-500 @enderror w-full"
+                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_awal') border-red-500 @enderror"
                         placeholder="Tanggal Awal" value="{{ request('tanggal_awal', '') }}"
                         max="{{ now()->addYear()->format('Y-m-d') }}" />
                     @error('tanggal_awal')
-                        <span class="text-red-500 text-xs mt-1 text-center sm:text-left">{{ $message }}</span>
+                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Tanggal Akhir -->
-                <div class="flex flex-col w-full sm:w-auto">
-                    <label for="tanggal_akhir" class="text-sm text-gray-700 mb-1 text-center sm:text-left">Tanggal
-                        Akhir</label>
+                <div class="flex flex-col">
+                    <label for="tanggal_akhir" class="text-sm text-gray-700 mb-1">Tanggal Akhir</label>
                     <input type="date" name="tanggal_akhir" id="tanggal_akhir"
-                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_akhir') border-red-500 @enderror w-full"
+                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_akhir') border-red-500 @enderror"
                         placeholder="Tanggal Akhir" value="{{ request('tanggal_akhir', '') }}" />
                     @error('tanggal_akhir')
-                        <span class="text-red-500 text-xs mt-1 text-center sm:text-left">{{ $message }}</span>
+                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Tampilkan Button -->
-                <div class="flex flex-col justify-end w-full sm:w-auto">
+                <div class="flex flex-col justify-end">
                     <button type="submit"
-                        class="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 h-[42px] w-full sm:w-auto">
+                        class="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 h-[42px]">
                         Tampilkan
                     </button>
                 </div>
@@ -54,7 +51,7 @@
 
             <!-- PDF Button Form -->
             <form id="pdfForm" action="{{ route('streamPDF.bMasuk.view') }}" method="post"
-                class="flex flex-col justify-end w-full sm:w-auto">
+                class="flex flex-col justify-end">
                 @csrf
                 <input type="hidden" name="tanggal_awal" id="tanggal_awal_pdf"
                     value="{{ request('tanggal_awal', now()->format('Y-m-d')) }}">
@@ -62,22 +59,18 @@
                     value="{{ request('tanggal_akhir', now()->addMonth()->format('Y-m-d')) }}">
                 <input type="hidden" name="search" id="search_pdf" value="{{ request('search', '') }}">
                 <button type="submit"
-                    class="px-4 py-1.5 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-[42px] flex items-center justify-center gap-2 w-full sm:w-auto">
+                    class="px-4 py-1.5 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-[42px] flex items-center gap-2">
                     <i class="fa-regular fa-file-pdf"></i>
                     View PDF
                 </button>
             </form>
 
-            <!-- Reset Filter Link/Button -->
-            <div class="flex flex-col justify-end w-full sm:w-auto">
-                <a href="{{ route('laporan.bMasuk.view') }}"
-                    class="px-4 py-1.5 text-sm font-medium text-white bg-pink-500 rounded-md hover:bg-pink-600 h-[42px] flex items-center justify-center w-full sm:w-auto">
-                    Reset Filter </a>
+            <div class="flex flex-col justify-end">
+                <a href="{{route('laporan.bMasuk.view')}}" class="px-4 py-1.5 text-sm font-medium text-white bg-pink-500 rounded-md hover:bg-pink-600 h-[42px] text-center justify-center items-center"> Reset Filter </a>
             </div>
 
             <!-- Search Form -->
-            <!-- Wrapper for search to control its growth and placement -->
-            <div class="w-full sm:flex-1 sm:flex sm:justify-end">
+            <div class="flex-1 flex justify-end">
                 <form id="searchForm" action="{{ route('laporan.bMasuk.search') }}" method="get"
                     class="w-full sm:w-[280px]">
                     <div class="relative">
@@ -125,42 +118,35 @@
                             <td colspan="10" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
-                        @php $no = ($bMasuk->currentPage() - 1) * $bMasuk->perPage() + 1; @endphp
-                        @foreach ($bMasuk as $data)
-                            @foreach ($data->detailMasuk as $detail)
-                                <tr>
-                                    <td class="px-4 py-2">{{ $no++ }}</td>
-                                    <td class="px-4 py-2 text-left">
-                                        {{ $detail->barangDetail->barang->namaBarang ?? 'Nama Barang Tidak Ditemukan' }}
-                                    </td>
-                                    <td class="px-4 py-2">{{ $detail->idBarang }}</td>
-                                    <td class="px-4 py-2">{{ $data->idSupplier }}</td>
-                                    <td class="px-4 py-2">{{ $data->idAkun }}</td>
-                                    <td class="px-4 py-2">{{ $detail->jumlahMasuk }}</td>
-                                    <td class="px-4 py-2 text-right">
-                                        Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}
-                                    </td>
-                                    <td class="px-4 py-2 text-right">
-                                        Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}</td>
-                                </tr>
-                            @endforeach
+                    @php $no = ($bMasuk->currentPage() - 1) * $bMasuk->perPage() + 1; @endphp
+                    @foreach ($bMasuk as $data)
+                        @foreach ($data->detailMasuk as $detail)
+                            <tr>
+                                <td class="px-4 py-2">{{ $no++ }}</td>
+                                <td class="px-4 py-2 text-left">
+                                    {{ $detail->barangDetail->barang->namaBarang ?? 'Nama Barang Tidak Ditemukan' }}</td>
+                                <td class="px-4 py-2">{{ $detail->idBarang }}</td>
+                                <td class="px-4 py-2">{{ $data->idSupplier }}</td>
+                                <td class="px-4 py-2">{{ $data->idAkun }}</td>
+                                <td class="px-4 py-2">{{ $detail->jumlahMasuk }}</td>
+                                <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}
+                                </td>
+                                <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}</td>
+                                <td class="px-4 py-2">
+                                    {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}</td>
+                            </tr>
                         @endforeach
+                    @endforeach
                     @endif
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        @if ($bMasuk->hasPages())
-            <div class="mt-4">
-                {{ $bMasuk->appends(request()->query())->links() }}
-            </div>
-        @endif
+        {{ $bMasuk->links() }}
     </div>
 
     <script>
@@ -258,15 +244,7 @@
             }
             const pdfForm = document.getElementById('pdfForm');
             if (pdfForm) {
-                pdfForm.addEventListener('submit', function(e) {
-                    const totalDetails = {{ $totalDetails ?? 0 }};
-                    if (totalDetails === 0) {
-                        e.preventDefault();
-                        alert('Tidak ada data untuk diunduh sebagai PDF.');
-                        return; // Don't proceed to syncHiddenForms
-                    }
-                    syncHiddenForms(e); // Only call if data exists
-                });
+                pdfForm.addEventListener('submit', syncHiddenForms);
             }
             const searchForm = document.getElementById('searchForm');
             if (searchForm) {

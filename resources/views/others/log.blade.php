@@ -1,10 +1,10 @@
 @extends('layout')
 
 @section('content')
-    <div class="">
+    <div class="p-6 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <!-- Card Component -->
+            <!-- Barang Masuk -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden border">
                 <div class="bg-blue-100 px-6 py-3 text-blue-700 font-semibold border-b">Aktivitas - Barang Masuk</div>
                 <div class="overflow-x-auto">
@@ -17,32 +17,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Susu UHT</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Beras 5Kg</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Minyak Goreng</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Ballpoin 0.5</td>
-                            </tr>
+                            @forelse ($barangMasukLogs as $log)
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-6 py-3">
+                                        {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}</td>
+                                    <td class="px-6 py-3">{{ $log->akun->nama ?? '-' }}</td>
+                                    <td class="px-6 py-3"> Barang Masuk </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-3 text-center text-gray-400">Tidak ada data</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-
-            <!-- Duplicate this block with changes for other logs -->
 
             <!-- Barang Keluar -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden border">
@@ -57,27 +47,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Reuse same rows -->
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Susu UHT</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Beras 5Kg</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Minyak Goreng</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Ballpoin 0.5</td>
-                            </tr>
+                            @forelse ($barangKeluarLogs as $log)
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-6 py-3">
+                                        {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}</td>
+                                    <td class="px-6 py-3">{{ $log->akun->nama ?? '-' }}</td>
+                                    <td class="px-6 py-3">
+                                        @php
+                                            $firstDetail = $log->detailKeluar->first();
+                                        @endphp
+                                        {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-3 text-center text-gray-400">Tidak ada data</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -96,27 +82,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Same rows -->
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Susu UHT</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Beras 5Kg</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Minyak Goreng</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Ballpoin 5Kg</td>
-                            </tr>
+                            @forelse ($barangReturLogs as $log)
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-6 py-3">
+                                        {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}</td>
+                                    <td class="px-6 py-3">{{ $log->akun->nama ?? '-'  }}</td>
+                                    <td class="px-6 py-3">
+                                        @php
+                                            $firstDetail = $log->detailRetur->first();
+                                        @endphp
+                                        {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-3 text-center text-gray-400">Tidak ada data</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -135,27 +117,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Same rows -->
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Susu UHT</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">12 Maret 2025</td>
-                                <td class="px-6 py-3">Nadia Salsabila</td>
-                                <td class="px-6 py-3">Beras 5Kg</td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Minyak Goreng</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-3">13 Maret 2025</td>
-                                <td class="px-6 py-3">Fadhil Aryansyah</td>
-                                <td class="px-6 py-3">Ballpoin 5Kg</td>
-                            </tr>
+                            @forelse ($barangRusakLogs as $log)
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-6 py-3">
+                                        {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}</td>
+                                    <td class="px-6 py-3">{{$log->akun->nama ?? '-' }}</td>
+                                    <td class="px-6 py-3">
+                                        @php
+                                            $firstDetail = $log->detailRusak->first();
+                                        @endphp
+                                        {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-3 text-center text-gray-400">Tidak ada data</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

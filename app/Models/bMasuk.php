@@ -45,6 +45,10 @@ class bMasuk extends Model
         });
     }
 
+    function akun() {
+        return $this->belongsTo(Akun::class, 'idAkun', 'idAkun');
+    }
+
     public function detailMasuk()
     {
         return $this->hasMany(bMasukDetail::class, 'idBarangMasuk', 'idBarangMasuk');

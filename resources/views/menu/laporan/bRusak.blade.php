@@ -122,7 +122,7 @@
                         @php $no = 1; @endphp
                         @foreach ($bRusak as $data)
                             @foreach ($data->detailRusak as $detail)
-                                <tr>
+                                <tr class="hover:bg-blue-50 even:bg-gray-50">
                                     <td class="px-4 py-2">{{ $no++ }}</td>
                                     <td class="px-4 py-2">{{ $data->idBarangRusak }}</td>
                                     <td class="px-4 py-2">{{ $data->penanggungJawab }}</td>

@@ -122,7 +122,7 @@
                         @php $no = 1; @endphp
                         @foreach ($bRetur as $data)
                             @foreach ($data->detailRetur as $detail)
-                                <tr>
+                                <tr class="hover:bg-blue-50 even:bg-gray-50" >
                                     <td class="px-4 py-2">{{ $no++ }}</td>
                                     <td class="px-4 py-2">{{ $detail->idBarangRetur ?? '-' }}</td>
                                     <td class="px-4 py-2">{{ $data->idSupplier ?? '-' }}</td>

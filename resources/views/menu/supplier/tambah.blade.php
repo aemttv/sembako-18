@@ -108,6 +108,11 @@
                 var tableBody = document.getElementById('supplierTableBody');
                 var newRow = tableBody.insertRow();
 
+                if(!namaLengkap || !noHp || !alamat || !status) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+
                 newRow.innerHTML = `
                     <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
                     <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>

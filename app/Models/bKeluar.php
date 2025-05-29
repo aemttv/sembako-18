@@ -75,6 +75,11 @@ class bKeluar extends Model
         });
     }
 
+    public function akun()
+    {
+        return $this->belongsTo(Akun::class, 'idAkun', 'idAkun');
+    }
+
     public function detailKeluar()
     {
         return $this->hasMany(bKeluarDetail::class, 'idBarangKeluar', 'idBarangKeluar');

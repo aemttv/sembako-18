@@ -4,6 +4,11 @@
 
 @section('content')
     <div class="p-6 space-y-4">
+        @if (session('success'))
+            <x-ui.alert type="success" :message="session('success')" />
+        @elseif (session('error'))
+            <x-ui.alert type="error" :message="session('error')" />
+        @endif
         <!-- Top Row - 3 Cards -->
         <div class="flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center gap-4 mb-6">
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">

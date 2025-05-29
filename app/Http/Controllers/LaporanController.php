@@ -17,7 +17,8 @@ class LaporanController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')->OrderBy('tglMasuk', 'desc')->paginate(10);
+        $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')->OrderBy('tglMasuk', 'desc')->paginate(5);
+        
 
         return view('menu.laporan.bMasuk', ['bMasuk' => $bMasuk]);
     }
@@ -52,7 +53,7 @@ class LaporanController extends Controller
             ]);
         }
 
-        $bMasuk = $query->paginate(10);
+        $bMasuk = $query->paginate(6);
 
         return view('menu.laporan.bMasuk', compact('bMasuk'));
     }
@@ -63,7 +64,7 @@ class LaporanController extends Controller
             abort(403, 'Unauthorized action.');
         }
         
-        $bKeluar = bKeluar::with('detailKeluar.barangDetailKeluar.barang')->OrderBy('tglKeluar', 'desc')->paginate(10);
+        $bKeluar = bKeluar::with('detailKeluar.barangDetailKeluar.barang')->OrderBy('tglKeluar', 'desc')->paginate(5);
 
         return view('menu.laporan.bKeluar', ['bKeluar' => $bKeluar]);
     }
@@ -97,7 +98,7 @@ class LaporanController extends Controller
             ]);
         }
 
-        $bKeluar = $query->paginate(10);
+        $bKeluar = $query->paginate(6);
 
         return view('menu.laporan.bKeluar', compact('bKeluar'));
     }
@@ -113,7 +114,7 @@ class LaporanController extends Controller
                 $query->where('statusDetailBarang', 1);
             },
             'merek',
-        ])->paginate(10);
+        ])->paginate(6);
 
         // Transform and set the collection back to the paginator
         $barang->setCollection(
@@ -169,7 +170,7 @@ class LaporanController extends Controller
         }
 
         // Now paginate
-        $barang = $query->paginate(10);
+        $barang = $query->paginate(6);
 
         // Transform the paginated collection
         $barang->setCollection(
@@ -208,7 +209,7 @@ class LaporanController extends Controller
 
         $bRetur = bRetur::with('detailRetur.detailBarangRetur.barang')
         ->where('statusRetur', 1)->orWhere('statusRetur', 0)
-        ->OrderBy('tglRetur', 'desc')->paginate(10);
+        ->OrderBy('tglRetur', 'desc')->paginate(6);
 
         return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
     }
@@ -240,7 +241,7 @@ class LaporanController extends Controller
             ]);
         }
 
-        $bRetur = $query->OrderBy('tglRetur', 'desc')->paginate(10);
+        $bRetur = $query->OrderBy('tglRetur', 'desc')->paginate(6);
 
 
         return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
@@ -255,7 +256,7 @@ class LaporanController extends Controller
         $bRusak = bRusak::with('detailRusak.detailBarangRusak.barang')
         ->where('statusRusak', 1)->orWhere('statusRusak', 0)
         ->OrderBy('tglRusak', 'desc')
-        ->paginate(10);
+        ->paginate(6);
 
         return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);
     }
@@ -287,7 +288,7 @@ class LaporanController extends Controller
             ]);
         }
 
-        $bRusak = $query->OrderBy('tglRusak', 'desc')->paginate(10);
+        $bRusak = $query->OrderBy('tglRusak', 'desc')->paginate(6);
 
         return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);
     }

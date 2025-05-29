@@ -115,7 +115,7 @@
                     @else
                     @php $no = 1; @endphp
                     @foreach ($barang as $data)
-                        <tr>
+                        <tr class="hover:bg-blue-50 even:bg-gray-50">
                             <td class="px-4 py-2">{{ $no++ }}</td>
                             <td class="px-4 py-2">{{ $data->idBarang }}</td>
                             <td class="px-4 py-2 text-left">{{ $data->namaBarang ?? 'Nama Barang' }}</td>

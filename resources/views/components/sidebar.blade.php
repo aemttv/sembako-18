@@ -242,6 +242,14 @@
                         <h2 class="px-2 pt-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Others</h2> {{-- Added px-2 to align --}}
                         <ul class="mt-2 space-y-1">
                             <li>
+                                <a href="/backup"
+                                    class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
+                                            {{ Request::is('backup') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                                    <i class="fas fa-scroll w-3 {{ Request::is('backup') ? 'text-gray-700' : 'text-gray-500' }}"></i>
+                                    Backup Database
+                                </a>
+                            </li>
+                            <li>
                                 <a href="/log"
                                     class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                             {{ Request::is('log') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">

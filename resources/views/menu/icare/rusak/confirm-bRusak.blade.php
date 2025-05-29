@@ -53,7 +53,7 @@
                             </tr>
                         @endif
                         @foreach ($bRusak as $rusak)
-                            <tr>
+                            <tr class="hover:bg-blue-50 even:bg-gray-50">
                                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2">{{ $rusak->idBarangRusak }}</td>
                                 <td class="px-4 py-2">{{ $rusak->akun->nama }} ({{ $rusak->akun->idAkun }})</td>
@@ -79,6 +79,9 @@
                     </tbody>
                 </table>
             </div>
+
+        <!-- Pagination -->
+        {{ $bRusak->links() }}
         @else
             <!-- Header -->
             <div class="flex justify-between items-center">
@@ -151,10 +154,11 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            {{ $staffBRusak->links() }}
         @endif
 
-        <!-- Pagination -->
-        {{ $bRusak->links() }}
     </div>
 
 

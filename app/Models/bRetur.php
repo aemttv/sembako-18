@@ -55,6 +55,10 @@ class bRetur extends Model
         return $this->belongsTo(Supplier::class, 'idSupplier', 'idSupplier');
     }
 
+    function akun() {
+        return $this->belongsTo(Akun::class, 'penanggungJawab', 'idAkun');
+    }
+
     public function detailRetur()
     {
         return $this->hasMany(bReturDetail::class, 'idBarangRetur', 'idBarangRetur');

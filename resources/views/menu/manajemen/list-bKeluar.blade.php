@@ -48,7 +48,7 @@
                         </tr>
                     @endif
                     @foreach ($bKeluar as $data)
-                        <tr class="hover:bg-blue-50">
+                        <tr class="hover:bg-blue-50 even:bg-gray-50">
                             <td class="px-4 py-2">{{ $data->idBarangKeluar }}</td>
                             <td class="px-4 py-2">{{ $data->invoice }}</td>
                             <td class="px-4 py-2">{{ $data->idAkun }}</td>
