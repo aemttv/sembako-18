@@ -14,64 +14,73 @@
 
         <!-- Tabs -->
 
-        <div class="flex items-end gap-4 border rounded-lg p-4 bg-white flex-wrap">
-            <!-- Filter & Actions -->
-            <form action="{{ route('laporan.bRetur.search') }}" method="get" class="flex items-end gap-4 flex-wrap">
+        <div
+            class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 border rounded-lg p-4 bg-white flex-wrap w-full">
+            <!-- Filter & Actions Form (Dates & Tampilkan) -->
+            <form action="{{ route('laporan.bRetur.search') }}" method="get"
+                class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 w-full sm:w-auto sm:flex-wrap">
                 <!-- Tanggal Mulai -->
-                <div class="flex flex-col">
-                    <label for="tanggal_awal" class="text-sm text-gray-700 mb-1">Tanggal Mulai</label>
+                <div class="flex flex-col w-full sm:w-auto">
+                    <label for="tanggal_awal" class="text-sm text-gray-700 mb-1 text-center sm:text-left">Tanggal
+                        Mulai</label>
                     <input type="date" name="tanggal_awal" id="tanggal_awal"
-                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_awal') border-red-500 @enderror"
+                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_awal') border-red-500 @enderror w-full"
                         placeholder="Tanggal Awal" value="{{ request('tanggal_awal', '') }}"
                         max="{{ now()->addYear()->format('Y-m-d') }}" />
                     @error('tanggal_awal')
-                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        <span class="text-red-500 text-xs mt-1 text-center sm:text-left">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Tanggal Akhir -->
-                <div class="flex flex-col">
-                    <label for="tanggal_akhir" class="text-sm text-gray-700 mb-1">Tanggal Akhir</label>
+                <div class="flex flex-col w-full sm:w-auto">
+                    <label for="tanggal_akhir" class="text-sm text-gray-700 mb-1 text-center sm:text-left">Tanggal
+                        Akhir</label>
                     <input type="date" name="tanggal_akhir" id="tanggal_akhir"
-                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_akhir') border-red-500 @enderror"
+                        class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 @error('tanggal_akhir') border-red-500 @enderror w-full"
                         placeholder="Tanggal Akhir" value="{{ request('tanggal_akhir', '') }}" />
                     @error('tanggal_akhir')
-                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        <span class="text-red-500 text-xs mt-1 text-center sm:text-left">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Tampilkan Button -->
-                <div class="flex flex-col justify-end">
+                <div class="flex flex-col justify-end w-full sm:w-auto">
                     <button type="submit"
-                        class="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 h-[42px]">
+                        class="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 h-[42px] w-full sm:w-auto">
                         Tampilkan
                     </button>
                 </div>
             </form>
-            <!-- PDF Button -->
-            <form action="{{ route('streamPDF.bRetur.view') }}" method="post" class="flex flex-col justify-end">
+
+            <!-- PDF Button Form -->
+            <form id="pdfForm" action="{{ route('streamPDF.bRetur.view') }}" method="post"
+                class="flex flex-col justify-end w-full sm:w-auto">
                 @csrf
                 <input type="hidden" name="tanggal_awal" value="{{ request('tanggal_awal', '') }}">
                 <input type="hidden" name="tanggal_akhir" value="{{ request('tanggal_akhir', '') }}">
                 <input type="hidden" name="search" value="{{ request('search', '') }}">
                 <button type="submit"
-                    class="px-4 py-1.5 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-[42px] flex items-center gap-2">
+                    class="px-4 py-1.5 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-[42px] flex items-center justify-center gap-2 w-full sm:w-auto">
                     <i class="fa-regular fa-file-pdf"></i>
                     View PDF
                 </button>
             </form>
 
-             <div class="flex flex-col justify-end">
-                <a href="{{route('laporan.bRetur.view')}}" class="px-4 py-1.5 text-sm font-medium text-white bg-pink-500 rounded-md hover:bg-pink-600 h-[42px] text-center justify-center items-center"> Reset Filter </a>
+            <!-- Reset Filter Link/Button -->
+            <div class="flex flex-col justify-end w-full sm:w-auto">
+                <a href="{{ route('laporan.bRetur.view') }}"
+                    class="px-4 py-1.5 text-sm font-medium text-white bg-pink-500 rounded-md hover:bg-pink-600 h-[42px] flex items-center justify-center w-full sm:w-auto">
+                    Reset Filter </a>
             </div>
 
-            <!-- Search Input (Right aligned) -->
-            <div class="flex-1 flex justify-end">
-                <form action="{{ route('laporan.bRetur.search') }}" method="get" class="w-[280px]">
-                    <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 shadow-sm">
+            <!-- Search Input Wrapper (for right alignment on desktop) -->
+            <div class="w-full sm:flex-1 sm:flex sm:justify-end">
+                <form action="{{ route('laporan.bRetur.search') }}" method="get" class="w-full sm:w-[280px]">
+                    <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 shadow-sm h-[42px]">
                         <i class="fas fa-search text-gray-400 mr-2"></i>
                         <input type="text" placeholder="Nama Barang / ID Barang" name="search"
-                            class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400"
+                            class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400 h-full"
                             value="{{ request('search', '') }}" />
                     </div>
                     <!-- Keep the date filters in sync when searching -->
@@ -110,32 +119,35 @@
                             <td colspan="10" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
-                    @php $no = 1; @endphp
-                    @foreach ($bRetur as $data)
-                        @foreach ($data->detailRetur as $detail)
-                            <tr>
-                                <td class="px-4 py-2">{{ $no++ }}</td>
-                                <td class="px-4 py-2">{{ $detail->idBarangRetur }}</td>
-                                <td class="px-4 py-2">{{ $data->idSupplier }}</td>
-                                <td class="px-4 py-2">{{ $data->penanggungJawab }}</td>
-                                <td class="px-4 py-2">{{ $detail->barcode }}</td>
-                                <td class="px-4 py-2  text-left">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
-                                <td class="px-4 py-2">{{ $detail->jumlah }}</td>
-                                <td>{{ $detail->kategoriAlasan->alasan() }}</td>
-                                <td class="px-4 py-2"> {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') }}</td>
-                                <td class="px-4 py-2">
-                                    @if ($data->statusRetur == 2)
-                                        <span class="text-yellow-500 font-semibold">Pending</span>
-                                    @elseif ($data->statusRetur == 1)
-                                        <span class="text-green-500 font-semibold">Approved</span>
-                                    @elseif ($data->statusRetur == 0)
-                                        <span class="text-red-500 font-semibold">Rejected</span>
-                                    @else
-                                        <span class="text-gray-500">Unknown</span>
-                                    @endif</td>
-                            </tr>
+                        @php $no = 1; @endphp
+                        @foreach ($bRetur as $data)
+                            @foreach ($data->detailRetur as $detail)
+                                <tr>
+                                    <td class="px-4 py-2">{{ $no++ }}</td>
+                                    <td class="px-4 py-2">{{ $detail->idBarangRetur ?? '-' }}</td>
+                                    <td class="px-4 py-2">{{ $data->idSupplier ?? '-' }}</td>
+                                    <td class="px-4 py-2">{{ $data->penanggungJawab ?? '-' }}</td>
+                                    <td class="px-4 py-2">{{ $detail->barcode ?? '-' }}</td>
+                                    <td class="px-4 py-2  text-left">
+                                        {{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
+                                    <td class="px-4 py-2">{{ $detail->jumlah ?? '-' }}</td>
+                                    <td>{{ $detail->kategoriAlasan->alasan() ?? '-' }}</td>
+                                    <td class="px-4 py-2">
+                                        {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') ?? '-' }}</td>
+                                    <td class="px-4 py-2">
+                                        @if ($data->statusRetur == 2)
+                                            <span class="text-yellow-500 font-semibold">Pending</span>
+                                        @elseif ($data->statusRetur == 1)
+                                            <span class="text-green-500 font-semibold">Approved</span>
+                                        @elseif ($data->statusRetur == 0)
+                                            <span class="text-red-500 font-semibold">Rejected</span>
+                                        @else
+                                            <span class="text-gray-500">Unknown</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
                         @endforeach
-                    @endforeach
                     @endif
                 </tbody>
             </table>
@@ -242,7 +254,15 @@
             }
             const pdfForm = document.getElementById('pdfForm');
             if (pdfForm) {
-                pdfForm.addEventListener('submit', syncHiddenForms);
+                pdfForm.addEventListener('submit', function(e) {
+                    const totalDetails = {{ $totalDetails ?? 0 }};
+                    if (totalDetails === 0) {
+                        e.preventDefault();
+                        alert('Tidak ada data untuk diunduh sebagai PDF.');
+                        return; // Don't proceed to syncHiddenForms
+                    }
+                    syncHiddenForms(e); // Only call if data exists
+                });
             }
             const searchForm = document.getElementById('searchForm');
             if (searchForm) {

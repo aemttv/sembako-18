@@ -5,14 +5,14 @@
 @section('content')
     <div class="p-6 space-y-4">
         <!-- Top Row - 3 Cards -->
-        <div class="flex flex-wrap justify-center gap-4 mb-6">
+        <div class="flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center gap-4 mb-6">
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
                 <x-card title="Total Stok Barang" icon="📦"
                     class="bg-pink-50 border border-pink-200">{{ $totalStok }}</x-card>
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
                 <x-card title="Total Barang Keluar" icon="📤"
-                    class="bg-blue-50 border ">{{ $totalBarangKeluar }}</x-card>
+                    class="bg-blue-50 border border-yellow-200">{{ $totalBarangKeluar }}</x-card> {{-- Added border-blue-200 for consistency --}}
             </div>
             <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
                 <x-card title="Total Barang Masuk" icon="📥"
@@ -21,8 +21,8 @@
         </div>
 
         <!-- Bottom Row - 2 Cards Centered -->
-        <div class="flex justify-center gap-4 mb-6">
-            <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
+        <div class="flex flex-col items-center sm:flex-row sm:justify-center gap-4 mb-6">
+            <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm"> {{-- lg:w-1/3 can be sm:w-1/2 if these should always be 2-col max on larger screens --}}
                 @if ($totalDekatKadaluarsa > 0)
                     <x-card title="Mendekati Masa Simpan" icon="⏳" class="bg-yellow-50 border border-yellow-200">
                         {{ $totalDekatKadaluarsa }} <span class="text-red-500 ml-0.5 top-0.5">⚠️</span>
@@ -33,8 +33,9 @@
                     </x-card>
                 @endif
             </div>
-            <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm">
-                <x-card title="Stok Rendah" icon="⚠️" class="bg-rose-50 border border-rose-200">{{ $stokRendah->implode(', ') }}</x-card>
+            <div class="w-full sm:w-1/2 lg:w-1/3 max-w-sm"> {{-- lg:w-1/3 can be sm:w-1/2 here too --}}
+                <x-card title="Stok Rendah" icon="⚠️"
+                    class="bg-rose-50 border border-rose-200">{{ $stokRendah->implode(', ') }}</x-card>
             </div>
         </div>
 
@@ -49,7 +50,6 @@
                 <canvas id="monthlySalesChart"></canvas>
             </div>
         </div>
-
     </div>
     <script>
         let monthlySalesChart;

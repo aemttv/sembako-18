@@ -54,8 +54,11 @@
             <x-header /> 
 
             <!-- Page content -->
-            <main class="flex-1 p-4 pt-20 px-4 bg-[#F9FAFB]">
-                @yield('content')
+            <main class="flex-1 pt-20 md:ml-80 bg-[#F9FAFB]">
+                <!-- Content wrapper with padding -->
+                <div class="px-4 pb-4 pt-0 md:px-6 md:pb-6"> {{-- pt-0 because main already has pt-20 --}}
+                    @yield('content')
+                </div>
             </main>
         </div>
     </div>

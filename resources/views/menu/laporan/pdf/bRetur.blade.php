@@ -149,8 +149,8 @@
                             <td class="px-4 py-2">{{ $detail->idBarangRetur }}</td>
                             <td class="px-4 py-2">{{ $data->idSupplier }}</td>
                             <td class="px-4 py-2">{{ $data->penanggungJawab }}</td>
-                            <td class="px-4 py-2">{{ $detail->detailBarangRetur->barcode }}</td>
-                            <td class="px-4 py-2  text-left">{{ $detail->detailBarangRetur->barang->namaBarang }}</td>
+                            <td class="px-4 py-2">{{ $detail->detailBarangRetur->barcode ?? '-'}}</td>
+                            <td class="px-4 py-2  text-left">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-'}}</td>
                             <td class="px-4 py-2">{{ $detail->jumlah }}</td>
                             <td>{{ $detail->kategoriAlasan->alasan() }}</td>
                             <td class="px-4 py-2"> {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') }}</td>
