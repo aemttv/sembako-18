@@ -19,6 +19,10 @@ class bKeluarController extends Controller
 {
     function viewBKeluar()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         Carbon::setLocale('id');
         $bKeluar = bKeluar::with('detailKeluar')->paginate(10);
         return view('menu.manajemen.list-bKeluar', ['bKeluar' => $bKeluar]);
@@ -26,6 +30,10 @@ class bKeluarController extends Controller
 
     public function viewDetailBKeluar($idBarangKeluar)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         Carbon::setLocale('id');
 
         $bKeluar = bKeluar::with(['detailKeluar.barangDetailKeluar.barang'])

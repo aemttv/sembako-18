@@ -14,8 +14,9 @@
         <!-- Notification Bell with Dropdown -->
         <div class="relative inline-block" id="notification-wrapper">
             @php
-                $hasUnread = isset($unreadNotifications) && $unreadNotifications->count();
-            @endphp
+            $unreadNotifications = collect($unreadNotifications ?? []);
+            $hasUnread = $unreadNotifications->count();
+        @endphp
             <!-- Button -->
             <button id="notification-toggle"
                 class="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full border hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -30,7 +31,7 @@
                 class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
                 <div class="p-4 border-b font-medium text-gray-700 flex items-center justify-between">
                     <span class="text-base">Notifications</span>
-                    @if (isset($globalNotifications) && $globalNotifications->count())
+                    @if (isset($globalNotifications) && count($globalNotifications))
                         <form action="{{ route('notifications.clear') }}" method="POST"
                             onsubmit="return confirm('Clear all notifications?');" class="h-full flex items-center">
                             @csrf
@@ -44,7 +45,7 @@
                 </div>
 
                 <ul class="max-h-60 overflow-y-auto divide-y divide-gray-100 text-sm">
-                    @if (isset($globalNotifications) && $globalNotifications->count())
+                    @if (isset($globalNotifications) && count($globalNotifications))
                         @foreach ($globalNotifications as $notif)
                             <li class="px-4 py-3 hover:bg-gray-50 {{-- cursor-pointer --}}"> {{-- Removed cursor-pointer if not clickable directly --}}
                                 <p class="text-gray-700">

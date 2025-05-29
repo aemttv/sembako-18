@@ -7,12 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     <meta name="csrf-token" content="{{ csrf_token() }}"> 
+    {{-- <link rel="icon" type="image/png" href="{{ asset('assets/images/logo_1png.png') }}?v=123"> --}}
 
-    {{-- <link rel="stylesheet" href="/style.css"> --}}
     <title>Toko Sembako 18</title>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>

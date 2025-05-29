@@ -13,6 +13,10 @@ class SupplierController extends Controller
 {
     function viewSupplier()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+        
         $supplier = Supplier::orderBy('idSupplier', 'desc')->paginate(10);
 
         return view('menu.supplier.indexSupplier', ['supplier' => $supplier]);
@@ -20,6 +24,10 @@ class SupplierController extends Controller
 
     function viewTambahSupplier()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('menu.supplier.tambah');
     }
 

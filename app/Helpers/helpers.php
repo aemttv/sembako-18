@@ -16,3 +16,15 @@ if (!function_exists('userRole')) {
     }
 }
 
+if (!function_exists('isUserLoggedIn')) {
+    /**
+     * Check if a user is currently logged in based on session data.
+     *
+     * @return bool
+     */
+    function isUserLoggedIn()
+    {
+        return session()->has('user_data') && session('user_data') !== null;
+    }
+}
+

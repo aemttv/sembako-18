@@ -35,7 +35,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::middleware('web')->group(function () {
     Route::post('/tambah-produk', [BarangController::class, 'tambahProduk'])->name('produk.submit');
     Route::post('/tambah-merek', [BarangController::class, 'tambahMerek'])->name('merek.submit');
-    Route::get('/tambah-produk', [BarangController::class, 'viewtambahProduk'])->name('view.tambah-produk');
+    Route::get('/tambah-produk-form', [BarangController::class, 'viewtambahProduk'])->name('view.tambah-produk');
     Route::get('/daftar-produk', [BarangController::class, 'viewBarang'])->name('view.barang');
     Route::get('/daftar-produk/search', [BarangController::class, 'search']);
     Route::get('/daftar-produk/list-search', [BarangController::class, 'searchList']);

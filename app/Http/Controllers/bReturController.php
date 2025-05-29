@@ -16,6 +16,9 @@ class bReturController extends Controller
 {
     public function viewConfirmBRetur()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
 
         $bRetur = bRetur::with(['detailRetur', 'detailRetur.barang']) // Load nested relationships
                     ->where('statusRetur', 2)
@@ -30,6 +33,11 @@ class bReturController extends Controller
     }
 
     function viewDetailBKeluar($idBarangRetur) {
+
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+        
         $bRetur = bRetur::with(['detailRetur.detailBarangRetur.barang']) // Load nested relationships
                     ->where('idBarangRetur', $idBarangRetur)
                     ->firstOrFail();

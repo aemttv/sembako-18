@@ -26,6 +26,11 @@ class BarangController extends Controller
      */
     public function viewBarang()
     {
+
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         // Eager load both 'detailBarang' and 'merek' relationships
         $barang = Barang::with([
             'detailBarang' => function ($query) {
@@ -77,6 +82,10 @@ class BarangController extends Controller
 
     public function searchMerek(Request $request)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = $request->get('q');
 
         $results = bMerek::where('namaMerek', 'like', "%$query%")
@@ -100,6 +109,10 @@ class BarangController extends Controller
      */
     public function search(Request $request)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = $request->get('q');
 
         $results = Barang::where('namaBarang', 'like', "%$query%")
@@ -110,6 +123,10 @@ class BarangController extends Controller
     }
     public function searchList(Request $request)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $search = $request->input('q');
 
         $barangQuery = Barang::with([
@@ -160,6 +177,10 @@ class BarangController extends Controller
      */
     public function searchBarcode(Request $request)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = $request->get('q');
 
         $results = Barang::with([
@@ -201,6 +222,10 @@ class BarangController extends Controller
 
     public function searchDetail(Request $request)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $barcode = $request->get('barcode');
 
         $detail = BarangDetail::with('barang')->where('barcode', $barcode)->where('statusDetailBarang', 1)->first();
@@ -237,6 +262,10 @@ class BarangController extends Controller
 
     public function viewDetailProduk($idBarang)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         Carbon::setLocale('id');
 
         // Get barang with active details
@@ -268,31 +297,51 @@ class BarangController extends Controller
      */
     function tambahMerek(Request $request)
     {
-        // Validate the input
-        $request->validate([
-            'merekBaru' => 'required|string|max:255',
-        ]);
-
-        $inputValue = ucwords(trim($request->input('merekBaru')));
-        if (bMerek::where('namaMerek', $inputValue)->exists()) {
-            return redirect()->back()->with('error', 'Merek sudah ada!');
+        if (!isUserLoggedIn()) {
+            abort(403, 'Unauthorized action.');
         }
 
-        // Create a new instance of the bMerek model
-        $merekBaru = new bMerek();
+        try {
+            // Validate the input
+            $request->validate([
+                'merekBaru' => 'required|string|max:255',
+            ]);
 
-        // Set the namaMerek field
-        $merekBaru->namaMerek = $request->input('merekBaru');
+            $inputValue = ucwords(trim($request->input('merekBaru')));
+            if (bMerek::where('namaMerek', $inputValue)->exists()) {
+                return redirect()->back()->with('error', 'Merek sudah ada!');
+            }
 
-        // Save to database
-        $merekBaru->save();
+            // Create a new instance of the bMerek model
+            $merekBaru = new bMerek();
 
-        // Optionally return response or redirect
-        return redirect()->back()->with('success', 'Merek berhasil ditambahkan!');
+            // Set the namaMerek field
+            $merekBaru->namaMerek = $request->input('merekBaru');
+
+            // Save to database
+            $merekBaru->save();
+
+            // Optionally return response or redirect
+            return redirect()->back()->with('success', 'Merek berhasil ditambahkan!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Let Laravel handle validation exceptions
+            throw $e;
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error adding merek: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => session('user_data')->id ?? null,
+            ]);
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menambahkan merek. Silakan coba lagi.');
+        }
     }
 
     function viewTambahProduk()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $merek = bMerek::all();
         $kategori = KategoriBarang::cases();
 
@@ -307,9 +356,15 @@ class BarangController extends Controller
      */
     function tambahProduk(Request $request)
     {
+        
         DB::beginTransaction();
-
+        
         try {
+           
+            if(!isUserLoggedIn()){
+                abort(403, 'Unauthorized action.');
+            }
+
             // Validate the request
             $request->validate(
                 [
@@ -397,6 +452,10 @@ class BarangController extends Controller
 
     function updateBarangDetail(Request $request, $idBarang)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             // Validate input
             $validated = $request->validate([
@@ -470,6 +529,10 @@ class BarangController extends Controller
 
     public function softDeleteBarangDetail($idBarang, $barcode)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
 
@@ -507,6 +570,10 @@ class BarangController extends Controller
     }
     public function softUpdateBarangDetail($idBarang, $barcode)
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             $detail = BarangDetail::where('idBarang', $idBarang)->where('barcode', $barcode)->first();
 

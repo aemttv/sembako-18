@@ -13,7 +13,7 @@ class LaporanController extends Controller
 {
     function viewbMasuk()
     {
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -26,7 +26,7 @@ class LaporanController extends Controller
     function searchBMasuk(Request $request)
     {
 
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -60,7 +60,7 @@ class LaporanController extends Controller
 
     function viewbKeluar()
     {
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
         
@@ -71,7 +71,7 @@ class LaporanController extends Controller
 
     function searchBKeluar(Request $request)
     {
-        if(!isOwner()){
+        if(!isOwner()|| isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -105,7 +105,7 @@ class LaporanController extends Controller
 
     function viewStokBarang(Request $request)
     {
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -134,7 +134,7 @@ class LaporanController extends Controller
 
     public function searchStokBarang(Request $request)
     {
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -203,7 +203,7 @@ class LaporanController extends Controller
 
     function viewbRetur() {
 
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -216,7 +216,7 @@ class LaporanController extends Controller
 
     function searchBRetur(Request $request) {
 
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -249,7 +249,7 @@ class LaporanController extends Controller
 
     function viewbRusak() {
 
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
@@ -263,7 +263,7 @@ class LaporanController extends Controller
 
     function searchBRusak(Request $request) {
 
-        if(!isOwner()){
+        if(!isOwner() || isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
         

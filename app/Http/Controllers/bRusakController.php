@@ -17,6 +17,10 @@ class bRusakController extends Controller
 {
     public function viewConfirmBRusak()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         $bRusak = bRusak::with(['detailRusak', 'detailRusak.barang', 'akun']) // Load nested relationships
             ->where('statusRusak', 2)
             ->paginate(10);
@@ -33,6 +37,10 @@ class bRusakController extends Controller
 
     public function viewAjukanBRusak()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+        
         return view('menu.icare.rusak.tambah');
     }
 

@@ -32,7 +32,7 @@
                     value="{{ request('q') }}"
                 />
             </form>
-            <a href="/tambah-produk"
+            <a href="/tambah-produk-form"
                 class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah
                 Produk</a>
             <!-- Trigger Buttons -->

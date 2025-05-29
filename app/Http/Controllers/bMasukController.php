@@ -16,6 +16,10 @@ class bMasukController extends Controller
 {
     function viewBMasuk()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
         Carbon::setLocale('id');
         $bMasuk = bMasuk::with('detailMasuk')->paginate(10);
 
@@ -33,6 +37,10 @@ class bMasukController extends Controller
     }
     function viewTambahBMasuk()
     {
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+        
         $suppliers = Supplier::pluck('nama');
 
         return view('menu.manajemen.bMasuk', compact('suppliers'));
