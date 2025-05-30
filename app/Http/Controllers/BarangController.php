@@ -464,7 +464,7 @@ class BarangController extends Controller
                 'kategori' => 'required',
                 'harga_satuan' => 'required|string', // Will be sanitized
                 'status_produk' => 'required|in:0,1',
-                'gambarProduk' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048', 'dimensions:min_width=400,min_height=400,max_width=1200,max_height=1200'],
+                'gambarProduk' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048', 'dimensions:min_width=200,min_height=200,max_width=1200,max_height=1920'],
                 [
                     'gambarProduk.dimensions' => 'Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.',
                 ],
@@ -507,8 +507,8 @@ class BarangController extends Controller
             foreach ($owner as $o) {
                 Notifications::create([
                     'idAkun' => $o->idAkun,
-                    'title' => 'Produk Baru Ditambahkan',
-                    'message' => 'Produk baru telah ditambahkan.',
+                    'title' => 'Produk Diperbarui',
+                    'message' => 'Produk telah Diperbarui.',
                     'data' => json_encode([
                         'nama_barang' => $barang->namaBarang,
                         'id_barang' => $barang->idBarang,
@@ -523,7 +523,7 @@ class BarangController extends Controller
             Log::error('Error updating product: ' . $e->getMessage());
 
             // Redirect back with error message and old input
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data produk. Silakan coba lagi.');
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
     }
 
