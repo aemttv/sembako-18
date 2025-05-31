@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 searchUrl: '/daftar-produk/search/barcode',
                 valueKeys: {
                     id: 'idBarang',
-                    name: 'barcode'
+                    name: 'barcode',
+                    satuan: 'satuan'
                 }
             });
             setupSearchableInput({
@@ -41,7 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     suggestionBox.innerHTML = data.map(item => `
                                 <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
                                     data-id="${item[valueKeys.id]}"
-                                    data-name="${item[valueKeys.name]}">
+                                    data-name="${item[valueKeys.name]}"
+                                    data-satuan="${item[valueKeys.satuan]}">
                                     ${item[valueKeys.name]} (${item[valueKeys.id]})
                                 </div>
                             `).join('');
@@ -124,10 +126,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         return;
                     };
 
+                    let satuanLabel = '';
+                    if(data.satuan == 2){
+                        satuanLabel = 'Kg';
+                    } else 
+                    {
+                        satuanLabel = 'pcs';
+                    }
+
                     // Fill popup content
                     document.getElementById('popup-barcode').innerText = data.barcode;
                     document.getElementById('popup-name').innerText = data.nama;
                     document.getElementById('popup-price').innerText = data.harga || '-';
+                    document.getElementById('popup-satuan').innerText = satuanLabel;
                     document.getElementById('popup-stock').innerText = data.stok || 0;
 
                     // Position popup near button
@@ -172,13 +183,19 @@ document.addEventListener('DOMContentLoaded', function() {
         // add item to row
         document.getElementById('add-barcode-btn').addEventListener('click', async function() {
             const barcode = document.getElementById('nama_barang').value.trim();
+            const nama_akun = document.getElementById('nama_akun').value.trim();
             const qty = parseInt(document.getElementById('qty')?.value || "1", 10);
-            const totalInvoiceElement = document.getElementById(
-                'invoice-total'); // Get the total invoice element
+            const totalInvoiceElement = document.getElementById('invoice-total'); // Get the total invoice element
+                
                 
                 if (!barcode || qty <= 0) {
                     alert('Please enter a valid barcode and quantity.');
                     return;
+                }
+
+                if(!nama_akun){
+                    alert('Please enter a valid Penanggung Jawab.')
+                    return
                 }
 
                 // Fetch detail based on barcode
@@ -194,16 +211,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                if(qty > detail.stok) {
-                    alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
-                    return;
+                // Logic for satuan
+                if (detail.satuan == 2) { // KG mode, qty is in grams
+                    // Minimal pengeluaran 100 gram
+                    if (qty < 50) {
+                        alert('Pengeluaran barang dengan satuan kg minimal 50 gram.');
+                        return;
+                    }
+                    // Check stock in grams
+                    const stokGram = parseFloat(detail.stok) * 1000; // stok in kg -> grams
+                    if (qty > stokGram) {
+                        alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
+                        return;
+                    }
+                } else { // PCS mode
+                    if (qty > detail.stok) {
+                        alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
+                        return;
+                    }
                 }
                     
             
             const id = detail.idBarang;
             const name = detail.nama;
             const price = parseFloat(detail.harga) || 0;
-            const total = price * qty;
+
+            let totalPrice = '';
+            if (detail.satuan == 2) {
+                // Price per kg * (qty in grams / 1000)
+                const total = price * (qty / 1000);
+                totalPrice = total.toLocaleString();
+            } else {
+                const total = price * qty;
+                totalPrice = total.toLocaleString();
+            }
 
             const tableBody = document.getElementById('transaction-table-body');
 
@@ -223,8 +264,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td class="p-2 border">${barcode}</td>
                 <td class="p-2 border">${name}</td>
                 <td class="p-2 border">Rp. ${price.toLocaleString()}</td>
-                <td class="p-2 border">${qty}</td>
-                <td class="p-2 border">Rp. ${total.toLocaleString()}</td>
+                <td class="p-2 border">${qty}${detail.satuan == 2 ? ' gr' : ''}</td>
+                <td class="p-2 border">Rp. ${totalPrice}</td>
                 <td class="p-2 border text-center"><button class="text-red-500 hover:underline remove-item">Remove</button></td>
             `;
 
@@ -250,36 +291,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to update the total invoice
         function updateTotalInvoice() {
-            // Calculate the total
-            const rows = document.querySelectorAll('#transaction-table-body tr');
-            let total = 0;
+    // Calculate the total from all rows
+    const rows = document.querySelectorAll('#transaction-table-body tr');
+    let total = 0;
 
-            rows.forEach(row => {
-                const totalCell = row.cells[5]; // The total cell in each row (6th column)
-                if (totalCell) {
-                    const rowTotal = parseFloat(totalCell.innerText.replace("Rp. ", "").replace(",", "")) || 0;
-                    total += rowTotal;
-                }
-            });
-
-            // Update the total invoice element
-            const totalInvoiceElement = document.getElementById('invoice-total');
-            totalInvoiceElement.innerText = `Rp. ${total.toLocaleString()}`;
-
-            // Get current total from input (if already has value)
-            let invoiceSpan = document.getElementById('invoice-total');
-            let invoiceInput = document.getElementById('invoice-total-input');
-
-            // Remove "Rp." and formatting from span
-            let currentTotal = parseFloat(invoiceSpan.innerText.replace(/[^0-9]/g, '')) || 0;
-
-            // Add new total
-            let newTotal = currentTotal + total;
-
-            // Update both display elements
-            invoiceSpan.innerText = `Rp. ${newTotal.toLocaleString('id-ID')}`;
-            invoiceInput.value = `Rp. ${newTotal.toLocaleString('id-ID')}`;
+    rows.forEach(row => {
+        const totalCell = row.cells[5]; // The total cell in each row (6th column)
+        if (totalCell) {
+            // Remove "Rp. ", dots, and commas for parsing
+            let rowTotal = totalCell.innerText.replace(/[^0-9]/g, '');
+            rowTotal = parseInt(rowTotal, 10) || 0;
+            total += rowTotal;
         }
+    });
+
+    // Format the total as Indonesian Rupiah
+    const formattedTotal = `Rp. ${total.toLocaleString('id-ID')}`;
+
+    // Update the total invoice display
+    const invoiceSpan = document.getElementById('invoice-total');
+    if (invoiceSpan) {
+        invoiceSpan.innerText = formattedTotal;
+    }
+
+    // Update the hidden/visible input for total (if exists)
+    const invoiceInput = document.getElementById('invoice-total-input');
+    if (invoiceInput) {
+        invoiceInput.value = total; // Use raw number for backend processing
+    }
+}
 
         document.getElementById('cash-input').addEventListener('input', function() {
             const cashValue = parseFloat(this.value.replace(/[^0-9]/g, '')) || 0;

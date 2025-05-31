@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
         searchUrl: '/daftar-produk/search/barcode',
         valueKeys: {
             id: 'idBarang',
-            name: 'barcode'
+            name: 'barcode',
+            satuan: 'satuan'
         }
     })
 
@@ -58,7 +59,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                     item => `
                     <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
                         data-id="${item[valueKeys.id]}"
-                        data-name="${item[valueKeys.name]}">
+                        data-name="${item[valueKeys.name]}"
+                        data-satuan="${item[valueKeys.satuan]}">
                         ${item[valueKeys.name]} (${item[valueKeys.id]})
                     </div>
                 `
@@ -140,14 +142,34 @@ document.addEventListener('DOMContentLoaded', function () {
                         data.harga || '-'
                     document.getElementById('popup-stock').innerText =
                         data.stok || 0
+                    document.getElementById('popup-satuan').innerText =
+                        data.satuan || 0
                         
-                    if(data.barcode) {
-                        document.getElementById('nama_barang').value = data.barcode;
-                        selectedBarcode = data.barcode;
-                        stokInput = data.stok;
+                    if (data.barcode) {
+                        document.getElementById('nama_barang').value =
+                            data.barcode
+                        selectedBarcode = data.barcode
+                        selectedSatuan = data.satuan // Save satuan for logic below
 
-                        document.getElementById('kuantitas').value = stokInput;
-                    } 
+                        stokInput = data.stok
+                        document.getElementById('kuantitas').value = stokInput
+
+                        // Set the satuan select to the correct value
+                        const satuanSelect = document.getElementById('satuan')
+                        if (satuanSelect) {
+                            satuanSelect.value = data.satuan
+                        }
+
+                        // If satuan is kg (2), make kuantitas readonly and show total grams
+                        const kuantitasInput =
+                            document.getElementById('kuantitas')
+                        if (data.satuan == 2) {
+                            kuantitasInput.readOnly = true
+                            kuantitasInput.value = parseFloat(data.stok)
+                        } else {
+                            kuantitasInput.readOnly = false
+                        }
+                    }
 
                     // Toggle popup visibility - no manual positioning needed
                     const popup = document.getElementById('barcode-popup')
@@ -235,6 +257,16 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        function formatTanggalMasuk(dateStr) {
+            // dateStr is expected in 'YYYY-MM-DD'
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            const [year, month, day] = dateStr.split('-');
+            return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+        }
+
         // Create a new table row
         rowCount++;
         const newRow = document.createElement('tr');
@@ -244,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td class="px-4 py-2 border-b">${barcode}</td>
             <td class="px-4 py-2 border-b">${kuantitas}</td>
             <td class="px-4 py-2 border-b">${kategoriKetText}</td>
-            <td class="px-4 py-2 border-b">${tanggalRusak}</td>
+            <td class="px-4 py-2 border-b">${formatTanggalMasuk(tanggalRusak)}</td>
             <td class="px-4 py-2 border-b">${note || '-'}</td>
             <td class="px-4 py-2 border-b">
                 <button type"button" class="text-red-600 hover:text-red-800 remove-row">Hapus</button>

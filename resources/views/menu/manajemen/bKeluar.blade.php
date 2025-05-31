@@ -59,17 +59,17 @@
                             <strong>Barcode Details</strong>
                             <div>Barcode: <span id="popup-barcode"></span></div>
                             <div>Name: <span id="popup-name"></span></div>
-                            <div>Price: <span id="popup-price"></span></div>
-                            <div>Stock: <span id="popup-stock"></span></div>
+                            <div>Price: Rp.<span id="popup-price"></span></div>
+                            <div>Stock: <span id="popup-stock"></span> <span id="popup-satuan"></span></div>
                         </div>
 
                     </div>
 
                     <label class="block text-sm font-medium">Qty</label>
-                    <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2" min="1"
-                        value="1" max="100"
+                    <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2" min="0"
+                        max="10000"
                         oninput="
-                            if(this.value.length > 3) this.value = this.value.slice(0,3);
+                            if(this.value.length > 6) this.value = this.value.slice(0,5);
                             if(this.value == 0) this.value = 1;
                         ">
                 </div>

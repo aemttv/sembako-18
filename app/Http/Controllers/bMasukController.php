@@ -127,6 +127,22 @@ class bMasukController extends Controller
             }
 
             foreach ($request->items as $item) {
+
+                $barang = Barang::find($item['barang_id']);
+                if (!$barang) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 'Barang tidak ditemukan.')->withInput();
+                }
+
+                // Logic subtotal: jika satuan == 2 (kg), jumlah masuk dianggap 1
+                if ($barang->satuan->value == 2) { // 2 = kg
+                    $jumlahMasuk = $item['kuantitas_masuk'];
+                    $subtotal = $item['harga_satuan'] * 1;
+                } else {
+                    $jumlahMasuk = $item['kuantitas_masuk'];
+                    $subtotal = $item['harga_satuan'] * $jumlahMasuk;
+                }
+
                 // Simpan detail barang masuk
                 $detail = new bMasukDetail();
                 $detail->idDetailBM = bMasukDetail::generateNewIdDetailBM();
@@ -134,7 +150,7 @@ class bMasukController extends Controller
                 $detail->idBarang = $item['barang_id'];
                 $detail->jumlahMasuk = $item['kuantitas_masuk'];
                 $detail->hargaBeli = $item['harga_satuan'];
-                $detail->subtotal = $item['harga_satuan'] * $item['kuantitas_masuk'];
+                $detail->subtotal = $subtotal;
                 $detail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
                 $detail->save();
 
@@ -144,7 +160,6 @@ class bMasukController extends Controller
                 $newDetail->idBarang = $item['barang_id'];
                 $newDetail->idSupplier = $request->supplier_id; // Bisa dari form
                 $newDetail->kondisiBarang = 'Baik';
-                $newDetail->satuanBarang = 'PCS';
                 $newDetail->quantity = $item['kuantitas_masuk'];
                 $newDetail->hargaBeli = $item['harga_satuan'];
                 $newDetail->tglMasuk = $item['tanggal_masuk'];

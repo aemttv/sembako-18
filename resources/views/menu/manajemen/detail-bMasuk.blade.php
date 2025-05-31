@@ -46,6 +46,7 @@
                                 <th class="px-4 py-2 border-b">ID Barang</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
                                 <th class="px-4 py-2 border-b">Kuantitas
+                                <th class="px-4 py-2 border-b">Satuan
                                 <th class="px-4 py-2 border-b">Harga Beli
                                 <th class="px-4 py-2 border-b">Subtotal</th>
                             </tr>
@@ -65,6 +66,7 @@
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
                                     <td class="px-4 py-2 border-b text-left">{{ mb_strimwidth($detail->barangDetail->barang->namaBarang, 0, 40, '...') }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlahMasuk }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->barangDetail->barang->satuan->namaSatuan() }}</td>
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
                                 </tr>

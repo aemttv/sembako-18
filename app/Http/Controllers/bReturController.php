@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\enum\Alasan;
+use App\enum\satuan;
 use App\Models\Akun;
 use App\Models\BarangDetail;
 use App\Models\bRetur;
@@ -86,7 +87,13 @@ class bReturController extends Controller
 
     function viewAjukanBRetur()
     {
-        return view('menu.icare.retur.tambah');
+        if(!isUserLoggedIn()){
+            abort(403, 'Unauthorized action.');
+        }
+
+        $satuan = satuan::cases();
+        
+        return view('menu.icare.retur.tambah', ['satuan' => $satuan]);
     }
 
     public function ajukanBRetur(Request $request)

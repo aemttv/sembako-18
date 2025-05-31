@@ -65,10 +65,12 @@
             </div>
             <div class="flex justify-between">
                 <span class="font-medium text-gray-600">Harga Jual:</span>
-                <span class="text-gray-800 font-semibold">Rp {{ number_format($barang->hargaJual, 0, ',', '.') }}</span>
+                <span class="text-gray-800 font-semibold">Rp {{ number_format($barang->hargaJual, 0, ',', '.') }} 
+                    <span class="text-xs">/ {{ $barang->satuan->namaSatuan() ?? '-' }}</span>
+                </span>
             </div>
             <div class="flex justify-between">
-                <span class="font-medium text-gray-600">Stok Barcode:</span>
+                <span class="font-medium text-gray-600">Stok:</span>
                 <span class="text-gray-800 font-semibold">{{ $scannedDetail->quantity }} {{$barang->satuan->namaSatuan() ?? '-'}}</span>
             </div>
             <div class="flex justify-between">

@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
         searchUrl: '/daftar-produk/search/barcode',
         valueKeys: {
             id: 'idBarang',
-            name: 'barcode'
+            name: 'barcode',
+            satuan: 'satuan'
         }
     })
 
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
             id: 'idSupplier',
             name: 'nama'
         }
-    });
+    })
 
     setupSearchableInput({
         inputId: 'nama_akun',
@@ -32,18 +33,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
-/**
- * Initializes a searchable input field with autocomplete suggestions.
- *
- * @param {Object} config - Configuration object for setting up the searchable input.
- * @param {string} config.inputId - The ID of the input element for entering search queries.
- * @param {string} config.hiddenId - The ID of the hidden input element to store the selected item's ID.
- * @param {string} config.suggestionBoxId - The ID of the element to display autocomplete suggestions.
- * @param {string} config.searchUrl - The URL endpoint to fetch search suggestions from.
- * @param {Object} config.valueKeys - Object containing keys to map the suggestion data.
- * @param {string} config.valueKeys.id - Key for the item ID in the suggestion data.
- * @param {string} config.valueKeys.name - Key for the item name in the suggestion data.
- */
+    /**
+     * Initializes a searchable input field with autocomplete suggestions.
+     *
+     * @param {Object} config - Configuration object for setting up the searchable input.
+     * @param {string} config.inputId - The ID of the input element for entering search queries.
+     * @param {string} config.hiddenId - The ID of the hidden input element to store the selected item's ID.
+     * @param {string} config.suggestionBoxId - The ID of the element to display autocomplete suggestions.
+     * @param {string} config.searchUrl - The URL endpoint to fetch search suggestions from.
+     * @param {Object} config.valueKeys - Object containing keys to map the suggestion data.
+     * @param {string} config.valueKeys.id - Key for the item ID in the suggestion data.
+     * @param {string} config.valueKeys.name - Key for the item name in the suggestion data.
+     */
 
     function setupSearchableInput ({
         inputId,
@@ -68,7 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                     item => `
                     <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
                         data-id="${item[valueKeys.id]}"
-                        data-name="${item[valueKeys.name]}">
+                        data-name="${item[valueKeys.name]}"
+                        data-satuan="${item[valueKeys.satuan]}">
                         ${item[valueKeys.name]} (${item[valueKeys.id]})
                     </div>
                 `
@@ -89,12 +91,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
 
-/**
- * Attaches click event listeners to each suggestion item in the suggestion box.
- * When a suggestion is clicked, updates the input field with the selected item's
- * name and sets the hidden input field with the selected item's id. Hides the
- * suggestion box after a selection is made.
- */
+        /**
+         * Attaches click event listeners to each suggestion item in the suggestion box.
+         * When a suggestion is clicked, updates the input field with the selected item's
+         * name and sets the hidden input field with the selected item's id. Hides the
+         * suggestion box after a selection is made.
+         */
 
         function addSuggestionClickListeners () {
             const items = suggestionBox.querySelectorAll('div')
@@ -150,51 +152,70 @@ document.addEventListener('DOMContentLoaded', function () {
                         data.harga || '-'
                     document.getElementById('popup-stock').innerText =
                         data.stok || 0
+                    document.getElementById('popup-satuan').innerText =
+                        data.satuan || 0
                     document.getElementById('popup-id-supplier').innerText =
                         data.idSupplier || 0
                     document.getElementById('popup-supplier-nama').innerText =
                         data.namaSupplier
 
                     if (data.barcode) {
-                        document.getElementById('nama_barang').value = data.barcode
+                        document.getElementById('nama_barang').value =
+                            data.barcode
                         selectedBarcode = data.barcode
+                        selectedSatuan = data.satuan // Save satuan for logic below
+
                         stokInput = data.stok
                         document.getElementById('kuantitas').value = stokInput
-                    }
 
+                        // Set the satuan select to the correct value
+                        const satuanSelect = document.getElementById('satuan')
+                        if (satuanSelect) {
+                            satuanSelect.value = data.satuan
+                        }
+
+                        // If satuan is kg (2), make kuantitas readonly and show total grams
+                        const kuantitasInput =
+                            document.getElementById('kuantitas')
+                        if (data.satuan == 2) {
+                            kuantitasInput.readOnly = true
+                            kuantitasInput.value = parseFloat(data.stok)
+                        } else {
+                            kuantitasInput.readOnly = false
+                        }
+                    }
                     if (data.idSupplier) {
-                        document.getElementById('nama_supplier').value = data.idSupplier;
+                        document.getElementById('nama_supplier').value =
+                            data.idSupplier
                         selectedSupplierName = data.idSupplier
                     }
 
                     // Toggle popup visibility - no manual positioning needed
                     const popup = document.getElementById('barcode-popup')
                     popup.classList.toggle('hidden')
-
-
                 })
                 .catch(err => console.error('Error loading detail:', err))
         })
 
-    function updateNoDataRow() {
-        const tableBody = document.getElementById('returTableBody');
-        const noDataRow = document.getElementById('noDataRow');
+    function updateNoDataRow () {
+        const tableBody = document.getElementById('returTableBody')
+        const noDataRow = document.getElementById('noDataRow')
         // Count rows that are NOT the placeholder
         const dataRows = Array.from(tableBody.children).filter(
             row => row.id !== 'noDataRow'
-        );
+        )
         if (dataRows.length === 0) {
             // Show placeholder if not present
             if (!noDataRow) {
-                const tr = document.createElement('tr');
-                tr.id = 'noDataRow';
-                tr.innerHTML = `<td colspan="8" class="text-center text-gray-500 p-2">Tidak ada data</td>`;
-                tableBody.appendChild(tr);
+                const tr = document.createElement('tr')
+                tr.id = 'noDataRow'
+                tr.innerHTML = `<td colspan="8" class="text-center text-gray-500 p-2">Tidak ada data</td>`
+                tableBody.appendChild(tr)
             }
         } else {
             // Remove placeholder if present
             if (noDataRow) {
-                noDataRow.remove();
+                noDataRow.remove()
             }
         }
     }
@@ -205,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const button = document.getElementById('search-barcode-btn')
         const namaSupplierInput = document.getElementById('nama_supplier')
 
-
         if (!popup.contains(e.target) && e.target !== button) {
             popup.classList.add('hidden')
             namaSupplierInput.value = selectedSupplierName || ''
@@ -213,54 +233,66 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     // Add Row Button Functionality
-    const addRowBtn = document.getElementById('addRow');
-    const returTableBody = document.getElementById('returTableBody');
-    const hiddenRowsDiv = document.getElementById('hiddenRows');
-    let rowCount = 0;
+    const addRowBtn = document.getElementById('addRow')
+    const returTableBody = document.getElementById('returTableBody')
+    const hiddenRowsDiv = document.getElementById('hiddenRows')
+    let rowCount = 0
 
-    addRowBtn.addEventListener('click', function() {
+    addRowBtn.addEventListener('click', function () {
         // Get all input values
-        const namaAkun = document.getElementById('nama_akun').value;
-        const akunId = document.getElementById('akun_id').value;
-        const namaBarang = document.getElementById('nama_barang').value;
-        const barcode = namaBarang;
-        const barangId = document.getElementById('barang_id').value;
-        const kuantitas = document.getElementById('kuantitas').value;
-        const supplierId = document.getElementById('nama_supplier').value;
-        const kategoriKet = document.getElementById('kategoriKet');
-        const kategoriKetText = kategoriKet.options[kategoriKet.selectedIndex].text;
-        const kategoriKetValue = kategoriKet.value;
-        const tanggalRetur = document.getElementById('tanggal_retur').value;
-        const note = document.querySelector('textarea').value;
+        const namaAkun = document.getElementById('nama_akun').value
+        const akunId = document.getElementById('akun_id').value
+        const namaBarang = document.getElementById('nama_barang').value
+        const barcode = namaBarang
+        const barangId = document.getElementById('barang_id').value
+        const kuantitas = document.getElementById('kuantitas').value
+        const supplierId = document.getElementById('nama_supplier').value
+        const kategoriKet = document.getElementById('kategoriKet')
+        const kategoriKetText =
+            kategoriKet.options[kategoriKet.selectedIndex].text
+        const kategoriKetValue = kategoriKet.value
+        const tanggalRetur = document.getElementById('tanggal_retur').value
+        const note = document.querySelector('textarea').value
 
         // Validate required fields
-        if (!namaAkun || !namaBarang || !barangId || !kuantitas || !supplierId) {
-            alert('Silakan mengisi field yang dibutuhkan (Penanggung Jawab, Nama Barang, kuantitas, and Nama Supplier)');
-            return;
+        if (
+            !namaAkun ||
+            !namaBarang ||
+            !barangId ||
+            !kuantitas ||
+            !supplierId
+        ) {
+            alert(
+                'Silakan mengisi field yang dibutuhkan (Penanggung Jawab, Nama Barang, kuantitas, and Nama Supplier)'
+            )
+            return
         }
 
-        if(kuantitas > stokInput) {
+        if (kuantitas > stokInput) {
             alert('Stok melebihi batas stok pada saat ini.')
             return
         }
 
-        let totalKuantitasForBarcode = 0;
+        let totalKuantitasForBarcode = 0
         Array.from(returTableBody.querySelectorAll('tr')).forEach(row => {
-            const rowBarcode = row.cells[2]?.textContent.trim();
-            const rowKuantitas = parseInt(row.cells[3]?.textContent.trim(), 10) || 0;
+            const rowBarcode = row.cells[2]?.textContent.trim()
+            const rowKuantitas =
+                parseInt(row.cells[3]?.textContent.trim(), 10) || 0
             if (rowBarcode === barcode) {
-                totalKuantitasForBarcode += rowKuantitas;
+                totalKuantitasForBarcode += rowKuantitas
             }
-        });
-        const newTotal = totalKuantitasForBarcode + parseInt(kuantitas, 10);
+        })
+        const newTotal = totalKuantitasForBarcode + parseInt(kuantitas, 10)
         if (newTotal > stokInput) {
-            alert(`Total kuantitas untuk barcode ini (${newTotal}) melebihi stok (${stokInput})!`);
-            return;
+            alert(
+                `Total kuantitas untuk barcode ini (${newTotal}) melebihi stok (${stokInput})!`
+            )
+            return
         }
 
         // Create a new table row
-        rowCount++;
-        const newRow = document.createElement('tr');
+        rowCount++
+        const newRow = document.createElement('tr')
         newRow.innerHTML = `
             <td class="px-4 py-2 border-b">${rowCount}</td>
             <td class="px-4 py-2 border-b">${namaAkun}</td>
@@ -272,10 +304,10 @@ document.addEventListener('DOMContentLoaded', function () {
             <td class="px-4 py-2 border-b">
                 <button type="button" class="text-red-600 hover:text-red-800 remove-row">Hapus</button>
             </td>
-        `;
+        `
 
         // Add the row to the table
-        returTableBody.appendChild(newRow);
+        returTableBody.appendChild(newRow)
 
         // Create hidden inputs for form submission
         const hiddenInputs = `
@@ -287,43 +319,45 @@ document.addEventListener('DOMContentLoaded', function () {
             <input type="hidden" name="retur[${rowCount}][kategori_ket]" value="${kategoriKetValue}">
             <input type="hidden" name="retur[${rowCount}][tanggal_retur]" value="${tanggalRetur}">
             <input type="hidden" name="retur[${rowCount}][note]" value="${note}">
-        `;
-        hiddenRowsDiv.insertAdjacentHTML('beforeend', hiddenInputs);
+        `
+        hiddenRowsDiv.insertAdjacentHTML('beforeend', hiddenInputs)
 
         // Add event listener to the remove button
-        newRow.querySelector('.remove-row').addEventListener('click', function() {
-            newRow.remove();
-            
-            updateRowNumbers();
-            updateNoDataRow();
-        });
+        newRow
+            .querySelector('.remove-row')
+            .addEventListener('click', function () {
+                newRow.remove()
 
-        updateNoDataRow();
+                updateRowNumbers()
+                updateNoDataRow()
+            })
+
+        updateNoDataRow()
 
         // Clear the form fields (except for staff and date)
-        document.getElementById('nama_barang').value = '';
-        document.getElementById('barang_id').value = '';
-        document.getElementById('nama_supplier').value = '';
-        document.getElementById('supplier_id').value = '';
-        document.querySelector('textarea').value = '';
-    });
+        document.getElementById('nama_barang').value = ''
+        document.getElementById('barang_id').value = ''
+        document.getElementById('nama_supplier').value = ''
+        document.getElementById('supplier_id').value = ''
+        document.querySelector('textarea').value = ''
+    })
 
     // Function to update row numbers after deletion
-    function updateRowNumbers() {
-        const rows = returTableBody.querySelectorAll('tr');
-        rowCount = 0;
+    function updateRowNumbers () {
+        const rows = returTableBody.querySelectorAll('tr')
+        rowCount = 0
         rows.forEach((row, index) => {
-            row.cells[0].textContent = index + 1;
-            rowCount++;
-        });
+            row.cells[0].textContent = index + 1
+            rowCount++
+        })
     }
 
     // Submit button functionality
-    const submitBtn = document.getElementById('submitData');
-    submitBtn.addEventListener('click', function(e) {
+    const submitBtn = document.getElementById('submitData')
+    submitBtn.addEventListener('click', function (e) {
         if (rowCount === 0) {
-            e.preventDefault();
-            alert('Please add at least one item to the table before submitting');
+            e.preventDefault()
+            alert('Please add at least one item to the table before submitting')
         }
-    });
+    })
 })

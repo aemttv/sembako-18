@@ -178,7 +178,7 @@
                                     :disabled="!editing">
                                     @foreach ($satuan as $sat)
                                         <option value="{{ $sat->value }}"
-                                            {{ old('satuan', $barang->satuan ?? null) == $sat->value ? 'selected' : '' }}>
+                                            {{ old('satuan', $barang->satuan?->value ?? null) == $sat->value ? 'selected' : '' }}>
                                             {{ $sat->namaSatuan() }}
                                         </option>
                                     @endforeach
@@ -197,8 +197,8 @@
                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50">Simpan</button>
                         <button type="button" @click="editing = false" x-show="editing"
                             class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
-                        <button type="button" @click="window.history.back()" x-show="!editing"
-                            class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Kembali</button>
+                        <button type="button" @click="window.location.href='/daftar-produk'" x-show="!editing"
+    class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Kembali</button>
                     </div>
                 </div>
             </form>

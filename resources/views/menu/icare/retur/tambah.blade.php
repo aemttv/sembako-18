@@ -55,6 +55,7 @@
                                         <div>Name: <span id="popup-name"></span></div>
                                         <div>Price: <span id="popup-price"></span></div>
                                         <div>Stock: <span id="popup-stock"></span></div>
+                                        <div>Satuan: <span id="popup-satuan"></span></div>
                                         <div>Supplier ID: <span id="popup-id-supplier"></span></div>
                                         <div>Supplier Name: <span id="popup-supplier-nama"></span></div>
                                     </div>
@@ -64,7 +65,7 @@
                     </div>
 
                     <!-- Row 2: Password -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Supplier ID</label>
@@ -86,7 +87,18 @@
                             if(this.value.length > 3) this.value = this.value.slice(0,3);
                             if(this.value == 0) this.value = 1;
                         "/>
-
+                        </div>
+                        <div class="relative">
+                            <label class="block text-sm text-gray-600 mb-1">Satuan</label>
+                            <select id="satuan" name="satuan" disabled
+                                class="w-full border rounded-md px-3 py-2">
+                                @foreach ($satuan as $sat)
+                                    <option value="{{ $sat->value }}"
+                                        {{ old('satuan', $barang->satuan?->value ?? null) == $sat->value ? 'selected' : '' }}>
+                                        {{ $sat->namaSatuan() }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>

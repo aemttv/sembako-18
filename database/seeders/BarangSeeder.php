@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Barang;
 use App\Models\BarangDetail;
+use App\Models\bMasuk;
+use App\Models\bMasukDetail;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
@@ -16,23 +18,23 @@ class BarangSeeder extends Seeder
      */
     public function run(): void
     {
+        // Insert merek_barang data
         $data = [
-            ['namaMerek' => 'Ajinomoto'],  //1
-            ['namaMerek' => 'Desaku'],  //2
-            ['namaMerek' => 'Good Day'],  //3
-            ['namaMerek' => 'Indomie'], //4
-            ['namaMerek' => 'Indomie Sedaap'], //5
-            ['namaMerek' => 'Roma'],  //6
-            ['namaMerek' => 'Mie Eko'], //7
-            ['namaMerek' => 'Pinpin'],  //8
-            ['namaMerek' => 'Racik'],   //9
-            ['namaMerek' => 'Rinso'],   //10
-            ['namaMerek' => 'SASA'],    //11
-            ['namaMerek' => 'Shinzui'], //12
-            ['namaMerek' => 'TOP Coffee'],  //13
-            ['namaMerek' => 'Tidak tersedia'],  //14
+            ['namaMerek' => 'Ajinomoto'],
+            ['namaMerek' => 'Desaku'],
+            ['namaMerek' => 'Good Day'],
+            ['namaMerek' => 'Indomie'],
+            ['namaMerek' => 'Indomie Sedaap'],
+            ['namaMerek' => 'Roma'],
+            ['namaMerek' => 'Mie Eko'],
+            ['namaMerek' => 'Pinpin'],
+            ['namaMerek' => 'Racik'],
+            ['namaMerek' => 'Rinso'],
+            ['namaMerek' => 'SASA'],
+            ['namaMerek' => 'Shinzui'],
+            ['namaMerek' => 'TOP Coffee'],
+            ['namaMerek' => 'Tidak tersedia'],
         ];
-
         DB::table('merek_barang')->insert($data);
 
         $faker = Faker::create('id_ID');
@@ -43,7 +45,7 @@ class BarangSeeder extends Seeder
                 'namaBarang' => 'TOP COFFEE Cappucino',
                 'kategoriBarang' => 1,
                 'hargaJual' => 3500,
-                'merekBarang' => 12,
+                'merekBarang' => 13,
                 'satuan' => 1,
             ],
             [
@@ -141,12 +143,13 @@ class BarangSeeder extends Seeder
                 'namaBarang' => 'Rinso Anti Noda + Molto Rose Fresh',
                 'kategoriBarang' => 1,
                 'hargaJual' => 17500,
-                'merekBarang' => 8,
+                'merekBarang' => 10,
                 'satuan' => 1,
             ],
         ];
 
         foreach ($barangsData as $barangData) {
+            // Insert Barang
             $barang = new Barang();
             $barang->idBarang = Barang::generateNewIdBarang();
             $barang->namaBarang = $barangData['namaBarang'];
@@ -156,24 +159,42 @@ class BarangSeeder extends Seeder
             $barang->satuan = $barangData['satuan'];
             $barang->save();
 
-            // Generate 2–5 detail records for each barang
+            // Generate a BarangMasuk (simulate a stock entry)
+            $barangMasuk = new bMasuk();
+            $barangMasuk->idBarangMasuk = bMasuk::generateNewIdBarangMasuk();
+            $barangMasuk->idSupplier = $faker->randomElement(['S001', 'S002', 'S003']);
+            $barangMasuk->idAkun = $faker->randomElement(['A001', 'A002', 'A003']);
+            $barangMasuk->tglMasuk = $faker->dateTimeBetween('-1 month', 'now')->format('Y-m-d');
+            $barangMasuk->nota = $faker->optional()->text(50);
+            $barangMasuk->save();
+
+            // Generate 2–5 detail_barang_masuk records for each barang_masuk
             $detailCount = $faker->numberBetween(2, 5);
             for ($j = 0; $j < $detailCount; $j++) {
-                $detail = new BarangDetail();
-                $detail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
+                $detail = new bMasukDetail();
+                $detail->idDetailBM = bMasukDetail::generateNewIdDetailBM();
+                $detail->idBarangMasuk = $barangMasuk->idBarangMasuk;
                 $detail->idBarang = $barang->idBarang;
-                $detail->idSupplier = $faker->randomElement(['S001', 'S002', 'S003']);
-                $detail->kondisiBarang = $faker->randomElement(['Baik', 'Mendekati Kadaluarsa']);
-                $detail->quantity = $faker->numberBetween(1, 10);
+                $detail->jumlahMasuk = $faker->numberBetween(1, 10);
                 $detail->hargaBeli = $faker->randomElement([1000, 3000, 5000, 7000, 10000]);
-                $detail->tglMasuk = $faker->dateTimeBetween('-1 month', 'now');
-                $detail->tglKadaluarsa = $faker->dateTimeBetween($detail->tglMasuk, '+6 months');
-                $detail->barcode = BarangDetail::generateBarcode();
-                $detail->statusDetailBarang = 1;
+                $detail->subtotal = $detail->jumlahMasuk * $detail->hargaBeli;
+                $detail->tglKadaluarsa = $faker->dateTimeBetween($barangMasuk->tglMasuk, '+6 months')->format('Y-m-d');
                 $detail->save();
+
+                // Insert into BarangDetail as well
+                $barangDetail = new BarangDetail();
+                $barangDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
+                $barangDetail->idBarang = $barang->idBarang;
+                $barangDetail->idSupplier = $barangMasuk->idSupplier;
+                $barangDetail->kondisiBarang = $faker->randomElement(['Baik', 'Mendekati Kadaluarsa']);
+                $barangDetail->quantity = $detail->jumlahMasuk;
+                $barangDetail->hargaBeli = $detail->hargaBeli;
+                $barangDetail->tglMasuk = $barangMasuk->tglMasuk;
+                $barangDetail->tglKadaluarsa = $detail->tglKadaluarsa;
+                $barangDetail->barcode = BarangDetail::generateBarcode();
+                $barangDetail->statusDetailBarang = $faker->randomElement([1, 2]);
+                $barangDetail->save();
             }
         }
-
-
     }
 }

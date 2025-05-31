@@ -45,7 +45,7 @@ class BarangController extends Controller
             // Dynamic total stock from detailBarang
             // If satuan is 2 (Kg), count the number of detailBarang rows
             // Otherwise, sum the quantity as usual
-            if ($item->satuan == 2) {
+            if ($item->satuan->value === 2) {
                 $item->totalStok = $item->detailBarang->count();
             } else {
                 $item->totalStok = $item->detailBarang->sum('quantity');
@@ -247,6 +247,7 @@ class BarangController extends Controller
                 'nama' => $detail->barang->namaBarang ?? '',
                 'harga' => $detail->barang->hargaJual ?? 0,
                 'stok' => $detail->quantity ?? 0,
+                'satuan' => $detail->barang->satuan ?? '',
             ]);
         } else {
             return response()->json(null, 404);
@@ -285,22 +286,22 @@ class BarangController extends Controller
         ])
             ->where('idBarang', $idBarang)
             ->firstOrFail();
-
+            
         $mereks = bMerek::all();
         $kategori = KategoriBarang::cases();
         $satuan = satuan::cases();
-
+        
         $barang->merekBarangName = $barang->merek ? $barang->merek->namaMerek : 'Unknown';
-
+        
         // Update: totalStok logic based on satuan
-        if ($barang->satuan == 2) {
-            // If satuan is '2' (Kg), count the number of detailBarang rows
+        if ($barang->satuan->value === 2) {
+            // satuan is kg
             $barang->totalStok = $barang->detailBarang->count();
         } else {
-            // Otherwise, sum the quantity as usual
             $barang->totalStok = $barang->detailBarang->sum('quantity');
         }
 
+        
         $inactiveDetail = BarangDetail::where('idBarang', $idBarang)
             ->where('statusDetailBarang', 0)
             ->where('quantity', '>', 0)
@@ -387,6 +388,7 @@ class BarangController extends Controller
                 abort(403, 'Unauthorized action.');
             }
 
+
             // Validate the request
             $request->validate(
                 [
@@ -426,6 +428,20 @@ class BarangController extends Controller
 
             // Process each product
             foreach ($request->items as $index => $item) {
+                // Duplicate check: by name, merek, and kategori
+                $exists = Barang::where('namaBarang', $item['nama_barang'])
+                    ->where('merekBarang', $item['merek_id'])
+                    ->where('kategoriBarang', $item['kategori'])
+                    ->exists();
+
+                if ($exists) {
+                    DB::rollBack();
+                    return redirect()
+                        ->back()
+                        ->with('error', 'Produk dengan nama, merek, dan kategori yang sama sudah ada: ' . $item['nama_barang'])
+                        ->withInput();
+                }
+
                 // Create new product
                 $barang = new Barang();
                 $barang->idBarang = Barang::generateNewIdBarang();

@@ -102,11 +102,26 @@ class bKeluarController extends Controller
                 $barang = BarangDetail::where('barcode', $item['barcode'])->first();
 
                 if ($barang) {
-                    $barang->quantity -= $detail->jumlahKeluar;
+                    // Ambil satuan barang dari tabel Barang
+                    $masterBarang = \App\Models\Barang::find($barang->idBarang);
+
+                    if ($masterBarang && $masterBarang->satuan->value == 2) { // 2 = kg
+                        // Asumsikan quantity di BarangDetail disimpan dalam kg (float)
+                        // Jika user input dalam gram, konversi ke kg
+                        // $item['kuantitas_keluar'] diharapkan dalam gram
+                        $jumlahKeluarKg = $item['kuantitas_keluar'] / 1000;
+                        $barang->quantity -= $jumlahKeluarKg;
+                    } else {
+                        // satuan pcs, langsung kurangi
+                        $barang->quantity -= $detail->jumlahKeluar;
+                    }
+
                     if ($barang->quantity <= 0) {
                         $barang->statusDetailBarang = 0;
                     }
+
                     $barang->save();
+                    // dd($barang);
 
                     // Collect item names and IDs for notification
                     $itemNames[] = $barang->namaBarang ?? 'Barang Tidak Diketahui';

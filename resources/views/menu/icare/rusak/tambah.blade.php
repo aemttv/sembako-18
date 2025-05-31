@@ -19,25 +19,24 @@
             <div class="border rounded-lg bg-white shadow-sm">
                 <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Detail Barang</div>
                 <div class="p-6 space-y-4">
-                    <!-- Row 1: Nama & Email -->
+                    <!-- Row 1: Barcode Search & Penanggung Jawab -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Barcode Search -->
                         <div class="relative flex-grow">
                             <label class="block text-sm text-gray-600 mb-1">Barcode Barang</label>
                             <div class="flex w-full gap-2">
                                 <div class="relative flex-grow">
-                                    <input id="nama_barang" type="text"
-                                        class="w-full border rounded-md px-3 py-2">
+                                    <input id="nama_barang" type="text" class="w-full border rounded-md px-3 py-2">
                                     <div id="barang-suggestions"
                                         class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
                                         <!-- Suggestions will appear here -->
                                     </div>
                                     <input type="hidden" id="barang_id" name="idBarang" />
                                 </div>
-                                <div class="relative"> <!-- Added wrapper div with relative positioning -->
+                                <div class="relative">
                                     <button id="search-barcode-btn" class="bg-blue-500 text-white px-3 py-2 rounded">
                                         <i class="fas fa-search"></i>
                                     </button>
-                                    <!-- Popup container - now positioned relative to search button -->
                                     <div id="barcode-popup"
                                         class="absolute bg-white border shadow rounded-md p-4 text-sm hidden z-50 left-0 mt-1 w-64">
                                         <strong>Barcode Details</strong>
@@ -45,24 +44,12 @@
                                         <div>Name: <span id="popup-name"></span></div>
                                         <div>Price: <span id="popup-price"></span></div>
                                         <div>Stock: <span id="popup-stock"></span></div>
+                                        <div>Satuan: <span id="popup-satuan"></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="relative">
-                            <label class="block text-sm text-gray-600 mb-1">Jumlah Pengeluaran</label>
-                            <input type="number" id="kuantitas" class="w-full border rounded-md px-3 py-2" min="1"
-                                 value="1" max="100"
-                            oninput="
-                            if(this.value.length > 3) this.value = this.value.slice(0,3);
-                            if(this.value == 0) this.value = 1;
-                        "/>
-                        </div>
-                    </div>
-                    
-
-                    <!-- Row 2: Password -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Penanggung Jawab -->
                         <div class="relative flex-grow">
                             <label class="block text-sm text-gray-600 mb-1">Penanggung Jawab</label>
                             <input id="nama_akun" type="text" class="w-full border rounded-md px-3 py-2"
@@ -73,13 +60,32 @@
                             </div>
                             <input type="hidden" id="akun_id" name="idAkun" />
                         </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Tanggal Rusak</label>
-                                <input type="date" id="tanggal_rusak" class="w-full border rounded-md px-3 py-2"
-                                    value="{{ now()->format('Y-m-d') }}" min="{{ now()->subMonth()->format('Y-m-d') }}"
-                                    max="{{ now()->addYear()->format('Y-m-d') }}" />
-                            </div>
-                        
+                    </div>
+
+                    <!-- Row 2: Jumlah Pengeluaran & Satuan -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Jumlah Pengeluaran -->
+                        <div class="relative flex-grow">
+                            <label class="block text-sm text-gray-600 mb-1">Jumlah Pengeluaran</label>
+                            <input type="number" id="kuantitas" class="w-full border rounded-md px-3 py-2" min="1"
+                                value="1" max="100"
+                                oninput="
+                        if(this.value.length > 3) this.value = this.value.slice(0,3);
+                        if(this.value == 0) this.value = 1;
+                    " />
+                        </div>
+                        <!-- Satuan Select -->
+                        <div class="relative flex-grow">
+                            <label class="block text-sm text-gray-600 mb-1">Satuan</label>
+                            <select id="satuan" name="satuan" disabled class="w-full border rounded-md px-3 py-2">
+                                @foreach ($satuan as $sat)
+                                    <option value="{{ $sat->value }}"
+                                        {{ old('satuan', $barang->satuan?->value ?? null) == $sat->value ? 'selected' : '' }}>
+                                        {{ $sat->namaSatuan() }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,6 +104,12 @@
                                     <option value="6">Tidak Layak Dipakai</option>
                                 </select>
                             </div>
+                            <div class="relative">
+                                <label class="block text-sm text-gray-600 mb-1">Tanggal Rusak</label>
+                                <input type="date" id="tanggal_rusak" class="w-full border rounded-md px-3 py-2"
+                                    value="{{ now()->format('Y-m-d') }}" min="{{ now()->subMonth()->format('Y-m-d') }}"
+                                    max="{{ now()->addYear()->format('Y-m-d') }}" />
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Note</label>
@@ -115,7 +127,7 @@
 
 
         <!-- Form action to store data -->
-        <form action="{{route('AjukanBRusak.submit')}}" method="POST" enctype="multipart/form-data" id="rusakTable">
+        <form action="{{ route('AjukanBRusak.submit') }}" method="POST" enctype="multipart/form-data" id="rusakTable">
             @csrf
             <!-- Hidden fields to store row data -->
             <div id="hiddenRows"></div>

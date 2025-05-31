@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\enum\Alasan;
+use App\enum\satuan;
 use App\Models\Akun;
 use App\Models\BarangDetail;
 use App\Models\bRusak;
@@ -40,8 +41,9 @@ class bRusakController extends Controller
         if(!isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
-        
-        return view('menu.icare.rusak.tambah');
+        $satuan = satuan::cases();
+
+        return view('menu.icare.rusak.tambah' , ['satuan' => $satuan]);
     }
 
     public function searchList(Request $request)
