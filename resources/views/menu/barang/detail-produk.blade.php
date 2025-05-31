@@ -156,7 +156,7 @@
                         </div>
 
                         {{-- Row 3: Harga Jual and Jumlah Stok --}}
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm mb-1">Harga Jual</label>
                                 <input type="text" id="harga_satuan" name="harga_satuan"
@@ -170,6 +170,19 @@
                                 <input type="text" id="jumlah_stok" name="jumlah_stok"
                                     class="w-full border rounded-md px-3 py-2 transition bg-gray-50 text-gray-500 cursor-not-allowed"
                                     value="{{ $barang->totalStok }}" readonly />
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Satuan</label>
+                                <select name="satuan" class="w-full border rounded-md px-3 py-2 transition"
+                                    :class="!editing ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700'"
+                                    :disabled="!editing">
+                                    @foreach ($satuan as $sat)
+                                        <option value="{{ $sat->value }}"
+                                            {{ old('satuan', $barang->satuan ?? null) == $sat->value ? 'selected' : '' }}>
+                                            {{ $sat->namaSatuan() }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>

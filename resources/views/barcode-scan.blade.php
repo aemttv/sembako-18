@@ -69,11 +69,7 @@
             </div>
             <div class="flex justify-between">
                 <span class="font-medium text-gray-600">Stok Barcode:</span>
-                <span class="text-gray-800 font-semibold">{{ $scannedDetail->quantity }}</span>
-            </div>
-            <div class="flex justify-between">
-                <span class="font-medium text-gray-600">Total Stok Produk Tersedia:</span>
-                <span class="text-gray-800 font-semibold">{{ $barang->totalStok }}</span>
+                <span class="text-gray-800 font-semibold">{{ $scannedDetail->quantity }} {{$barang->satuan->namaSatuan() ?? '-'}}</span>
             </div>
             <div class="flex justify-between">
                 <span class="font-medium text-gray-600">Tanggal Masuk:</span>

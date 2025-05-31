@@ -21,8 +21,9 @@ return new class extends Migration
             $table->string('idBarang', 11)->primary();
             $table->string('namaBarang', 100);
             $table->integer('kategoriBarang');
-            $table->integer('merekBarang');
-            $table->integer('stokBarang');
+            $table->integer('merekBarang')->default(0);
+            $table->float('stokBarang')->default(0);;
+            $table->integer('satuan')->nullable();
             $table->float('hargaJual');
             $table->text('gambarProduk')->nullable();
             $table->integer('statusBarang')->default(1); //aktif
@@ -36,8 +37,7 @@ return new class extends Migration
             $table->string('idBarang', 11);
             $table->string('idSupplier', 11);
             $table->string('kondisiBarang', 50);
-            $table->integer('quantity');
-            $table->string('satuanBarang', 50);
+            $table->float('quantity');
             $table->float('hargaBeli');
             $table->date('tglMasuk');
             $table->date('tglKadaluarsa');

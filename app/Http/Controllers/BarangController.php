@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\enum\KategoriBarang;
+use App\enum\satuan;
 use App\Models\Akun;
 use App\Models\Barang;
 use App\Models\BarangDetail;
@@ -42,11 +43,16 @@ class BarangController extends Controller
         // Transform the collection to include dynamic values
         $barang->getCollection()->transform(function ($item) {
             // Dynamic total stock from detailBarang
-            $item->totalStok = $item->detailBarang->sum('quantity');
+            // If satuan is 2 (Kg), count the number of detailBarang rows
+            // Otherwise, sum the quantity as usual
+            if ($item->satuan == 2) {
+                $item->totalStok = $item->detailBarang->count();
+            } else {
+                $item->totalStok = $item->detailBarang->sum('quantity');
+            }
 
             // Determine kondisiBarangText based on string value in detailBarang
             // Priority: Kadaluarsa > Mendekati Kadaluarsa > Baik
-            // pluck -> extract semua value dari kondisiBarang dan return sebagai array baru
             $kondisiList = $item->detailBarang->pluck('kondisiBarang')->all();
 
             if (in_array('Kadaluarsa', $kondisiList, true)) {
@@ -116,8 +122,10 @@ class BarangController extends Controller
         $query = $request->get('q');
 
         $results = Barang::where('namaBarang', 'like', "%$query%")
-            ->select('idBarang', 'namaBarang')
+            ->select('idBarang', 'namaBarang', 'satuan')
             ->get();
+
+        
 
         return response()->json($results);
     }
@@ -280,12 +288,25 @@ class BarangController extends Controller
 
         $mereks = bMerek::all();
         $kategori = KategoriBarang::cases();
+        $satuan = satuan::cases();
 
         $barang->merekBarangName = $barang->merek ? $barang->merek->namaMerek : 'Unknown';
-        $barang->totalStok = $barang->detailBarang->sum('quantity');
-        $inactiveDetail = BarangDetail::where('idBarang', $idBarang)->where('statusDetailBarang', 0)->where('quantity', '>', 0)->get();
 
-        return view('menu.barang.detail-produk', compact('barang', 'mereks', 'kategori', 'inactiveDetail'));
+        // Update: totalStok logic based on satuan
+        if ($barang->satuan == 2) {
+            // If satuan is '2' (Kg), count the number of detailBarang rows
+            $barang->totalStok = $barang->detailBarang->count();
+        } else {
+            // Otherwise, sum the quantity as usual
+            $barang->totalStok = $barang->detailBarang->sum('quantity');
+        }
+
+        $inactiveDetail = BarangDetail::where('idBarang', $idBarang)
+            ->where('statusDetailBarang', 0)
+            ->where('quantity', '>', 0)
+            ->get();
+
+        return view('menu.barang.detail-produk', compact('barang', 'mereks', 'kategori', 'satuan' , 'inactiveDetail'));
     }
 
     /**
@@ -344,8 +365,9 @@ class BarangController extends Controller
 
         $merek = bMerek::all();
         $kategori = KategoriBarang::cases();
+        $satuan = satuan::cases();
 
-        return view('menu.barang.tambah', ['kategori' => $kategori, 'merek' => $merek]);
+        return view('menu.barang.tambah', ['kategori' => $kategori, 'merek' => $merek, 'satuan' => $satuan]);
     }
 
     /**
@@ -412,6 +434,7 @@ class BarangController extends Controller
                 $barang->kategoriBarang = $item['kategori'];
                 $barang->hargaJual = $item['harga_satuan'];
                 $barang->stokBarang = $item['kuantitas_masuk'];
+                $barang->satuan = $item['satuan_barang'];
 
                 // Associate image if exists for this index
                 if (isset($uploadedImages[$index])) {
@@ -463,6 +486,7 @@ class BarangController extends Controller
                 'idMerek' => 'required|exists:merek_barang,idMerek',
                 'kategori' => 'required',
                 'harga_satuan' => 'required|string', // Will be sanitized
+                'satuan' => 'required|integer',
                 'status_produk' => 'required|in:0,1',
                 'gambarProduk' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048', 'dimensions:min_width=200,min_height=200,max_width=1200,max_height=1920'],
                 [
@@ -498,6 +522,7 @@ class BarangController extends Controller
             $barang->merekBarang = $validated['idMerek'];
             $barang->kategoriBarang = $validated['kategori']; // If enum, cast in model or controller
             $barang->hargaJual = $hargaJual;
+            $barang->satuan = $validated['satuan'];
             $barang->statusBarang = $validated['status_produk'];
 
             $barang->save();

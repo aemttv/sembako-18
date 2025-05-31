@@ -16,24 +16,17 @@
         </div>
 
         <!-- Form Container -->
-        <!-- Form action to store data -->
 
         <div class="max-w-2xl mx-auto">
             <!-- Informasi Barang -->
             <div class="border rounded-lg bg-white shadow-sm">
                 <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Barang</div>
                 <div class="p-6 space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
                         <div class="relative w-full">
                         <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
                         <input type="text" id="nama_barang" name="nama_barang" class="w-full border rounded-md px-3 py-2"
                             placeholder="Nama Barang..." autocomplete="off" maxlength="100">
                         </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1">Harga Jual</label>
-                            <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" maxlength="16"/>
-                        </div>
-                    </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative w-full">
                             <label class="block text-sm text-gray-600 mb-1">Merek Barang</label>
@@ -50,6 +43,10 @@
                             <!-- Hidden input to store ID -->
                             <input type="hidden" id="merek_id" name="idMerek" />
                         </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Harga Jual</label>
+                            <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" maxlength="16"/>
+                        </div>
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Kategori Barang</label>
@@ -57,6 +54,17 @@
                                 @foreach ($kategori as $item)
                                     <option value="{{ $item->value }}">
                                         {{ $item->namaKategori() }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Kategori Barang</label>
+                            <select id="satuan_barang" name="satuan" class="w-full border rounded-md px-3 py-2">
+                                @foreach ($satuan as $item)
+                                    <option value="{{ $item->value }}">
+                                        {{ $item->namaSatuan() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -92,7 +100,7 @@
                                 <th class="px-4 py-2 border-b">Merek</th>
                                 <th class="px-4 py-2 border-b">Kategori</th>
                                 <th class="px-4 py-2 border-b">Harga Jual</th>
-                                <th class="px-4 py-2 border-b">Kuantitas</th>
+                                <th class="px-4 py-2 border-b">Satuan</th>
                                 <th class="px-4 py-2 border-b">Gambar</th>
                                 <th class="px-4 py-2 border-b">Aksi</th>
                             </tr>
@@ -345,13 +353,68 @@
                 const hargaSatuanFormatted = formatRupiah(hargaSatuanNumeric);
                 const kuantitasMasuk = document.getElementById('kuantitas_masuk').value;
                 const merekId = document.getElementById('merek_id').value;
+                const satuan = document.getElementById('satuan_barang').value;
 
-                if (!namaBarang || !namaMerek ) {
-                    alert('Please fill in all required fields');
+                if (!namaBarang || !hargaSatuanFormatted || !merekId) {
+                    alert('Silakan isi nama barang, merek dan harga.');
                     return;
                 }
 
+                letKategoriLabel = '';
+                switch (kategoriBarang) {
+                case '1':
+                    kategoriLabel = 'Kebutuhan Harian';
+                    break;
+                case '2':
+                    kategoriLabel = 'Perawatan Kebersihan';
+                    break;
+                case '3':
+                    kategoriLabel = 'Produk Kesehatan';
+                    break;
+                case '4':
+                    kategoriLabel = 'Peralatan Sekolah';
+                    break;
+                case '5':
+                    kategoriLabel = 'Aksesoris Fashion';
+                    break;
+                case '6':
+                    kategoriLabel = 'Aksesoris Hiasan';
+                    break;
+                default:
+                    kategoriLabel = kategoriBarang;
+                }
+
+                let satuanLabel = '';
+                if (satuan === '1') {
+                    satuanLabel = 'pcs/eceran';
+                } else if (satuan === '2') {
+                    satuanLabel = 'kg';
+                } else {
+                    satuanLabel = satuan;
+                }
+                
+
                 const tableBody = document.getElementById('barangTableBody');
+
+                let isDuplicate = false;
+for (let i = 0; i < tableBody.rows.length; i++) {
+    const cellNamaBarang = tableBody.rows[i].cells[1]; // 2nd column (index 1)
+    const cellNamaMerek = tableBody.rows[i].cells[2]; // 3rd column (index 2)
+    if (
+        cellNamaBarang &&
+        cellNamaMerek &&
+        cellNamaBarang.textContent.trim().toLowerCase() === namaBarang.trim().toLowerCase() &&
+        cellNamaMerek.textContent.trim().toLowerCase() === namaMerek.trim().toLowerCase()
+    ) {
+        isDuplicate = true;
+        break;
+    }
+}
+if (isDuplicate) {
+    alert('Nama barang dengan merek yang sama sudah ada di tabel!');
+    return;
+}
+
                 const newRow = tableBody.insertRow();
                 newRow.id = `row-${rowIndex}`;
 
@@ -375,9 +438,9 @@
                     <td class="px-4 py-2 border-b text-center">${rowIndex + 1}</td>
                     <td class="px-4 py-2 border-b text-center">${namaBarang}</td>
                     <td class="px-4 py-2 border-b text-center">${namaMerek}</td>
-                    <td class="px-4 py-2 border-b text-center">${kategoriBarang}</td>
+                    <td class="px-4 py-2 border-b text-center">${kategoriLabel}</td>
                     <td class="px-4 py-2 border-b text-center">${hargaSatuanFormatted}</td>
-                    <td class="px-4 py-2 border-b text-center">${kuantitasMasuk}</td>
+                    <td class="px-4 py-2 border-b text-center">${satuanLabel}</td>
                     <td class="px-4 py-2 border-b">
                         <div class="flex flex-col items-center justify-center gap-2">
                             <!-- Preview container with border placeholder -->
@@ -467,6 +530,7 @@
                     <input type="hidden" name="items[${rowIndex}][kategori]" value="${kategoriBarang}">
                     <input type="hidden" name="items[${rowIndex}][harga_satuan]" value="${hargaSatuanNumeric}">
                     <input type="hidden" name="items[${rowIndex}][kuantitas_masuk]" value="${kuantitasMasuk}">
+                    <input type="hidden" name="items[${rowIndex}][satuan_barang]" value="${satuan}">
                 `;
                 document.getElementById('hiddenRows').appendChild(hiddenInputs);
 

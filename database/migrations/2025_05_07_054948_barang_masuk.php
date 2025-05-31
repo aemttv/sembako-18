@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('idDetailBM', 11)->primary();
             $table->string('idBarangMasuk', 11);
             $table->string('idBarang', 11);
-            $table->integer('jumlahMasuk');
+            $table->float('jumlahMasuk');
             $table->float('hargaBeli');
             $table->float('subtotal');
             $table->date('tglKadaluarsa');

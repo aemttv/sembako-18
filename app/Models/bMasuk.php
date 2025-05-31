@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\enum\satuan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,10 @@ class bMasuk extends Model
 
     // You can also set the default guard if needed
     protected $guard = 'web';
+
+    protected $casts = [
+        'satuanBarang' => satuan::class
+    ];
 
     public static function generateNewIdBarangMasuk()
     {

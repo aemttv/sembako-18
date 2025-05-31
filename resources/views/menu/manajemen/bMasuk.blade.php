@@ -41,15 +41,17 @@
                         </div>
                         <div class="grid grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-sm text-gray-600 mb-1">Harga Satuan</label>
+                                <label class="block text-sm text-gray-600 mb-1">Harga Beli</label>
                                 <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2"
                                     maxlength="16" />
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Satuan</label>
-                                <input type="text" id="satuan"
-                                    class="w-full border rounded-md px-3 py-2 bg-gray-100 cursor-no-drop" value="Pcs/Eceran"
-                                    readonly />
+                                <select id="satuan" name="satuan" disabled
+                                    class="w-full border rounded-md px-3 py-2">
+                                    <option value="1" selected>Pcs/Eceran</option>
+                                    <option value="2">Kg</option>
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
@@ -154,7 +156,7 @@
                             <tr>
                                 <th class="px-4 py-2 border-b">ID Barang</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
-                                <th class="px-4 py-2 border-b">Harga Satuan</th>
+                                <th class="px-4 py-2 border-b">Harga Beli</th>
                                 <th class="px-4 py-2 border-b">Satuan</th>
                                 <th class="px-4 py-2 border-b">Kuantitas</th>
                                 <th class="px-4 py-2 border-b">Tanggal Masuk</th>
@@ -181,6 +183,9 @@
         </form>
 
         <script>
+            document.getElementById('satuan').addEventListener('change', function() {
+                this.disabled = true;
+            });
             // get search inputs - nama barang atau supplier 
             document.addEventListener('DOMContentLoaded', function() {
                 setupSearchableInput({
@@ -190,7 +195,8 @@
                     searchUrl: '/daftar-produk/search',
                     valueKeys: {
                         id: 'idBarang',
-                        name: 'namaBarang'
+                        name: 'namaBarang',
+                        satuan: 'satuan'
                     }
                 });
 
@@ -226,7 +232,8 @@
                                         suggestionBox.innerHTML = data.map(item => `
                                 <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
                                     data-id="${item[valueKeys.id]}"
-                                    data-name="${item[valueKeys.name]}">
+                                    data-name="${item[valueKeys.name]}"
+                                    data-satuan="${item[valueKeys.satuan]}">
                                     ${item[valueKeys.name]} (${item[valueKeys.id]})
                                 </div>
                             `).join('');
@@ -252,6 +259,15 @@
                                 input.value = item.getAttribute('data-name');
                                 hiddenInput.value = item.getAttribute('data-id');
                                 suggestionBox.classList.add('hidden');
+
+                                // Set satuan if available and if this is the barang input
+                                if (inputId === 'nama_barang' && item.hasAttribute('data-satuan')) {
+                                    const satuanSelect = document.getElementById('satuan');
+                                    if (satuanSelect) {
+                                        satuanSelect.value = item.getAttribute('data-satuan');
+                                        satuanSelect.disabled = true; // Make it readonly/disabled
+                                    }
+                                }
                             });
                         });
                     }
@@ -492,6 +508,21 @@
                         return;
                     }
 
+                    if (satuan === '2' && Number(kuantitas) > 20) {
+                        alert('Kuantitas maximal untuk satuan Kg adalah 20.');
+                        return;
+                    }
+
+                    let satuanLabel = '';
+                    if (satuan === '1') {
+                        satuanLabel = 'pcs/eceran';
+                    } else if (satuan === '2') {
+                        satuanLabel = 'kg';
+                    } else {
+                        satuanLabel = satuan;
+                    }
+
+
                     function formatTanggalMasuk(dateStr) {
                         // dateStr is expected in 'YYYY-MM-DD'
                         const months = [
@@ -508,7 +539,7 @@
                         <td class="px-4 py-2 border-b">${barangId}</td>
                         <td class="px-4 py-2 border-b">${namaBarang}</td>
                         <td class="px-4 py-2 border-b">${hargaSatuanFormatted}</td>
-                        <td class="px-4 py-2 border-b">${satuan}</td>
+                        <td class="px-4 py-2 border-b">${satuanLabel}</td>
                         <td class="px-4 py-2 border-b">${kuantitas}</td>
                         <td class="px-4 py-2 border-b">${formatTanggalMasuk(tanggalMasuk)}</td>
                         <td class="px-4 py-2 border-b">${formatTanggalMasuk(tanggalKadaluwarsa)}</td>

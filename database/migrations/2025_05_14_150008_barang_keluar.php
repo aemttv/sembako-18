@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('idDetailBK', 11)->primary();
             $table->string('idBarangKeluar', 11);
             $table->string('idBarang', 11);
-            $table->integer('jumlahKeluar');
+            $table->float('jumlahKeluar');
             $table->float('subtotal');
             $table->integer('kategoriAlasan');
             $table->string('keterangan', 100)->nullable();

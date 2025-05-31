@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('idDetailRetur', 11)->primary();
             $table->string('idBarangRetur', 11);
             $table->string('barcode');
-            $table->integer('jumlah');
+            $table->float('jumlah');
             $table->integer('kategoriAlasan');
             $table->string('keterangan', 100)->nullable();
             $table->integer('statusReturDetail')->default(2); //(e.g., some items approved, some rejected),

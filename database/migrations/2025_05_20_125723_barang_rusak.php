@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('idBarangRusak', 11);
             $table->string('idBarang', 11);
             $table->string('barcode');
-            $table->integer('jumlah');
+            $table->float('jumlah');
             $table->integer('kategoriAlasan');
             $table->string('keterangan', 100)->nullable();
             $table->integer('statusRusakDetail')->default(2);
