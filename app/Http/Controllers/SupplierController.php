@@ -17,7 +17,7 @@ class SupplierController extends Controller
             abort(403, 'Unauthorized action.');
         }
         
-        $supplier = Supplier::orderBy('idSupplier', 'desc')->paginate(10);
+        $supplier = Supplier::orderBy('idSupplier', 'asc')->paginate(10);
 
         return view('menu.supplier.indexSupplier', ['supplier' => $supplier]);
     }

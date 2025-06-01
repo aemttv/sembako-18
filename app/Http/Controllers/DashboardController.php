@@ -43,7 +43,7 @@ class DashboardController extends Controller
         $query->where('statusDetailBarang', 1);
             }], 'quantity')
             ->having('total_quantity', '<', 10)
-            ->take(3)
+            ->take(1)
             ->pluck('namaBarang');
 
         return view('menu.dashboard', [

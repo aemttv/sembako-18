@@ -30,8 +30,8 @@
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
                             <input type="text" id="nama_barang" name="nama_barang"
-                                class="w-full border rounded-md px-3 py-2" placeholder="Search Barang..."
-                                autocomplete="off">
+                                class="w-full border rounded-md px-3 py-2"
+                                placeholder="Cari nama barang atau merek barang..." autocomplete="off">
                             <div id="barang-suggestions"
                                 class="absolute z-10 w-full bg-white border mt-1 rounded-md hidden max-h-60 overflow-auto">
                                 <!-- Suggestions will appear here -->
@@ -47,8 +47,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Satuan</label>
-                                <select id="satuan" name="satuan" disabled
-                                    class="w-full border rounded-md px-3 py-2">
+                                <select id="satuan" name="satuan" disabled class="w-full border rounded-md px-3 py-2">
                                     <option value="1" selected>Pcs/Eceran</option>
                                     <option value="2">Kg</option>
                                 </select>
@@ -69,8 +68,7 @@
                                 <input type="date" id="tanggal_masuk" name="tglMasuk"
                                     class="w-full border rounded-md px-3 py-2 @error('tglMasuk') border-red-500 @enderror"
                                     value="{{ old('tglMasuk', now()->format('Y-m-d')) }}"
-                                    max="{{ now()->addYear()->format('Y-m-d') }}" onchange="updateMinExpiryDate()"
-                                    />
+                                    max="{{ now()->addYear()->format('Y-m-d') }}" onchange="updateMinExpiryDate()" />
                                 @error('tglMasuk')
                                     <span class="text-red-500 text-xs">{{ $message }}</span>
                                 @enderror
@@ -80,7 +78,7 @@
                                 <input type="date" id="tanggal_kadaluwarsa" name="tglKadaluwarsa"
                                     class="w-full border rounded-md px-3 py-2 @error('tglKadaluwarsa') border-red-500 @enderror"
                                     value="{{ old('tglKadaluwarsa', now()->addMonth()->format('Y-m-d')) }}"
-                                    onchange="validateDates()"/>
+                                    onchange="validateDates()" />
                                 @error('tglKadaluwarsa')
                                     <span class="text-red-500 text-xs">{{ $message }}</span>
                                 @enderror
@@ -126,8 +124,8 @@
                                 </div>
                                 <p id="fileName" class="text-sm text-gray-600 mt-2"></p>
                                 <span class="text-xs text-orange-500 mt-1">
-                                            Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.
-                                        </span>
+                                    Resolusi gambar harus minimal 400x400px dan maksimal 1200x1200px.
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -142,7 +140,7 @@
             </div>
 
             <div class="mt-6 border rounded-lg shadow-sm bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 text-center cursor-pointer"
-            id="addRow">
+                id="addRow">
                 (+) Tambah Data Barang Ke Tabel
             </div>
 
@@ -196,7 +194,8 @@
                     valueKeys: {
                         id: 'idBarang',
                         name: 'namaBarang',
-                        satuan: 'satuan'
+                        satuan: 'satuan',
+                        merek: 'merekNama'
                     }
                 });
 
@@ -233,8 +232,9 @@
                                 <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
                                     data-id="${item[valueKeys.id]}"
                                     data-name="${item[valueKeys.name]}"
-                                    data-satuan="${item[valueKeys.satuan]}">
-                                    ${item[valueKeys.name]} (${item[valueKeys.id]})
+                                    data-satuan="${item[valueKeys.satuan]}"
+                                    data-merek="${item[valueKeys.merek] || ''}">
+                                    ${item[valueKeys.merek] ? `[${item[valueKeys.merek]}] ` : ''}${item[valueKeys.name]} (${item[valueKeys.id]})
                                 </div>
                             `).join('');
                                         suggestionBox.classList.remove('hidden');

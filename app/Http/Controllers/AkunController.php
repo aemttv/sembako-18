@@ -11,6 +11,12 @@ class AkunController extends Controller
 {
     function viewAkun()
     {
+        if(!isUserLoggedIn()){
+            return redirect()->route('login');
+        }
+        if(!isOwner()){
+            abort(403, 'Unauthorized action.');
+        }
         $akun = Akun::paginate(10);
 
         return view('account.akun', ['akun' => $akun]);

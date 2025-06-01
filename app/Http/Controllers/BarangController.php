@@ -121,13 +121,29 @@ class BarangController extends Controller
 
         $query = $request->get('q');
 
-        $results = Barang::where('namaBarang', 'like', "%$query%")
-            ->select('idBarang', 'namaBarang', 'satuan')
-            ->get();
+        // Eager load 'merek' relationship
+        $results = Barang::with('merek')
+        ->where(function ($q) use ($query) {
+            $q->where('namaBarang', 'like', "%$query%")
+            ->orWhereHas('merek', function ($q2) use ($query) {
+                $q2->where('namaMerek', 'like', "%$query%");
+            });
+        })
+        ->select('idBarang', 'namaBarang', 'satuan', 'merekBarang')
+        ->get();
 
-        
+        // Transform the results to include merek name
+        $formatted = $results->map(function ($item) {
+            return [
+                'idBarang' => $item->idBarang,
+                'namaBarang' => $item->namaBarang,
+                'satuan' => $item->satuan,
+                'merekBarang' => $item->merekBarang,
+                'merekNama' => $item->merek ? $item->merek->namaMerek : 'Unknown',
+            ];
+        });
 
-        return response()->json($results);
+        return response()->json($formatted);
     }
     public function searchList(Request $request)
     {
