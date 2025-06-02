@@ -104,7 +104,7 @@ class LaporanController extends Controller
         return view('menu.laporan.bKeluar', compact('bKeluar'));
     }
 
-    function viewStokBarang(Request $request)
+    function viewStokBarang()
     {
         if(!isOwner() || !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
@@ -115,7 +115,7 @@ class LaporanController extends Controller
                 $query->where('statusDetailBarang', 1);
             },
             'merek',
-        ])->paginate(6);
+        ])->paginate(10);
 
         // Transform and set the collection back to the paginator
         $barang->setCollection(

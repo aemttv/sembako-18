@@ -186,52 +186,67 @@ document.addEventListener('DOMContentLoaded', function() {
             const nama_akun = document.getElementById('nama_akun').value.trim();
             const qty = parseInt(document.getElementById('qty')?.value || "1", 10);
             const totalInvoiceElement = document.getElementById('invoice-total'); // Get the total invoice element
-                
-                
-                if (!barcode || qty <= 0) {
-                    alert('Please enter a valid barcode and quantity.');
+
+            if (!barcode || qty <= 0) {
+                alert('Please enter a valid barcode and quantity.');
+                return;
+            }
+
+            if(!nama_akun){
+                alert('Please enter a valid Penanggung Jawab.')
+                return
+            }
+
+            // Fetch detail based on barcode
+            let detail;
+
+            try {
+                const response = await fetch(`/daftar-produk/search-detail?barcode=${barcode}`);
+                if (!response.ok) throw new Error('Not Found');
+
+                detail = await response.json();
+            } catch (e) {
+                alert('Barcode not found.');
+                return;
+            }
+
+            const tableBody = document.getElementById('transaction-table-body');
+
+            // Calculate total quantity for this barcode already in the table
+            let totalKuantitasForBarcode = 0;
+            Array.from(tableBody.querySelectorAll('tr')).forEach(row => {
+                const rowBarcode = row.cells[1]?.textContent.trim(); // barcode is in cell 1 (second column)
+                const rowKuantitasCell = row.cells[4]?.textContent.trim(); // quantity is in cell 4 (fifth column)
+                let rowKuantitas = 0;
+                if (rowKuantitasCell) {
+                    // Remove ' gr' if present for KG mode
+                    rowKuantitas = parseInt(rowKuantitasCell.replace(' gr', '').trim(), 10) || 0;
+                }
+                if (rowBarcode === barcode) {
+                    totalKuantitasForBarcode += rowKuantitas;
+                }
+            });
+
+            // Logic for satuan
+            if (detail.satuan == 2) { // KG mode, qty is in grams
+                // Minimal pengeluaran 50 gram
+                if (qty < 50) {
+                    alert('Pengeluaran barang dengan satuan kg minimal 50 gram.');
                     return;
                 }
-
-                if(!nama_akun){
-                    alert('Please enter a valid Penanggung Jawab.')
-                    return
-                }
-
-                // Fetch detail based on barcode
-                let detail;
-                
-                try {
-                    const response = await fetch(`/daftar-produk/search-detail?barcode=${barcode}`);
-                    if (!response.ok) throw new Error('Not Found');
-                    
-                    detail = await response.json();
-                } catch (e) {
-                    alert('Barcode not found.');
+                // Check stock in grams
+                const stokGram = parseFloat(detail.stok) * 1000; // stok in kg -> grams
+                if ((totalKuantitasForBarcode + qty) > stokGram) {
+                    alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
                     return;
                 }
-
-                // Logic for satuan
-                if (detail.satuan == 2) { // KG mode, qty is in grams
-                    // Minimal pengeluaran 100 gram
-                    if (qty < 50) {
-                        alert('Pengeluaran barang dengan satuan kg minimal 50 gram.');
-                        return;
-                    }
-                    // Check stock in grams
-                    const stokGram = parseFloat(detail.stok) * 1000; // stok in kg -> grams
-                    if (qty > stokGram) {
-                        alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
-                        return;
-                    }
-                } else { // PCS mode
-                    if (qty > detail.stok) {
-                        alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
-                        return;
-                    }
+            } else { // PCS mode
+                if ((totalKuantitasForBarcode + qty) > detail.stok) {
+                    alert('Jumlah pengeluaran melebihi stok barang pada barcode ini.');
+                    return;
                 }
-                    
-            
+            }
+
             const id = detail.idBarang;
             const name = detail.nama;
             const price = parseFloat(detail.harga) || 0;
@@ -245,17 +260,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const total = price * qty;
                 totalPrice = total.toLocaleString();
             }
-
-            const tableBody = document.getElementById('transaction-table-body');
-
-            let totalKuantitasForBarcode = 0;
-            Array.from(tableBody.querySelectorAll('tr')).forEach(row => {
-                const rowBarcode = row.cells[2]?.textContent.trim();
-                const rowKuantitas = parseInt(row.cells[3]?.textContent.trim(), 10) || 0;
-                if (rowBarcode === barcode) {
-                    totalKuantitasForBarcode += rowKuantitas;
-                }
-            });
 
             // Create new row
             const row = document.createElement('tr');
