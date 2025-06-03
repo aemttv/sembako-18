@@ -218,7 +218,11 @@
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">ID Supplier</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">QR Code</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Barcode</th>
-                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Kuantitas</th>
+                                @if ($barang->satuan->value === 1)
+                                    <th class="px-4 py-2 border-b border-gray-300 bg-white">Kuantitas</th>
+                                @else
+                                    <th class="px-4 py-2 border-b border-gray-300 bg-white">Berat(Kg)</th>
+                                @endif
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Kondisi</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Tanggal Masuk</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Tanggal Kadaluarsa

@@ -60,7 +60,7 @@
                             <div>Barcode: <span id="popup-barcode"></span></div>
                             <div>Name: <span id="popup-name"></span></div>
                             <div>Price: Rp.<span id="popup-price"></span></div>
-                            <div>Stock: <span id="popup-stock"></span> <span id="popup-satuan"></span></div>
+                            <div>Berat: <span id="popup-stock"></span> <span id="popup-satuan"></span></div>
                         </div>
 
                     </div>
@@ -142,9 +142,9 @@
                     <label class="block text-sm font-medium">Note</label>
                     <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
 
-                    
+
                     <button id="process-button" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 mt-2 w-full text-center justify-center items-center">Process</button>
-                    
+
                 </div>
 
             </div>

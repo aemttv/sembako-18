@@ -72,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
 
                         if ($tglKadaluarsa->isPast()) {
                             $newKondisi = 'Kadaluarsa';
-                        } elseif ($daysToExpire >= 0 && $daysToExpire < 7) {
+                        } elseif ($daysToExpire >= 0 && $daysToExpire <= 2) {
                             $newKondisi = 'Mendekati Kadaluarsa';
                         } else {
                             $newKondisi = 'Baik';
@@ -89,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
 
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
             Log::info("Kondisi barang update completed. Updated {$updatedCount} items in {$executionTime}ms");
-            
+
         } catch (\Exception $e) {
             Log::error('Barang expiration check failed: ' . $e->getMessage());
         }

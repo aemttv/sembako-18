@@ -40,7 +40,7 @@
                         <th class="px-4 py-2">Jumlah Masuk</th>
                         <th class="px-4 py-2">Subtotal</th>
                         <th class="px-4 py-2">Tanggal Masuk</th>
-                        <th class="px-4 py-2">Tanggal Kadaluarsa</th>
+                        {{-- <th class="px-4 py-2">Tanggal Kadaluarsa</th> --}}
                         <th class="px-4 py-2">Nota</th>
                         <th class="px-4 py-2">Proses</th>
                     </tr>
@@ -59,8 +59,8 @@
                             <td class="px-4 py-2">Rp.{{ number_format($data->total, 0, ',', '.') }}</td>
                             <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}
                             </td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->expiredDate)->translatedFormat('d F Y') }}
-                            </td>
+                            {{-- <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->expiredDate)->translatedFormat('d F Y') }}
+                            </td> --}}
                             @if ($data->nota != null)
                                 <td class="px-4 py-2 text-center">
                                     <button onclick="showNotaModal('{{ asset('nota_file/' . $data->nota) }}')"

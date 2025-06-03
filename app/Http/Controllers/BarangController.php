@@ -297,18 +297,22 @@ class BarangController extends Controller
         $barang = Barang::with([
             'detailBarang' => function ($query) {
                 $query->where('statusDetailBarang', 1);
+                $query->orderby('tglKadaluarsa', 'asc');
+
             },
             'merek',
         ])
             ->where('idBarang', $idBarang)
             ->firstOrFail();
-            
+
         $mereks = bMerek::all();
         $kategori = KategoriBarang::cases();
         $satuan = satuan::cases();
-        
+
+
+
         $barang->merekBarangName = $barang->merek ? $barang->merek->namaMerek : 'Unknown';
-        
+
         // Update: totalStok logic based on satuan
         if ($barang->satuan->value === 2) {
             // satuan is kg
@@ -317,7 +321,7 @@ class BarangController extends Controller
             $barang->totalStok = $barang->detailBarang->sum('quantity');
         }
 
-        
+
         $inactiveDetail = BarangDetail::where('idBarang', $idBarang)
             ->where('statusDetailBarang', 0)
             ->where('quantity', '>', 0)
@@ -395,11 +399,11 @@ class BarangController extends Controller
      */
     function tambahProduk(Request $request)
     {
-        
+
         DB::beginTransaction();
-        
+
         try {
-           
+
             if(!isUserLoggedIn()){
                 abort(403, 'Unauthorized action.');
             }

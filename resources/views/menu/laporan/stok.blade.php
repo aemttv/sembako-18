@@ -18,7 +18,7 @@
             <form action="{{ route('laporan.StokBarang.search') }}" method="get"
                 class="flex flex-col sm:flex-row sm:items-end gap-4 w-full sm:w-auto sm:flex-wrap">
                 <!-- Tanggal Mulai -->
-                <div class="flex flex-col w-full sm:w-auto">
+                {{-- <div class="flex flex-col w-full sm:w-auto">
                     <label for="tanggal_awal" class="text-sm text-gray-700 mb-1 text-center sm:text-left">Tanggal Mulai</label>
                     <input type="date" name="tanggal_awal" id="tanggal_awal"
                         class="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full @error('tanggal_awal') border-red-500 @enderror"
@@ -38,15 +38,15 @@
                     @error('tanggal_akhir')
                         <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                     @enderror
-                </div>
+                </div> --}}
 
                 <!-- Tampilkan Button -->
-                <div class="flex flex-col justify-end w-full sm:w-auto">
+                {{-- <div class="flex flex-col justify-end w-full sm:w-auto">
                     <button type="submit"
                         class="px-4 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 h-[42px] w-full sm:w-auto">
                         Tampilkan
                     </button>
-                </div>
+                </div> --}}
             </form>
 
             <!-- PDF Button Form -->
@@ -98,7 +98,7 @@
                         <th class="px-4 py-2">Merek</th>
                         <th class="px-4 py-2">Stok Total</th>
                         <th class="px-4 py-2">Harga Jual</th>
-                        <th class="px-4 py-2">Tanggal Awal Masuk</th>
+                        {{-- <th class="px-4 py-2">Tanggal Awal Masuk</th> --}}
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
@@ -123,11 +123,11 @@
                             <td class="px-4 py-2">{{ $data->merekBarangName }}</td>
                             <td class="px-4 py-2">{{ $data->totalStok }}</td>
                             <td class="px-4 py-2 text-right">Rp.{{ number_format($data->hargaJual, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2">
+                            {{-- <td class="px-4 py-2">
                                 {{ optional($data->detailBarang->sortBy('tglMasuk')->first())->tglMasuk
                                     ? \Carbon\Carbon::parse($data->detailBarang->sortBy('tglMasuk')->first()->tglMasuk)->translatedFormat('d F Y')
                                     : '-' }}
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                     @endif

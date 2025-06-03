@@ -48,6 +48,7 @@
                                 <th class="px-4 py-2 border-b">Kuantitas
                                 <th class="px-4 py-2 border-b">Satuan
                                 <th class="px-4 py-2 border-b">Harga Beli
+                                <th class="px-4 py-2 border-b">Tanggal Kadaluarsa</th>
                                 <th class="px-4 py-2 border-b">Subtotal</th>
                             </tr>
                         </thead>
@@ -68,6 +69,7 @@
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlahMasuk }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barangDetail->barang->satuan->namaSatuan() }}</td>
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}</td>
+                                    <td class="px-4 py-2 border-b">{{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}</td>
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
