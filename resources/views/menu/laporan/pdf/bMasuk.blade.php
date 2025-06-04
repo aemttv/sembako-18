@@ -182,7 +182,7 @@
             </tbody>
         </table>
 
-        <div style="margin-top: 24px;">
+    <div style="margin-top: 24px;">
     <strong>Keterangan:</strong>
     <table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px;">
         <thead>
@@ -194,17 +194,28 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($supplierAkunList as $row)
+            @php
+                $maxRows = max(count($supplierList), count($akunList));
+            @endphp
+            @for($i = 0; $i < $maxRows; $i++)
                 <tr>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">{{ $row['idSupplier'] }}</td>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">{{ $row['namaSupplier'] }}</td>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">{{ $row['idAkun'] }}</td>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">{{ $row['namaAkun'] }}</td>
+                    <td style="border: 1px solid #444; padding: 4px 8px;">
+                        {{ $supplierList[$i]['idSupplier'] ?? '' }}
+                    </td>
+                    <td style="border: 1px solid #444; padding: 4px 8px;">
+                        {{ $supplierList[$i]['namaSupplier'] ?? '' }}
+                    </td>
+                    <td style="border: 1px solid #444; padding: 4px 8px;">
+                        {{ $akunList[$i]['idAkun'] ?? '' }}
+                    </td>
+                    <td style="border: 1px solid #444; padding: 4px 8px;">
+                        {{ $akunList[$i]['namaAkun'] ?? '' }}
+                    </td>
                 </tr>
-            @endforeach
+            @endfor
         </tbody>
     </table>
-    </div>
+</div>
 </body>
 
 </html>

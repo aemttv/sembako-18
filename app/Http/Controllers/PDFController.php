@@ -57,32 +57,32 @@ class PDFController extends Controller
             }
         }
 
-        // Collect unique IDs
-        $idSuppliers = $bMasuk->pluck('idSupplier')->unique();
-        $idAkuns = $bMasuk->pluck('idAkun')->unique();
+        // Collect unique supplier IDs and akun IDs from $bRetur
+        $idSuppliers = $bMasuk->pluck('idSupplier')->unique()->filter();
+        $idAkuns = $bMasuk->pluck('idAkun')->unique()->filter();
 
         // Fetch names from DB (Supplier and Akun models)
         $suppliers = Supplier::whereIn('idSupplier', $idSuppliers)->pluck('nama', 'idSupplier');
         $akuns = Akun::whereIn('idAkun', $idAkuns)->pluck('nama', 'idAkun');
 
-        // Prepare the legend list
-        $supplierAkunList = [];
-        foreach ($bMasuk as $data) {
-            $supplierAkunList[] = [
-                'idSupplier' => $data->idSupplier,
-                'namaSupplier' => $suppliers[$data->idSupplier] ?? '-',
-                'idAkun' => $data->idAkun,
-                'namaAkun' => $akuns[$data->idAkun] ?? '-',
+        // Prepare separate arrays
+        $supplierList = [];
+        foreach ($idSuppliers as $idSupplier) {
+            $supplierList[] = [
+                'idSupplier' => $idSupplier,
+                'namaSupplier' => $suppliers[$idSupplier] ?? '-',
             ];
         }
-        //  make unique by idSupplier+idAkun
-        $supplierAkunList = collect($supplierAkunList)
-            ->unique(function ($item) {
-                return $item['idSupplier'] . '-' . $item['idAkun'];
-            })
-            ->values();
 
-        $pdf = Pdf::loadView('menu.laporan.pdf.bMasuk', compact('bMasuk', 'tglMasuk', 'tglAkhir', 'grandTotal', 'supplierAkunList'));
+        $akunList = [];
+        foreach ($idAkuns as $idAkun) {
+            $akunList[] = [
+                'idAkun' => $idAkun,
+                'namaAkun' => $akuns[$idAkun] ?? '-',
+            ];
+        }
+
+        $pdf = Pdf::loadView('menu.laporan.pdf.bMasuk', compact('bMasuk', 'tglMasuk', 'tglAkhir', 'grandTotal', 'supplierList', 'akunList'));
         return $pdf->stream('laporan-bmasuk.pdf');
     }
 
