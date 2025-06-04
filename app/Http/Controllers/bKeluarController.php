@@ -42,6 +42,8 @@ class bKeluarController extends Controller
 
         $kategoriAlasan = Alasan::cases();
 
+
+
         return view('menu.manajemen.detail-bKeluar', compact('bKeluar', 'kategoriAlasan'));
     }
 

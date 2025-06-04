@@ -190,35 +190,35 @@
                                         <a href="/laporan-stok"
                                             class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-stok') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                            L.Stok
+                                            Stok
                                         </a>
                                     </li>
                                     <li>
                                         <a href="/laporan-barang-masuk"
                                             class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-masuk') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                            L.Barang Masuk
+                                            Barang Masuk
                                         </a>
                                     </li>
                                     <li>
                                         <a href="/laporan-barang-keluar"
                                             class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-keluar') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                            L.Barang Keluar
+                                            Barang Keluar
                                         </a>
                                     </li>
                                     <li>
                                         <a href="/laporan-barang-retur" {{-- Assuming this is the correct URL --}}
                                             class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-retur-barang') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                            L.Retur Barang
+                                            Retur Barang
                                         </a>
                                     </li>
                                     <li>
                                         <a href="/laporan-barang-rusak"
                                             class="block rounded-lg px-4 py-2 pl-8 pr-4 text-sm font-medium
                 {{ Request::is('laporan-barang-rusak') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                                            L.Barang Rusak
+                                            Barang Rusak
                                         </a>
                                     </li>
                                 </ul>
@@ -343,7 +343,7 @@
                 }
             });
         }
-        
+
         if (sidebarOverlay) {
             sidebarOverlay.addEventListener('click', closeSidebar);
         }

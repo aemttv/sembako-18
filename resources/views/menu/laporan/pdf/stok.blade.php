@@ -125,7 +125,7 @@
         <table class="pdf-table">
             <thead>
                 <tr>
-                    <th colspan="8" class="text-center">
+                    <th colspan="7" class="text-center">
                         <strong>Stok Barang {{ Carbon::parse($tglMasuk)->translatedFormat('Y') }}</strong>
                     </th>
                 </tr>
@@ -137,7 +137,6 @@
                     <th>Merek</th>
                     <th>Stok Total</th>
                     <th>Harga Jual</th>
-                    <th>Tanggal Awal Masuk</th>
                 </tr>
             </thead>
             <tbody>
@@ -151,21 +150,10 @@
                             <td>{{ $data->merekBarangName }}</td>
                             <td class="text-center">{{ $data->totalStok }}</td>
                             <td>Rp.{{ number_format($data->hargaJual, 0, ',', '.') }}</td>
-                            <td>
-                                {{ optional($data->detailBarang->sortBy('tglMasuk')->first())->tglMasuk
-                                    ? \Carbon\Carbon::parse($data->detailBarang->sortBy('tglMasuk')->first()->tglMasuk)->translatedFormat('d F Y')
-                                    : '-' }}
-                            </td>
                         </tr>
                     @endforeach
-                <!-- Grand Total Row -->
-                <tr>
-                    <td colspan="6" style="text-align: right; font-weight: bold;">Grand Total</td>
-                    <td colspan="2" style="font-weight: bold;">Rp.{{ number_format($grandTotal, 0, ',', '.') }}</td>
-                </tr>
             </tbody>
         </table>
-
 </body>
 
 </html>
