@@ -154,9 +154,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-between items-center text-sm text-gray-800">
-            {{ $bRetur->links() }}
-        </div>
+        {{ $bRetur->links() }}
     </div>
 
     <script>

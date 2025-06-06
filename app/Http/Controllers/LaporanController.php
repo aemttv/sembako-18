@@ -209,8 +209,11 @@ class LaporanController extends Controller
         }
 
         $bRetur = bRetur::with('detailRetur.detailBarangRetur.barang')
-        ->where('statusRetur', 1)->orWhere('statusRetur', 0)
-        ->OrderBy('tglRetur', 'desc')->paginate(6);
+        ->where('statusRetur', 1)
+        ->orWhere('statusRetur', 0)
+        ->orderBy('tglRetur', 'desc')
+        ->orderBy('idBarangRetur', 'desc')
+        ->paginate(5);
 
         return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
     }
@@ -257,6 +260,7 @@ class LaporanController extends Controller
         $bRusak = bRusak::with('detailRusak.detailBarangRusak.barang')
         ->where('statusRusak', 1)->orWhere('statusRusak', 0)
         ->OrderBy('tglRusak', 'desc')
+        ->OrderBy('idBarangRusak', 'desc')
         ->paginate(6);
 
         return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);

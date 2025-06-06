@@ -19,13 +19,13 @@
         
         <!-- Tabs -->
         <div class="flex justify-between items-center gap-2 border rounded-lg p-2 bg-white">
-
             <!-- Search Input Group -->
-            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
+            <form action="{{ url('/akun-list/search') }}" method="GET"
+                class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm mx-auto">
                 <i class="fas fa-search text-gray-400 mr-2"></i>
-                <input type="text" placeholder="Search or type command..."
+                <input type="text" name="q" placeholder="Nama Akun / ID Akun" value="{{ request('q') }}"
                     class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400" />
-            </div>
+            </form>
             <a href="/tambah-akun"
                 class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600">Tambah Akun</a>
         </div>

@@ -10,6 +10,7 @@ use App\Models\BarangDetail;
 use App\Models\bMerek;
 use App\Models\Notifications;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -264,6 +265,7 @@ class BarangController extends Controller
                 'harga' => $detail->barang->hargaJual ?? 0,
                 'stok' => $detail->quantity ?? 0,
                 'satuan' => $detail->barang->satuan ?? '',
+                'kadaluarsa' => $detail->tglKadaluarsa,
             ]);
         } else {
             return response()->json(null, 404);
@@ -669,5 +671,26 @@ class BarangController extends Controller
             Log::error('Error restoring BarangDetail: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengembalikan barang detail. Silakan coba lagi.');
         }
+    }
+
+    public function getKadaluarsaByBarcode(Request $request): JsonResponse
+    {
+        $barcode = $request->query('barcode');
+        if (!$barcode) {
+            return response()->json(['error' => 'Barcode is required'], 400);
+        }
+
+        // Find the latest kadaluarsa for this barcode (adjust logic as needed)
+        $barangDetail = BarangDetail::where('barcode', $barcode)
+            ->orderByDesc('tglKadaluarsa')
+            ->first();
+
+        if (!$barangDetail || !$barangDetail->tglKadaluarsa) {
+            return response()->json(['kadaluarsa' => null]);
+        }
+
+        return response()->json([
+            'kadaluarsa' => $barangDetail->tglKadaluarsa->format('Y-m-d')
+        ]);
     }
 }

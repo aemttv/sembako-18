@@ -46,7 +46,7 @@
                                 <th class="px-4 py-2 border-b">ID Barang</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
                                 <th class="px-4 py-2 border-b">Barcode</th>
-                                <th class="px-4 py-2 border-b">Kuantitas
+                                <th class="px-4 py-2 border-b">Kuantitas/Berat(kg)</th>
                                 <th class="px-4 py-2 border-b">Subtotal</th>
                                 <th class="px-4 py-2 border-b">Kategori Alasan</th>
                                 <th class="px-4 py-2 border-b">Keterangan</th>

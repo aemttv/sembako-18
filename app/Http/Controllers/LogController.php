@@ -13,14 +13,14 @@ class LogController extends Controller
     public function index()
     {
         if(!isOwner() || !isUserLoggedIn()) {
-            abort(403, 'Unauthorized action.');
+        abort(403, 'Unauthorized action.');
         }
 
-        // Fetch logs for each activity type, order by date descending
-        $barangMasukLogs = bMasuk::with('detailMasuk')->limit(5)->get();
-        $barangKeluarLogs = bKeluar::with('detailKeluar')->limit(5)->get();
-        $barangReturLogs = bRetur::with('detailRetur')->limit(5)->get();
-        $barangRusakLogs = bRusak::with('detailRusak')->limit(5)->get();
+        // Eager load nested relationships for deeper info
+        $barangMasukLogs = bMasuk::with('detailMasuk.barangDetail.barang')->limit(5)->orderby('idBarangMasuk', 'desc')->orderby('tglMasuk', 'desc')->get();
+        $barangKeluarLogs = bKeluar::with('detailKeluar')->limit(5)->orderby('idBarangKeluar', 'desc')->orderby('tglKeluar', 'desc')->get();
+        $barangReturLogs = bRetur::with('detailRetur')->limit(5)->orderby('idBarangRetur', 'desc')->orderby('tglRetur', 'desc')->get();
+        $barangRusakLogs = bRusak::with('detailRusak')->limit(5)->orderby('idBarangRusak', 'desc')->orderby('tglRusak', 'desc')->get();
 
         $kategoriAlasan = Alasan::cases();
 

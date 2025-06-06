@@ -36,9 +36,9 @@
                         <th class="px-4 py-2">ID Barang Masuk</th>
                         <th class="px-4 py-2">ID Supplier</th>
                         <th class="px-4 py-2">ID Akun</th>
-                        <th class="px-4 py-2">Harga Beli</th>
-                        <th class="px-4 py-2">Jumlah Masuk</th>
-                        <th class="px-4 py-2">Subtotal</th>
+                        {{-- <th class="px-4 py-2">Harga Beli</th> --}}
+                        {{-- <th class="px-4 py-2">Jumlah Masuk</th> --}}
+                        {{-- <th class="px-4 py-2">Subtotal</th> --}}
                         <th class="px-4 py-2">Tanggal Masuk</th>
                         {{-- <th class="px-4 py-2">Tanggal Kadaluarsa</th> --}}
                         <th class="px-4 py-2">Nota</th>
@@ -54,11 +54,10 @@
                             <td class="px-4 py-2">{{ $data->idBarangMasuk }}</td>
                             <td class="px-4 py-2">{{ explode(' ', trim($data->supplier->nama))[0] }} ({{ $data->idSupplier }})</td>
                             <td class="px-4 py-2">{{ explode(' ', trim($data->akun->nama))[0] }} ({{ $data->idAkun }})</td>
-                            <td class="px-4 py-2">Rp.{{ number_format($data->hargaBeli, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2">{{ $data->quantity }}</td>
-                            <td class="px-4 py-2">Rp.{{ number_format($data->total, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}
-                            </td>
+                            {{-- <td class="px-4 py-2">Rp.{{ number_format($data->hargaBeli, 0, ',', '.') }}</td> --}}
+                            {{-- <td class="px-4 py-2">{{ $data->quantity }}</td> --}}
+                            {{-- <td class="px-4 py-2">Rp.{{ number_format($data->total, 0, ',', '.') }}</td> --}}
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}</td>
                             {{-- <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->expiredDate)->translatedFormat('d F Y') }}
                             </td> --}}
                             @if ($data->nota != null)

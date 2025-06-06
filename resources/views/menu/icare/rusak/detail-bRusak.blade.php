@@ -41,11 +41,11 @@
                         <thead class="sticky top-0 bg-white">
                             <tr>
                                 <th class="px-4 py-2 border-b border-gray-300">No</th>
-                                <th class="px-4 py-2 border-b border-gray-300">Detail Rusak ID</th>
-                                <th class="px-4 py-2 border-b border-gray-300">Barang Rusak ID</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Detail ID</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Rusak ID</th>
                                 <th class="px-4 py-2 border-b border-gray-300">Nama Barang</th>
                                 <th class="px-4 py-2 border-b border-gray-300">Barcode</th>
-                                <th class="px-4 py-2 border-b border-gray-300">Jumlah</th>
+                                <th class="px-4 py-2 border-b border-gray-300">Jumlah/Berat(kg)</th>
                                 <th class="px-4 py-2 border-b border-gray-300">Kategori Keterangan
                                 <th class="px-4 py-2 border-b border-gray-300">Keterangan</th>
                                 </th>
@@ -67,7 +67,9 @@
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailBR }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarangRusak }}</td>
-                                    <td class="px-4 py-2 border-b">{{ mb_strimwidth($detail->detailBarangRusak->barang->namaBarang, 0, 40, '...' ?? '-')}}</td>
+                                    <td class="px-4 py-2 border-b">
+                                        {{ mb_strimwidth(optional(optional($detail->detailBarangRusak)->barang)->namaBarang ?? '-', 0, 40, '...') }}
+                                    </td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barcode }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlah }}</td>
                                     <td class="px-4 py-2 border-b 

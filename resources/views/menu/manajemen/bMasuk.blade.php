@@ -418,10 +418,14 @@
                         const minDate = new Date(masuk);
                         minDate.setDate(minDate.getDate() + 1);
                         document.getElementById('tanggal_kadaluwarsa').valueAsDate = minDate;
+                        return false;
                     } else {
                         errorSpan.style.display = 'none';
+                        return true;
                     }
                 }
+                errorSpan.style.display = 'block';
+                return false;
             }
 
             document.addEventListener('DOMContentLoaded', function() {
@@ -521,7 +525,6 @@
                     } else {
                         satuanLabel = satuan;
                     }
-
 
                     function formatTanggalMasuk(dateStr) {
                         // dateStr is expected in 'YYYY-MM-DD'

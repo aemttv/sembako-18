@@ -45,6 +45,7 @@
                                         <div>Price: <span id="popup-price"></span></div>
                                         <div>Stock: <span id="popup-stock"></span></div>
                                         <div>Satuan: <span id="popup-satuan"></span></div>
+                                        <div>Kadaluarsa: <span id="popup-kadaluarsa"></span></div>
                                     </div>
                                 </div>
                             </div>

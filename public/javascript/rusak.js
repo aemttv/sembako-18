@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
         valueKeys: {
             id: 'idBarang',
             name: 'barcode',
-            satuan: 'satuan'
+            satuan: 'satuan',
+            tglKadaluarsa: 'tglKadaluarsa'
         }
     })
 
@@ -60,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
                         data-id="${item[valueKeys.id]}"
                         data-name="${item[valueKeys.name]}"
-                        data-satuan="${item[valueKeys.satuan]}">
+                        data-satuan="${item[valueKeys.satuan]}"
+                        data-kadaluarsa="${item[valueKeys.tglKadaluarsa]}">
                         ${item[valueKeys.name]} (${item[valueKeys.id]})
                     </div>
                 `
@@ -112,6 +114,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
+    let cacheKadaluarsa = null;
+
     // search popup function
     document
         .getElementById('search-barcode-btn')
@@ -144,6 +148,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         data.stok || 0
                     document.getElementById('popup-satuan').innerText =
                         data.satuan || 0
+                    document.getElementById('popup-kadaluarsa').innerText =
+                        data.kadaluarsa || '-'
                         
                     if (data.barcode) {
                         document.getElementById('nama_barang').value =
@@ -169,6 +175,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         } else {
                             kuantitasInput.readOnly = false
                         }
+
+                        cacheKadaluarsa = data.kadaluarsa || null;
                     }
 
                     // Toggle popup visibility - no manual positioning needed
@@ -218,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const hiddenRowsDiv = document.getElementById('hiddenRows');
     let rowCount = 0;
 
-    addRowBtn.addEventListener('click', function () {
+    addRowBtn.addEventListener('click', async function () {
         // Get all input values
         const namaAkun = document.getElementById('nama_akun').value;
         const akunId = document.getElementById('akun_id').value;
@@ -241,6 +249,24 @@ document.addEventListener('DOMContentLoaded', function () {
         if(kuantitas > stokInput) {
             alert('Stok melebihi batas stok pada saat ini.')
             return
+        }
+
+        // console.log(kategoriKetValue);
+
+        if (kategoriKetValue === "5") { // 1 = kadaluarsa
+            if (!cacheKadaluarsa) {
+                alert('Data kadaluarsa untuk barcode ini tidak ditemukan!');
+                return;
+            }
+            // Compare only the date part as string (YYYY-MM-DD)
+            const today = new Date();
+            const todayStr = today.toISOString().slice(0, 10);
+            const kadaluarsaStrOnly = cacheKadaluarsa.slice(0, 10);
+
+            if (todayStr <= kadaluarsaStrOnly) {
+                alert('Barang ini belum kadaluarsa, tidak dapat diproses sebagai kadaluarsa.');
+                return;
+            }
         }
 
         let totalKuantitasForBarcode = 0;

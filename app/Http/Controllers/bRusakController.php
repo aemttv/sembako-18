@@ -90,6 +90,26 @@ class bRusakController extends Controller
         return view('menu.icare.rusak.detail-bRusak', ['bRusak' => $bRusak, 'kategoriAlasan' => $kategoriAlasan]);
     }
 
+    private function updateBRusakStatus($idBarangRusak)
+    {
+        $details = bRusakDetail::where('idBarangRusak', $idBarangRusak)->get();
+        $accepted = $details->where('statusRusakDetail', 1)->count();
+        $rejected = $details->where('statusRusakDetail', 0)->count();
+        $total = $details->count();
+
+        $bRusak = bRusak::find($idBarangRusak);
+        if (!$bRusak) return;
+
+        if ($accepted === $total) {
+            $bRusak->statusRusak = 1; // all accepted
+        } elseif ($rejected === $total) {
+            $bRusak->statusRusak = 0; // all rejected
+        } else {
+            $bRusak->statusRusak = 3; // mixed/partial
+        }
+        $bRusak->save();
+    }
+
     public function ajukanBRusak(Request $request)
     {
         DB::beginTransaction();
@@ -216,28 +236,17 @@ class bRusakController extends Controller
             return redirect()->back()->with('error', 'Data barang (pending) tidak ditemukan.');
         }
 
-        // If kategoriAlasan == '1', only allow if expired
-        if ($detail->kategoriAlasan == '1') {
-            if (Carbon::now() > $pendingBarang->tglKadaluarsa) {
-                $detail->save();
-                // Approve the pendingBarang: remove from stock (delete or set status to approved/removed)
-                $pendingBarang->delete();
-            } else {
-                return redirect()->back()->with('error', 'Barang Belum melebihi tanggal kadaluarsa.');
-            }
-        } else {
-            $detail->save();
-            $pendingBarang->delete();
-        }
+        $pendingBarang->statusDetailBarang = 3; // approved
+        $detail->save();
 
         // Check if all details for this rusak are validated (status = 1)
-        $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)->where('statusRusakDetail', '!=', 1)->doesntExist();
+        $pendingCount = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)
+        ->where('statusRusakDetail', 2) // 2 = pending
+        ->count();
 
-        if ($allDetailsValidated) {
-            // Update the main rusak status
+        if ($pendingCount === 0) {
             $bRusak = bRusak::find($detail->idBarangRusak);
-            $bRusak->statusRusak = 1;
-            $bRusak->save();
+            $this->updateBRusakStatus($detail->idBarangRusak);
 
             //notification sending to all users
             $owners = Akun::where('peran', 1)->get();
@@ -270,7 +279,7 @@ class bRusakController extends Controller
                 ]);
             }
 
-            return redirect()->route('view.ConfirmBRusak')->with('success', 'Semua barang rusak telah divalidasi dan telah dikonfirmasi');
+            return redirect()->route('view.ConfirmBRusak')->with('success', 'Sukses!');
         }
 
         return redirect()
@@ -305,13 +314,13 @@ class bRusakController extends Controller
         }
 
         // Check if all details for this rusak are validated (status = 0)
-        $allDetailsValidated = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)->where('statusRusakDetail', '!=', 0)->doesntExist();
+        $pendingCount = bRusakDetail::where('idBarangRusak', $detail->idBarangRusak)
+        ->where('statusRusakDetail', 2) // 2 = pending
+        ->count();
 
-        if ($allDetailsValidated) {
-            // Update the main rusak status
+        if ($pendingCount === 0) {
             $bRusak = bRusak::find($detail->idBarangRusak);
-            $bRusak->statusRusak = 0;
-            $bRusak->save();
+            $this->updateBRusakStatus($detail->idBarangRusak);
 
             //notification sending to all users
             $owners = Akun::where('peran', 1)->get();
@@ -344,7 +353,7 @@ class bRusakController extends Controller
                 ]);
             }
 
-            return redirect()->route('view.ConfirmBRusak')->with('success', 'Semua barang rusak telah ditolak');
+            return redirect()->route('view.ConfirmBRusak')->with('success', 'Sukses!');
         }
 
         return redirect()

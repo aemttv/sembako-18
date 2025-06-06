@@ -24,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
         // Only run in web environment (not for console commands)
         if ($this->app->runningInConsole()) {
             return;
@@ -39,15 +38,9 @@ class AppServiceProvider extends ServiceProvider
             $user = session('user_data');
             $idAkun = $user ? $user->idAkun : null;
             if ($idAkun) {
-                $notifications = Notifications::where('idAkun', $idAkun)
-                    ->where('read', true)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                $notifications = Notifications::where('idAkun', $idAkun)->where('read', true)->orderBy('created_at', 'desc')->get();
 
-                $unreadNotifications = Notifications::where('idAkun', session('user_data')->idAkun)
-                    ->where('read', false)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                $unreadNotifications = Notifications::where('idAkun', session('user_data')->idAkun)->where('read', false)->orderBy('created_at', 'desc')->get();
             }
 
             $view->with('unreadNotifications', $unreadNotifications);
@@ -68,11 +61,11 @@ class AppServiceProvider extends ServiceProvider
                 ->chunkById(200, function ($details) use ($now, &$updatedCount) {
                     foreach ($details as $detail) {
                         $tglKadaluarsa = Carbon::parse($detail->tglKadaluarsa);
-                        $daysToExpire = $tglKadaluarsa->diffInDays($now, false);
+                        $daysToExpire = $now->diffInDays($tglKadaluarsa, false);
 
-                        if ($tglKadaluarsa->isPast()) {
+                        if ($daysToExpire < 0) {
                             $newKondisi = 'Kadaluarsa';
-                        } elseif ($daysToExpire >= 0 && $daysToExpire <= 2) {
+                        } elseif ($daysToExpire <= 3) {
                             $newKondisi = 'Mendekati Kadaluarsa';
                         } else {
                             $newKondisi = 'Baik';
@@ -89,7 +82,6 @@ class AppServiceProvider extends ServiceProvider
 
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
             Log::info("Kondisi barang update completed. Updated {$updatedCount} items in {$executionTime}ms");
-
         } catch (\Exception $e) {
             Log::error('Barang expiration check failed: ' . $e->getMessage());
         }

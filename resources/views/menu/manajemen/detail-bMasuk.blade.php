@@ -41,11 +41,11 @@
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
                                 <th class="px-4 py-2 border-b">No</th>
-                                <th class="px-4 py-2 border-b">ID Detail Barang Keluar</th>
-                                <th class="px-4 py-2 border-b">ID Barang Keluar</th>
+                                <th class="px-4 py-2 border-b">ID Detail BM</th>
+                                <th class="px-4 py-2 border-b">ID Keluar</th>
                                 <th class="px-4 py-2 border-b">ID Barang</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
-                                <th class="px-4 py-2 border-b">Kuantitas
+                                <th class="px-4 py-2 border-b">Kuantitas/Berat(kg)</th>
                                 <th class="px-4 py-2 border-b">Satuan
                                 <th class="px-4 py-2 border-b">Harga Beli
                                 <th class="px-4 py-2 border-b">Tanggal Kadaluarsa</th>

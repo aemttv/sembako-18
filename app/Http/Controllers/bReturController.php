@@ -200,6 +200,26 @@ class bReturController extends Controller
         }
     }
 
+    private function updateBReturStatus($idBarangRetur)
+    {
+        $details = bReturDetail::where('idBarangRetur', $idBarangRetur)->get();
+        $accepted = $details->where('statusReturDetail', 1)->count();
+        $rejected = $details->where('statusReturDetail', 0)->count();
+        $total = $details->count();
+
+        $bRetur = bRetur::find($idBarangRetur);
+        if (!$bRetur) return;
+
+        if ($accepted === $total) {
+            $bRetur->statusRetur = 1; // all accepted
+        } elseif ($rejected === $total) {
+            $bRetur->statusRetur = 0; // all rejected
+        } else {
+            $bRetur->statusRetur = 3; // mixed/partial
+        }
+        $bRetur->save();
+    }
+
     public function validBRetur($idDetailRetur) {
         try {
             // Update the detail status
@@ -220,21 +240,18 @@ class bReturController extends Controller
             }
 
             // Approve the pendingBarang: remove from stock (delete or set status to approved/removed)
-            $pendingBarang->delete();
+            $pendingBarang->statusDetailBarang = 3; // approved
 
             $detail->save();
 
             // Check if all details for this return are validated (status = 1)
-            $allDetailsValidated = bReturDetail::where('idBarangRetur', $detail->idBarangRetur)
-                ->where('statusReturDetail', '!=', 1)
-                ->doesntExist();
+            $pendingCount = bReturDetail::where('idBarangRetur', $detail->idBarangRetur)
+                ->where('statusReturDetail', 2) // 2 = pending
+                ->count();
 
-            if ($allDetailsValidated) {
-                // Update the main return status
-                $bRetur = bRetur::find($detail->idBarangRetur);
-                if ($bRetur) {
-                    $bRetur->statusRetur = 1;
-                    $bRetur->save();
+               if ($pendingCount === 0) {
+                    $bRetur = bRetur::find($detail->idBarangRetur);
+                    $this->updateBReturStatus($detail->idBarangRetur);
 
                     // Notification sending to all users
                     $owners = Akun::where('peran', 1)->get();
@@ -261,10 +278,9 @@ class bReturController extends Controller
                             'validated_by' => session('user_data')->nama ?? 'Unknown'
                         ]),
                     ]);
-                }
 
                 return redirect()->route('view.ConfirmBRetur')
-                    ->with('success', 'Semua barang retur telah divalidasi dan retur telah dikonfirmasi');
+                    ->with('success', 'Sukses!');
             }
             
             return redirect()->route('detail.bRetur', ['idBarangRetur' => $detail->idBarangRetur])
@@ -320,17 +336,15 @@ class bReturController extends Controller
             }
 
             // Check if all details for this return are validated (status = 0)
-            $allDetailsValidated = bReturDetail::where('idBarangRetur', $detail->idBarangRetur)
-                ->where('statusReturDetail', '!=', 0)
-                ->doesntExist();
 
-            if ($allDetailsValidated) {
-                // Update the main return status
+            $pendingCount = bReturDetail::where('idBarangRetur', $detail->idBarangRetur)
+                ->where('statusReturDetail', 2) // 2 = pending
+                ->count();
+
+            if ($pendingCount === 0) {
                 $bRetur = bRetur::find($detail->idBarangRetur);
-                if ($bRetur) {
-                    $bRetur->statusRetur = 0;
-                    $bRetur->save();
-                }
+                $this->updateBReturStatus($detail->idBarangRetur);
+
 
                 // Notification sending to all users
                 $owners = Akun::where('peran', 1)->get();
@@ -359,7 +373,7 @@ class bReturController extends Controller
                 ]);
 
                 return redirect()->route('view.ConfirmBRetur')
-                    ->with('success', 'Semua barang retur telah ditolak');
+                    ->with('success', 'Sukses!');
             }
 
             return redirect()->route('detail.bRetur', ['idBarangRetur' => $detail->idBarangRetur])

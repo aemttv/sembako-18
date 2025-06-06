@@ -88,9 +88,6 @@ class AkunController extends Controller
         
     }
     
-        
-    
-
     public function search(Request $request)
     {
         $query = $request->get('q'); // Search query from input
@@ -102,4 +99,24 @@ class AkunController extends Controller
 
         return response()->json($akun); // Return matched suppliers as JSON
     }
+
+    public function searchList(Request $request)
+    {
+        $search = $request->input('q');
+
+        $akun = Akun::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama', 'like', '%' . $search . '%')->orWhere('idAkun', 'like', '%' . $search . '%');
+                });
+            })
+            ->paginate(10)
+            ->appends(['q' => $search]);
+
+        return view('account.akun', [
+            'akun' => $akun,
+            'search' => $search,
+        ]);
+    }
+
 }

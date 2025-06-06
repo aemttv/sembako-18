@@ -20,9 +20,10 @@
                             @forelse ($barangMasukLogs as $log)
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-6 py-3">
-                                        {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}</td>
+                                        {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}
+                                    </td>
                                     <td class="px-6 py-3">{{ $log->akun->nama ?? '-' }}</td>
-                                    <td class="px-6 py-3"> Barang Masuk </td>
+                                    <td class="px-6 py-3">{{ $log->idBarangMasuk }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -56,7 +57,7 @@
                                         @php
                                             $firstDetail = $log->detailKeluar->first();
                                         @endphp
-                                        {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
+                                        {{$log->idBarangKeluar}} - {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
                                     </td>
                                 </tr>
                             @empty
@@ -86,12 +87,12 @@
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-6 py-3">
                                         {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}</td>
-                                    <td class="px-6 py-3">{{ $log->akun->nama ?? '-'  }}</td>
+                                    <td class="px-6 py-3">{{ $log->akun->nama ?? '-' }}</td>
                                     <td class="px-6 py-3">
                                         @php
                                             $firstDetail = $log->detailRetur->first();
                                         @endphp
-                                        {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
+                                        {{$log->idBarangRetur}} - {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
                                     </td>
                                 </tr>
                             @empty
@@ -121,12 +122,12 @@
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="px-6 py-3">
                                         {{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}</td>
-                                    <td class="px-6 py-3">{{$log->akun->nama ?? '-' }}</td>
+                                    <td class="px-6 py-3">{{ $log->akun->nama ?? '-' }}</td>
                                     <td class="px-6 py-3">
                                         @php
                                             $firstDetail = $log->detailRusak->first();
                                         @endphp
-                                        {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
+                                        {{$log->idBarangRusak}} - {{ $firstDetail?->kategoriAlasan?->alasan() ?? '-' }}
                                     </td>
                                 </tr>
                             @empty

@@ -48,6 +48,8 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-produk/search/barcode', [BarangController::class, 'searchBarcode']);
     Route::get('/daftar-produk/search-detail/barcode', [BarangController::class, 'searchSupplierBarcode']);
     Route::get('/daftar-produk/search-detail', [BarangController::class, 'searchDetail']);
+    Route::get('/daftar-produk/get-kadaluarsa', [BarangController::class, 'getKadaluarsaByBarcode']);
+
 });
 
 Route::middleware('web')->group(function () {
@@ -132,6 +134,7 @@ Route::middleware('web')->group(function () {
     Route::get('/daftar-akun', [AkunController::class, 'viewAkun'])->name('view.akun');
     Route::get('/tambah-akun', [AkunController::class, 'viewTambahAkun']);
     Route::get('/akun/search', [AkunController::class, 'search']);
+    Route::get('/akun-list/search', [AkunController::class, 'searchList']);
 });
 
 Route::get('/backup', [BackupDBController::class, 'backup']);
