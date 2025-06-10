@@ -35,8 +35,32 @@ class DashboardController extends Controller
             $query->where('statusDetailBarang', 1);
         }])->get()->sum(fn($barang) => $barang->detailBarang->sum('quantity'));
 
-        $totalBarangMasuk = bMasukDetail::sum('jumlahMasuk');
-        $totalBarangKeluar = bKeluarDetail::sum('jumlahKeluar');
+        $bMasukDetails = bMasukDetail::with('barangDetail.barang')->get();
+        $bKeluarDetails = bKeluarDetail::with('barangDetailKeluar.barang')->get();
+
+        // Calculate totalBarangMasuk
+        $totalBarangMasuk = $bMasukDetails->groupBy('barang_id')->reduce(function ($carry, $details) {
+            $barang = $details->first()->barang;
+            if ($barang && $barang->satuan && $barang->satuan->value === 2) {
+                // Count the number of records for this barang_id
+                return $carry + $details->count();
+            } else {
+                // Sum jumlahMasuk for this barang_id
+                return $carry + $details->sum('jumlahMasuk');
+            }
+        }, 0);
+
+        // Calculate totalBarangKeluar
+        $totalBarangKeluar = $bKeluarDetails->groupBy('barang_id')->reduce(function ($carry, $details) {
+            $barang = $details->first()->barang;
+            if ($barang && $barang->satuan && $barang->satuan->value === 2) {
+                // Count the number of records for this barang_id
+                return $carry + $details->count();
+            } else {
+                // Sum jumlahKeluar for this barang_id
+                return $carry + $details->sum('jumlahKeluar');
+            }
+        }, 0);
         $totalDekatKadaluarsa = BarangDetail::where('kondisiBarang', 'Mendekati Kadaluarsa')->sum('quantity');
 
         $stokRendah = Barang::withSum(['detailBarang as total_quantity' => function($query) {

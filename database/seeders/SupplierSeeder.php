@@ -16,12 +16,12 @@ class SupplierSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        $supplier1 = new Supplier();
-        $supplier1->idsupplier = Supplier::generateNewIdSupplier();  // Generate new ID like A001, A002, etc.
-        $supplier1->nama = 'Aira';
-        $supplier1->nohp = '082331940061';
-        $supplier1->alamat = 'Jl. Raya Lontar Blk. AB No.61, Surabaya';
-        $supplier1->save();
+        // $supplier1 = new Supplier();
+        // $supplier1->idsupplier = Supplier::generateNewIdSupplier();  // Generate new ID like A001, A002, etc.
+        // $supplier1->nama = 'Aira';
+        // $supplier1->nohp = '082331940061';
+        // $supplier1->alamat = 'Jl. Raya Lontar Blk. AB No.61, Surabaya';
+        // $supplier1->save();
 
         $supplier2 = new Supplier();
         $supplier2->idsupplier = Supplier::generateNewIdSupplier();  // Generate new ID like A001, A002, etc.

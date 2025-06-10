@@ -87,7 +87,14 @@
                             <td class="px-4 py-2">{{ $data->merekBarangName }}</td>
                             <td class="px-4 py-2">{{ $data->kategoriBarang->namaKategori() ?? '-'}}</td>
                             <td class="px-4 py-2">{{ $data->totalStok }}</td>
-                            <td class="px-4 py-2">{{ $data->kondisiBarangText ?? '-'}}</td>
+                            <td class="px-4 py-2 
+        @if ($data->kondisiBarangText === 'Baik') text-green-600
+        @elseif ($data->kondisiBarangText === 'Mendekati Kadaluarsa') text-orange-500
+        @elseif ($data->kondisiBarangText === 'Kadaluarsa') text-red-600
+        @endif
+    ">
+        {{ $data->kondisiBarangText ?? '-' }}
+    </td>
                             <td class="px-4 py-2 flex gap-1 justify-center ">
                                 <a href="{{ route('detail.produk', ['idBarang' => $data->idBarang]) }}"
                                     class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail</a>

@@ -113,10 +113,10 @@
                             <td colspan="8" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
-                    @php $no = 1; @endphp
+                    @php $no = ($barang->currentPage() - 1) * $barang->perPage() + 1; @endphp
                     @foreach ($barang as $index => $data)
                         <tr class="hover:bg-blue-50 even:bg-gray-50">
-                            <td class="px-4 py-2">{{ $index + 1 }}</td>
+                            <td class="px-4 py-2">{{ $no++ }}</td>
                             <td class="px-4 py-2">{{ $data->idBarang }}</td>
                             <td class="px-4 py-2 text-left">{{ $data->namaBarang ?? 'Nama Barang' }}</td>
                             <td class="px-4 py-2">{{ $data->kategoriBarang->namaKategori() }}</td>

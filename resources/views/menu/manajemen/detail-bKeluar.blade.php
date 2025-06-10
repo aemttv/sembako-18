@@ -41,12 +41,13 @@
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
                                 <th class="px-4 py-2 border-b">No</th>
-                                <th class="px-4 py-2 border-b">ID Detail BK</th>
-                                <th class="px-4 py-2 border-b">ID Barang Keluar</th>
+                                <th class="px-4 py-2 border-b">ID Detail</th>
+                                <th class="px-4 py-2 border-b">ID BK</th>
                                 <th class="px-4 py-2 border-b">ID Barang</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
                                 <th class="px-4 py-2 border-b">Barcode</th>
                                 <th class="px-4 py-2 border-b">Kuantitas/Berat(kg)</th>
+                                <th class="px-4 py-2 border-b">Satuan</th>
                                 <th class="px-4 py-2 border-b">Subtotal</th>
                                 <th class="px-4 py-2 border-b">Kategori Alasan</th>
                                 <th class="px-4 py-2 border-b">Keterangan</th>
@@ -68,6 +69,7 @@
                                     <td class="px-4 py-2 border-b text-left">{{ mb_strimwidth($detail->barangDetailKeluar->barang->namaBarang, 0, 40, '...') }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barcode }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlahKeluar }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barang->satuan->namaSatuan() }}</td>
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                     </td>
                                     <td class="px-4 py-2 border-b 

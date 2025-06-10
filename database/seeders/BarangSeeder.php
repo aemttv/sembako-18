@@ -27,7 +27,7 @@ class BarangSeeder extends Seeder
             ['namaMerek' => 'Indomie Sedaap'],
             ['namaMerek' => 'Roma'],
             ['namaMerek' => 'Mie Eko'],
-            ['namaMerek' => 'Pinpin'],
+            ['namaMerek' => 'Pringles'],
             ['namaMerek' => 'Racik'],
             ['namaMerek' => 'Rinso'],
             ['namaMerek' => 'SASA'],
@@ -83,11 +83,18 @@ class BarangSeeder extends Seeder
                 'merekBarang' => 2,
                 'satuan' => 1,
             ],
+            // [
+            //     'namaBarang' => 'Mi Instan Mi Goreng',
+            //     'kategoriBarang' => 1,
+            //     'hargaJual' => 3500,
+            //     'merekBarang' => 5,
+            //     'satuan' => 1,
+            // ],
             [
                 'namaBarang' => 'Mi Instan Mi Goreng',
                 'kategoriBarang' => 1,
                 'hargaJual' => 3500,
-                'merekBarang' => 4,
+                'merekBarang' => 6,
                 'satuan' => 1,
             ],
             [
@@ -132,13 +139,13 @@ class BarangSeeder extends Seeder
                 'merekBarang' => 14,
                 'satuan' => 2, // KG
             ],
-            [
-                'namaBarang' => 'Beras Pin Pin',
-                'kategoriBarang' => 1,
-                'hargaJual' => 17500,
-                'merekBarang' => 8,
-                'satuan' => 2, // KG
-            ],
+            // [
+            //     'namaBarang' => 'Beras Pin Pin',
+            //     'kategoriBarang' => 1,
+            //     'hargaJual' => 17500,
+            //     'merekBarang' => 8,
+            //     'satuan' => 2, // KG
+            // ],
             [
                 'namaBarang' => 'Rinso Anti Noda + Molto Rose Fresh',
                 'kategoriBarang' => 1,
@@ -158,43 +165,55 @@ class BarangSeeder extends Seeder
             $barang->merekBarang = $barangData['merekBarang'];
             $barang->satuan = $barangData['satuan'];
             $barang->save();
-
-            // Generate a BarangMasuk (simulate a stock entry)
-            $barangMasuk = new bMasuk();
-            $barangMasuk->idBarangMasuk = bMasuk::generateNewIdBarangMasuk();
-            $barangMasuk->idSupplier = $faker->randomElement(['S001', 'S002', 'S003']);
-            $barangMasuk->idAkun = $faker->randomElement(['A001', 'A002', 'A003']);
-            $barangMasuk->tglMasuk = $faker->dateTimeBetween('-1 month', 'now')->format('Y-m-d');
-            $barangMasuk->nota = $faker->optional()->text(50);
-            $barangMasuk->save();
-
-            // Generate 2–5 detail_barang_masuk records for each barang_masuk
-            $detailCount = $faker->numberBetween(2, 5);
-            for ($j = 0; $j < $detailCount; $j++) {
-                $detail = new bMasukDetail();
-                $detail->idDetailBM = bMasukDetail::generateNewIdDetailBM();
-                $detail->idBarangMasuk = $barangMasuk->idBarangMasuk;
-                $detail->idBarang = $barang->idBarang;
-                $detail->jumlahMasuk = $faker->numberBetween(1, 10);
-                $detail->hargaBeli = $faker->randomElement([1000, 3000, 5000, 7000, 10000]);
-                $detail->subtotal = $detail->jumlahMasuk * $detail->hargaBeli;
-                $detail->tglKadaluarsa = $faker->dateTimeBetween($barangMasuk->tglMasuk, '+6 months')->format('Y-m-d');
-                $detail->save();
-
-                // Insert into BarangDetail as well
-                $barangDetail = new BarangDetail();
-                $barangDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
-                $barangDetail->idBarang = $barang->idBarang;
-                $barangDetail->idSupplier = $barangMasuk->idSupplier;
-                $barangDetail->kondisiBarang = $faker->randomElement(['Baik', 'Mendekati Kadaluarsa']);
-                $barangDetail->quantity = $detail->jumlahMasuk;
-                $barangDetail->hargaBeli = $detail->hargaBeli;
-                $barangDetail->tglMasuk = $barangMasuk->tglMasuk;
-                $barangDetail->tglKadaluarsa = $detail->tglKadaluarsa;
-                $barangDetail->barcode = BarangDetail::generateBarcode();
-                $barangDetail->statusDetailBarang = $faker->randomElement([1, 2]);
-                $barangDetail->save();
-            }
         }
+
+            // Get all barang IDs after insert
+            $allBarang = Barang::all();
+            $allBarangIds = $allBarang->pluck('idBarang')->toArray();
+
+            // Generate bMasuk and bMasukDetail
+            for ($i = 0; $i < 15; $i++) { // Generate 20 bMasuk entries, adjust as needed
+                $barangMasuk = new bMasuk();
+                $barangMasuk->idBarangMasuk = bMasuk::generateNewIdBarangMasuk();
+                $barangMasuk->idSupplier = $faker->randomElement(['S001', 'S002']);
+                $barangMasuk->idAkun = $faker->randomElement(['A001', 'A002', 'A003']);
+                $barangMasuk->tglMasuk = $faker->dateTimeBetween('-1 month', 'now')->format('Y-m-d');
+                $barangMasuk->save();
+
+                // Generate 2–5 detail_barang_masuk records for each barang_masuk
+                $detailCount = $faker->numberBetween(2, 5);
+                for ($j = 0; $j < $detailCount; $j++) {
+                    // Pick a random barang for this detail
+                    $randomBarangId = $faker->randomElement($allBarangIds);
+                    $barang = $allBarang->firstWhere('idBarang', $randomBarangId);
+
+                    $detail = new bMasukDetail();
+                    $detail->idDetailBM = bMasukDetail::generateNewIdDetailBM();
+                    $detail->idBarangMasuk = $barangMasuk->idBarangMasuk;
+                    $detail->idBarang = $barang->idBarang;
+                    $detail->jumlahMasuk = $faker->numberBetween(1, 10);
+
+                    $persentase = $faker->numberBetween(60, 90) / 100;
+                    $detail->hargaBeli = round($barang->hargaJual * $persentase, -2); // round to nearest 100
+
+                    $detail->subtotal = $detail->jumlahMasuk * $detail->hargaBeli;
+                    $detail->tglKadaluarsa = $faker->dateTimeBetween($barangMasuk->tglMasuk, '+6 months')->format('Y-m-d');
+                    $detail->save();
+
+                    // Insert into BarangDetail as well
+                    $barangDetail = new BarangDetail();
+                    $barangDetail->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
+                    $barangDetail->idBarang = $barang->idBarang;
+                    $barangDetail->idSupplier = $barangMasuk->idSupplier;
+                    $barangDetail->kondisiBarang = $faker->randomElement(['Baik', 'Mendekati Kadaluarsa']);
+                    $barangDetail->quantity = $detail->jumlahMasuk;
+                    $barangDetail->hargaBeli = $detail->hargaBeli;
+                    $barangDetail->tglMasuk = $barangMasuk->tglMasuk;
+                    $barangDetail->tglKadaluarsa = $detail->tglKadaluarsa;
+                    $barangDetail->barcode = BarangDetail::generateBarcode();
+                    $barangDetail->statusDetailBarang = 1;
+                    $barangDetail->save();
+                }
+            }
     }
 }
