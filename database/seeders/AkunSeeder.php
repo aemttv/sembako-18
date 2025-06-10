@@ -61,15 +61,15 @@ class AkunSeeder extends Seeder
         $staff2->statusAkun = 1;
         $staff2->save();
 
-        $staff3 = new Akun();
-        $staff3->idAkun = Akun::generateNewId();
-        $staff3->nama = 'Sohibbin';
-        $staff3->email = 'binhibin14@gmail.com';
-        $staff3->password = bcrypt('sembako18');
-        $staff3->nohp = '0813321527389';
-        $staff3->alamat = 'Jl. Anggrek Merah';
-        $staff3->peran = 2;  // 2 = Staff
-        $staff3->statusAkun = 1;
-        $staff3->save();
+        // $staff3 = new Akun();
+        // $staff3->idAkun = Akun::generateNewId();
+        // $staff3->nama = 'Sohibbin';
+        // $staff3->email = 'binhibin14@gmail.com';
+        // $staff3->password = bcrypt('sembako18');
+        // $staff3->nohp = '0813321527389';
+        // $staff3->alamat = 'Jl. Anggrek Merah';
+        // $staff3->peran = 2;  // 2 = Staff
+        // $staff3->statusAkun = 1;
+        // $staff3->save();
     }
 }

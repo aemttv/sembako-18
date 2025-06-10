@@ -38,7 +38,7 @@ class bReturController extends Controller
         if(!isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
-        
+
         $bRetur = bRetur::with(['detailRetur.detailBarangRetur.barang']) // Load nested relationships
                     ->where('idBarangRetur', $idBarangRetur)
                     ->firstOrFail();
@@ -92,7 +92,7 @@ class bReturController extends Controller
         }
 
         $satuan = satuan::cases();
-        
+
         return view('menu.icare.retur.tambah', ['satuan' => $satuan]);
     }
 
@@ -137,9 +137,9 @@ class bReturController extends Controller
                     $pendingBarang->idDetailBarang = BarangDetail::generateNewIdBarangDetail();
                     $pendingBarang->quantity = $data['kuantitas'];
                     $pendingBarang->statusDetailBarang = 2; // pending
-                    
+
                     $pendingBarang->save();
-                    
+
                 } else {
                     // If returning all, just update status to pending
                     $barang->statusDetailBarang = 2;
@@ -282,7 +282,7 @@ class bReturController extends Controller
                 return redirect()->route('view.ConfirmBRetur')
                     ->with('success', 'Sukses!');
             }
-            
+
             return redirect()->route('detail.bRetur', ['idBarangRetur' => $detail->idBarangRetur])
                 ->with('success', 'Informasi Barang Retur berhasil diubah');
         } catch (\Exception $e) {
@@ -290,7 +290,7 @@ class bReturController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memvalidasi barang retur. Silakan coba lagi.');
         }
     }
-    
+
     /**
      * Rejects a specific item return by updating its detail status and managing
      * associated inventory records. Restores inventory quantities for active items

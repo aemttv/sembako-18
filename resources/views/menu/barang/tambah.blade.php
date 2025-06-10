@@ -60,7 +60,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm text-gray-600 mb-1">Kategori Barang</label>
+                            <label class="block text-sm text-gray-600 mb-1">Satuan Barang</label>
                             <select id="satuan_barang" name="satuan" class="w-full border rounded-md px-3 py-2">
                                 @foreach ($satuan as $item)
                                     <option value="{{ $item->value }}">
@@ -392,7 +392,7 @@
                 } else {
                     satuanLabel = satuan;
                 }
-                
+
 
                 const tableBody = document.getElementById('barangTableBody');
 
@@ -448,16 +448,16 @@ if (isDuplicate) {
                                 <!-- Images will appear here -->
                                 <span class="text-gray-400 text-sm text-center ${previewContainer.innerHTML ? 'hidden' : ''}">No images uploaded (max 1200x1200px)</span>
                             </div>
-                            
+
                             <!-- Upload button -->
-                            <button type="button" onclick="document.getElementById('${fileInputId}').click()" 
+                            <button type="button" onclick="document.getElementById('${fileInputId}').click()"
                                 class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
                                 Upload Gambar
                             </button>
                         </div>
                     </td>
                     <td class="px-4 py-2 border-b text-center">
-                        <button type="button" onclick="removeRow('row-${rowIndex}')" 
+                        <button type="button" onclick="removeRow('row-${rowIndex}')"
                             class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
                             Hapus
                         </button>
@@ -466,6 +466,22 @@ if (isDuplicate) {
 
                 // Append file input to the row
                 newRow.querySelector(`td:nth-child(7)`).appendChild(fileInput);
+
+                // Define the function to remove an image from the file input
+function removeImageFromInput(fileInput, index) {
+    const dataTransfer = new DataTransfer();
+    const files = fileInput.files;
+
+    // Add all files except the one to be removed
+    for (let i = 0; i < files.length; i++) {
+        if (i !== index) {
+            dataTransfer.items.add(files[i]);
+        }
+    }
+
+    // Update the file input with the new file list
+    fileInput.files = dataTransfer.files;
+}
 
                 // Handle file selection for this row
                 fileInput.addEventListener('change', function(e) {

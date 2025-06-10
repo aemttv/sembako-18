@@ -25,7 +25,8 @@ class bKeluarController extends Controller
 
         Carbon::setLocale('id');
         $bKeluar = bKeluar::with('detailKeluar')->paginate(10);
-        return view('menu.manajemen.list-bKeluar', ['bKeluar' => $bKeluar]);
+        $bKeluarStaff = bKeluar::with('detailKeluar')->where('idAkun', session('idAkun'))->paginate(10);
+        return view('menu.manajemen.list-bKeluar', ['bKeluar' => $bKeluar, 'bKeluarStaff' => $bKeluarStaff]);
     }
 
     public function viewDetailBKeluar($idBarangKeluar)

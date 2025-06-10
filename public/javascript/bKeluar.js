@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     let satuanLabel = '';
                     if(data.satuan == 2){
                         satuanLabel = 'Kg';
-                    } else 
+                    } else
                     {
                         satuanLabel = 'pcs';
                     }
@@ -265,11 +265,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td class="p-2 border text-center">${id}</td>
-                <td class="p-2 border">${barcode}</td>
+                <td class="p-2 border text-center">${barcode}</td>
                 <td class="p-2 border">${name}</td>
-                <td class="p-2 border">Rp. ${price.toLocaleString()}</td>
-                <td class="p-2 border">${qty}${detail.satuan == 2 ? ' gr' : ''}</td>
-                <td class="p-2 border">Rp. ${totalPrice}</td>
+                <td class="p-2 border text-right">Rp. ${price.toLocaleString()}</td>
+                <td class="p-2 border text-center">${qty}${detail.satuan == 2 ? ' gr' : ''}</td>
+                <td class="p-2 border text-right">Rp. ${totalPrice}</td>
                 <td class="p-2 border text-center"><button class="text-red-500 hover:underline remove-item">Remove</button></td>
             `;
 
@@ -321,13 +321,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update the hidden/visible input for total (if exists)
     const invoiceInput = document.getElementById('invoice-total-input');
     if (invoiceInput) {
-        invoiceInput.value = total; // Use raw number for backend processing
+        invoiceInput.value = `Rp. ${total.toLocaleString('id-ID')}`; // Use raw number for backend processing
     }
 }
 
-        document.getElementById('cash-input').addEventListener('input', function() {
-            const cashValue = parseFloat(this.value.replace(/[^0-9]/g, '')) || 0;
+        document.addEventListener('DOMContentLoaded', function() {
+    const cashInput = document.getElementById('cash-input');
 
+    // Create or get the error message element for cash-input
+    let cashInputError = document.getElementById('cashInputError');
+    if (!cashInputError && cashInput) {
+        cashInputError = document.createElement('div');
+        cashInputError.id = 'cashInputError';
+        cashInputError.className = 'text-red-500 text-xs mt-1';
+        cashInputError.style.display = 'none';
+        cashInput.parentNode.appendChild(cashInputError);
+    }
+
+
+    if (cashInput) {
+        cashInput.addEventListener('input', function() {
+            let value = this.value.replace(/[^0-9]/g, '');
+            if (value !== '' && !/^\d+$/.test(value)) {
+                this.value = '';
+                this.classList.add('border-red-500');
+                return;
+            } else if (value === '' || Number(value) <= 0) {
+                this.classList.add('border-red-500');
+            } else {
+                this.classList.remove('border-red-500');
+            }
+
+            // Format as Rupiah for display
+            this.value = formatRupiah(value);
+
+            const cashValue = parseFloat(value) || 0;
             const totalText = document.getElementById('invoice-total-input').value;
             const totalValue = parseFloat(totalText.replace(/[^0-9]/g, '')) || 0;
 
@@ -336,6 +364,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
             document.getElementById('change-output').value = formattedChange;
         });
+
+        // On focus, remove formatting for easier editing
+        cashInput.addEventListener('focus', function() {
+            this.value = getNumericValue(this.value);
+        });
+
+        // On blur, reformat as Rupiah
+        cashInput.addEventListener('blur', function() {
+            let numericValue = getNumericValue(this.value);
+            if (numericValue === '') {
+                numericValue = '0'; // Default to 0 if empty
+            }
+            this.value = formatRupiah(numericValue);
+        });
+    }
+});
+
+// Helper functions
+function formatRupiah(value) {
+    return 'Rp. ' + parseInt(value, 10).toLocaleString('id-ID');
+}
+
+function getNumericValue(value) {
+    return value.replace(/[^0-9]/g, '');
+}
 
         //form submission
         document.getElementById('process-button').addEventListener('click', function() {

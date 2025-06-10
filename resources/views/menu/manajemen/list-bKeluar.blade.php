@@ -44,26 +44,49 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
+                @if (isOwner())
                     @if ($bKeluar->isEmpty())
-                        <tr>
-                            <td class="px-4 py-2 text-center" colspan="5">
-                                Data Barang Masuk tidak ditemukan.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-center" colspan="5">
+                            Data Barang Masuk tidak ditemukan.
+                        </td>
+                    </tr>
                     @endif
                     @foreach ($bKeluar as $data)
-                        <tr class="hover:bg-blue-50 even:bg-gray-50">
-                            <td class="px-4 py-2">{{ $data->idBarangKeluar }}</td>
-                            <td class="px-4 py-2">{{ $data->invoice }}</td>
-                            <td class="px-4 py-2">{{ explode(' ', trim($data->akun->nama))[0] }} ({{ $data->idAkun }})</td>
-                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}
-                            </td>
-                            <td class="px-4 py-2 text-center">
-                                <a href="{{ route('detail.bKeluar', ['idBarangKeluar' => $data->idBarangKeluar]) }}"
-                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Detail</a>
+                    <tr class="hover:bg-blue-50 even:bg-gray-50">
+                        <td class="px-4 py-2">{{ $data->idBarangKeluar }}</td>
+                        <td class="px-4 py-2">{{ $data->invoice }}</td>
+                        <td class="px-4 py-2">{{ explode(' ', trim($data->akun->nama))[0] }} ({{ $data->idAkun }})</td>
+                        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                            <a href="{{ route('detail.bKeluar', ['idBarangKeluar' => $data->idBarangKeluar]) }}"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Detail</a>
                             </td>
                         </tr>
+                        @endforeach
+                @else
+                    @if ($bKeluarStaff->isEmpty())
+                <tr>
+                    <td class="px-4 py-2 text-center" colspan="5">
+                        Data Barang Masuk tidak ditemukan.
+                    </td>
+                </tr>
+                @endif
+                @foreach ($bKeluarStaff as $data)
+                <tr class="hover:bg-blue-50 even:bg-gray-50">
+                    <td class="px-4 py-2">{{ $data->idBarangKeluar }}</td>
+                    <td class="px-4 py-2">{{ $data->invoice }}</td>
+                    <td class="px-4 py-2">{{ explode(' ', trim($data->akun->nama))[0] }} ({{ $data->idAkun }})</td>
+                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        <a href="{{ route('detail.bKeluar', ['idBarangKeluar' => $data->idBarangKeluar]) }}"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Detail</a>
+                        </td>
+                    </tr>
                     @endforeach
+                @endif
                 </tbody>
             </table>
         </div>

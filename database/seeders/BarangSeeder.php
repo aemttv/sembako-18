@@ -94,7 +94,7 @@ class BarangSeeder extends Seeder
                 'namaBarang' => 'Mi Instan Mi Goreng',
                 'kategoriBarang' => 1,
                 'hargaJual' => 3500,
-                'merekBarang' => 6,
+                'merekBarang' => 5,
                 'satuan' => 1,
             ],
             [

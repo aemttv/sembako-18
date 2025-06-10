@@ -135,11 +135,11 @@
                                     <td class="px-4 py-2">
                                         {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') ?? '-' }}</td>
                                     <td class="px-4 py-2">
-                                        @if ($data->statusRetur == 2)
+                                        @if ($detail->statusReturDetail == 2)
                                             <span class="text-yellow-500 font-semibold">Pending</span>
-                                        @elseif ($data->statusRetur == 1)
+                                        @elseif ($detail->statusReturDetail == 1)
                                             <span class="text-green-500 font-semibold">Approved</span>
-                                        @elseif ($data->statusRetur == 0)
+                                        @elseif ($detail->statusReturDetail == 0)
                                             <span class="text-red-500 font-semibold">Rejected</span>
                                         @else
                                             <span class="text-gray-500">Unknown</span>

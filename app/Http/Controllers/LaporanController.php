@@ -14,12 +14,12 @@ class LaporanController extends Controller
     function viewbMasuk()
     {
         if(!isOwner() ||  !isUserLoggedIn()){
-            
+
             abort(403, 'Unauthorized action.');
         }
 
         $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')->OrderBy('tglMasuk', 'desc')->paginate(5);
-        
+
 
         return view('menu.laporan.bMasuk', ['bMasuk' => $bMasuk]);
     }
@@ -64,7 +64,7 @@ class LaporanController extends Controller
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
-        
+
         $bKeluar = bKeluar::with('detailKeluar.barangDetailKeluar.barang')->OrderBy('tglKeluar', 'desc')->paginate(5);
 
         return view('menu.laporan.bKeluar', ['bKeluar' => $bKeluar]);
@@ -209,8 +209,6 @@ class LaporanController extends Controller
         }
 
         $bRetur = bRetur::with('detailRetur.detailBarangRetur.barang')
-        ->where('statusRetur', 1)
-        ->orWhere('statusRetur', 0)
         ->orderBy('tglRetur', 'desc')
         ->orderBy('idBarangRetur', 'desc')
         ->paginate(5);
@@ -258,7 +256,6 @@ class LaporanController extends Controller
         }
 
         $bRusak = bRusak::with('detailRusak.detailBarangRusak.barang')
-        ->where('statusRusak', 1)->orWhere('statusRusak', 0)
         ->OrderBy('tglRusak', 'desc')
         ->OrderBy('idBarangRusak', 'desc')
         ->paginate(6);
@@ -271,7 +268,7 @@ class LaporanController extends Controller
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
-        
+
         $query = bRusak::with('detailRusak.detailBarangRusak.barang');
 
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {

@@ -46,8 +46,7 @@
                                 <th class="px-4 py-2 border-b">ID Barang</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
                                 <th class="px-4 py-2 border-b">Barcode</th>
-                                <th class="px-4 py-2 border-b">Kuantitas/Berat(kg)</th>
-                                <th class="px-4 py-2 border-b">Satuan</th>
+                                <th class="px-4 py-2 border-b">Kuantitas/Berat(gr)</th>
                                 <th class="px-4 py-2 border-b">Subtotal</th>
                                 <th class="px-4 py-2 border-b">Kategori Alasan</th>
                                 <th class="px-4 py-2 border-b">Keterangan</th>
@@ -69,10 +68,10 @@
                                     <td class="px-4 py-2 border-b text-left">{{ mb_strimwidth($detail->barangDetailKeluar->barang->namaBarang, 0, 40, '...') }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barcode }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->jumlahKeluar }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barang->satuan->namaSatuan() }}</td>
+                                    {{-- <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barang->satuan->namaSatuan() }}</td> --}}
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                     </td>
-                                    <td class="px-4 py-2 border-b 
+                                    <td class="px-4 py-2 border-b
                                         @if ($detail->kategoriAlasan === \App\enum\Alasan::Terjual) text-green-700
                                         @elseif($detail->kategoriAlasan) text-orange-700 @endif ">
                                         {{ $detail->kategoriAlasan?->alasan() ?? '-' }}

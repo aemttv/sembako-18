@@ -24,11 +24,11 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Nama Lengkap</label>
                             <input type="text" id="nama" name="nama" class="w-full border rounded-md px-3 py-2"
-                                placeholder="Nama Lengkap" autocomplete="off" />
+                                placeholder="Nama Lengkap" autocomplete="off" maxlength="50"/>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Email</label>
-                            <input type="email" id="email" name="email" class="w-full border rounded-md px-3 py-2"
+                            <input type="email" id="email" name="email" class="w-full border rounded-md px-3 py-2" maxlength="150"
                                 placeholder="Email" />
                         </div>
                     </div>

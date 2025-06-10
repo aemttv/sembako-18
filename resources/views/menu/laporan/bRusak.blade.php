@@ -134,11 +134,11 @@
                                     <td class="px-4 py-2">
                                         {{ \Carbon\Carbon::parse($data->tglRusak)->translatedFormat('d F Y') }}</td>
                                     <td class="px-4 py-2">
-                                        @if ($data->statusRusak == 2)
+                                        @if ($detail->statusRusakDetail == 2)
                                             <span class="text-yellow-500 font-semibold">Pending</span>
-                                        @elseif ($data->statusRusak == 1)
+                                        @elseif ($detail->statusRusakDetail == 1)
                                             <span class="text-green-500 font-semibold">Approved</span>
-                                        @elseif ($data->statusRusak == 0)
+                                        @elseif ($detail->statusRusakDetail == 0)
                                             <span class="text-red-500 font-semibold">Rejected</span>
                                         @else
                                             <span class="text-gray-500">Unknown</span>

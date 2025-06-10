@@ -65,7 +65,7 @@
 
                     </div>
 
-                    <label class="block text-sm font-medium">Qty</label>
+                    <label class="block text-sm font-medium">Kuantitas/Berat(gr)</label>
                     <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2" min="0"
                         max="10000"
                         oninput="
@@ -104,7 +104,7 @@
                             <th class="p-2 border">Barcode</th>
                             <th class="p-2 border">Nama Barang</th>
                             <th class="p-2 border">Harga</th>
-                            <th class="p-2 border">Kuantitas</th>
+                            <th class="p-2 border">Kuantitas/Berat(Kg)</th>
                             <th class="p-2 border">Subtotal</th>
                             <th class="p-2 border">Proses</th>
                         </tr>

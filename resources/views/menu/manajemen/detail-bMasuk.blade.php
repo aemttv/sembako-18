@@ -42,7 +42,7 @@
                             <tr>
                                 <th class="px-4 py-2 border-b">No</th>
                                 <th class="px-4 py-2 border-b">ID Detail BM</th>
-                                <th class="px-4 py-2 border-b">ID Keluar</th>
+                                <th class="px-4 py-2 border-b">ID BM</th>
                                 <th class="px-4 py-2 border-b">ID Barang</th>
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
                                 <th class="px-4 py-2 border-b">Kuantitas/Berat(kg)</th>

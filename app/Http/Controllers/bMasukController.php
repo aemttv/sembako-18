@@ -22,6 +22,7 @@ class bMasukController extends Controller
 
         Carbon::setLocale('id');
         $bMasuk = bMasuk::with('detailMasuk')->paginate(10);
+        $bMasukStaff = bMasuk::with('detailMasuk', 'akun')->where('idAkun', session('idAkun'))->paginate(10);
 
         $bMasuk->getCollection()->transform(function ($item) {
             $item->quantity = $item->detailMasuk->sum('jumlahMasuk');
@@ -32,15 +33,24 @@ class bMasukController extends Controller
 
             return $item;
         });
+        $bMasukStaff->getCollection()->transform(function ($item) {
+            $item->quantity = $item->detailMasuk->sum('jumlahMasuk');
+            $item->hargaBeli = $item->detailMasuk->sum('hargaBeli');
+            $item->total = $item->detailMasuk->sum('subtotal');
+            $item->expiredDate = $item->detailMasuk->max('tglKadaluarsa');
+            $item->barcode = $item->detailMasuk->max('barcode');
 
-        return view('menu.manajemen.list-bMasuk', ['bMasuk' => $bMasuk]);
+            return $item;
+        });
+
+        return view('menu.manajemen.list-bMasuk', ['bMasuk' => $bMasuk, 'bMasukStaff' => $bMasukStaff]);
     }
     function viewTambahBMasuk()
     {
         if(!isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
-        
+
         $suppliers = Supplier::pluck('nama');
 
         return view('menu.manajemen.bMasuk', compact('suppliers'));

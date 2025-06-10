@@ -129,59 +129,79 @@
 
             // Menambahkan baris baru ke dalam tabel
             document.getElementById('addRow').addEventListener('click', function() {
-                var namaLengkap = document.getElementById('nama').value;
-                var noHp = document.getElementById('no_hp').value;
-                var alamat = document.getElementById('alamat').value;
-                var status = document.getElementById('status').value;
+    var namaLengkap = document.getElementById('nama').value;
+    var noHp = document.getElementById('no_hp').value;
+    var alamat = document.getElementById('alamat').value;
+    var status = document.getElementById('status').value;
 
-                // Add new row to the table
-                var tableBody = document.getElementById('supplierTableBody');
-                var newRow = tableBody.insertRow();
+    // Add new row to the table
+    var tableBody = document.getElementById('supplierTableBody');
+    const isNumeric = /^\d+$/.test(noHp);
 
-                const isNumeric = /^\d+$/.test(noHp);
+    if (!namaLengkap || !noHp || !alamat || !status) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
+        alert('No HP harus berupa angka dan dimulai dengan 08 atau 628');
+        return;
+    }
 
-                if (!namaLengkap || !noHp || !alamat || !status) {
-                    alert('Please fill in all required fields');
-                    return;
-                }
-                if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
-                    alert('No HP harus berupa angka dan dimulai dengan 08 atau 628');
-                    return;
-                }
-                
-                newRow.innerHTML = `
-                    <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
-                    <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>
-                    <td class="px-4 py-2 border-b text-center">${noHp}</td>
-                    <td class="px-4 py-2 border-b text-center">${alamat}</td>
-                    <td class="px-4 py-2 border-b text-center">${status == 1 ? 'Aktif' : 'Tidak Aktif'} </td>
-                    <td class="px-4 py-2 border-b text-center">
-                        <button class="text-red-500 hover:text-red-700">Hapus</button>
-                    </td>
-                `;
+    // Check for duplicate entries
+    for (let i = 0; i < tableBody.rows.length; i++) {
+        let row = tableBody.rows[i];
+        if (row.cells[1].innerText === namaLengkap &&
+            row.cells[2].innerText === noHp &&
+            row.cells[3].innerText === alamat &&
+            row.cells[4].innerText === (status == 1 ? 'Aktif' : 'Tidak Aktif')) {
+            alert('Duplicate entry detected. Please enter unique values.');
+            return;
+        }
+    }
 
-                // Menambahkan input tersembunyi untuk setiap row ke dalam form
-                var hiddenRows = document.getElementById('hiddenRows');
-                var hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = `supplier_input[]`;
-                hiddenInput.value = JSON.stringify({
-                    nama: namaLengkap,
-                    no_hp: noHp,
-                    alamat: alamat,
-                    status: status
-                });
-                hiddenRows.appendChild(hiddenInput);
+    var newRow = tableBody.insertRow();
+    var rowId = `row-${tableBody.rows.length}`;
+    newRow.id = rowId;
+    newRow.innerHTML = `
+        <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
+        <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>
+        <td class="px-4 py-2 border-b text-center">${noHp}</td>
+        <td class="px-4 py-2 border-b text-center">${alamat}</td>
+        <td class="px-4 py-2 border-b text-center">${status == 1 ? 'Aktif' : 'Tidak Aktif'} </td>
+        <td class="px-4 py-2 border-b text-center">
+            <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow('${rowId}')">Hapus</button>
+        </td>
+    `;
 
-                // Clear form fields
-                document.getElementById('clearFields').addEventListener('click', function () {
-                    document.getElementById('nama').value = '';
-                    document.getElementById('no_hp').value = '';
-                    document.getElementById('alamat').value = '';
-                    document.getElementById('status').value = '';
-                });
+    // Menambahkan input tersembunyi untuk setiap row ke dalam form
+    var hiddenRows = document.getElementById('hiddenRows');
+    var hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = `supplier_input[]`;
+    hiddenInput.value = JSON.stringify({
+        nama: namaLengkap,
+        no_hp: noHp,
+        alamat: alamat,
+        status: status
+    });
+    hiddenRows.appendChild(hiddenInput);
 
-            });
+    // Clear form fields
+    document.getElementById('clearFields').addEventListener('click', function () {
+        document.getElementById('nama').value = '';
+        document.getElementById('no_hp').value = '';
+        document.getElementById('alamat').value = '';
+        document.getElementById('status').value = '';
+    });
+});
+
+window.removeRow = function(rowId) {
+    const row = document.getElementById(rowId);
+    if (row) {
+        row.remove();
+        updateNoDataRow();
+    }
+};
 
             // Kosongkan semua field
             document.getElementById('clearFields').addEventListener('click', function () {
@@ -194,11 +214,11 @@
 
             // Pastikan form bisa submit ke backend
             document.getElementById('submitData').addEventListener('click', function() {
-                
+
             });
 
-            
-            
+
+
         </script>
 
     </div>
