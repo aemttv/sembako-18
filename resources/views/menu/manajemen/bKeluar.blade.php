@@ -60,7 +60,7 @@
                             <div>Barcode: <span id="popup-barcode"></span></div>
                             <div>Name: <span id="popup-name"></span></div>
                             <div>Price: Rp.<span id="popup-price"></span></div>
-                            <div>Berat: <span id="popup-stock"></span> <span id="popup-satuan"></span></div>
+                            <div>Kuantitas/Berat: <span id="popup-stock"></span> <span id="popup-satuan"></span></div>
                         </div>
 
                     </div>

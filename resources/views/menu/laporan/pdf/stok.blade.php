@@ -104,17 +104,6 @@
 
                 <tbody>
                     <tr>
-                        <td class="text-right"><strong>Periode Laporan</strong>:&nbsp;
-
-                            @if ($tglMasuk == $tglAkhir)
-                                {{ \Carbon\Carbon::parse($tglMasuk)->translatedFormat('F Y') }}
-                                @else
-                                {{ \Carbon\Carbon::parse($tglMasuk)->translatedFormat('j F Y') }} -
-                                {{ \Carbon\Carbon::parse($tglAkhir)->translatedFormat('j F Y') }}
-                            @endif
-                        </td>
-                    </tr>
-                    <tr>
                         <td class="text-right"><strong>Tanggal Pembuatan Laporan</strong>:&nbsp; {{ \Carbon\Carbon::now()->translatedFormat('j F Y') }}</td>
                     </tr>
 
