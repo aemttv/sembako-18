@@ -47,9 +47,8 @@
                                 <th class="px-4 py-2 border-b">Nama Barang</th>
                                 <th class="px-4 py-2 border-b">Kuantitas/Berat(kg)</th>
                                 <th class="px-4 py-2 border-b">Satuan
-                                <th class="px-4 py-2 border-b">Harga Beli
+                                <th class="px-4 py-2 border-b">Harga Beli(Subtotal)
                                 <th class="px-4 py-2 border-b">Tanggal Kadaluarsa</th>
-                                <th class="px-4 py-2 border-b">Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -59,7 +58,13 @@
                                     </td>
                                 </tr>
                             @endif
+                             @php
+                                $grandTotal = 0;
+                            @endphp
                             @foreach ($bMasuk->detailMasuk as $index => $detail)
+                                @php
+                                    $grandTotal += $detail->hargaBeli;
+                                @endphp
                                 <tr>
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailBM }}</td>
@@ -70,9 +75,15 @@
                                     <td class="px-4 py-2 border-b">{{ $detail->barangDetail->barang->satuan->namaSatuan() }}</td>
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2 border-b">{{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}</td>
-                                    <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
+                            @if (!$bMasuk->detailMasuk->isEmpty())
+                                <tr class="font-bold bg-gray-100">
+                                    <td class="px-4 py-2 border-b text-right" colspan="7">Grand Total:</td>
+                                    <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($grandTotal, 0, ',', '.') }}</td>
+                                    <td class="px-4 py-2 border-b"></td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>

@@ -83,6 +83,7 @@ class PDFController extends Controller
         }
 
         $pdf = Pdf::loadView('menu.laporan.pdf.bMasuk', compact('bMasuk', 'tglMasuk', 'tglAkhir', 'grandTotal', 'supplierList', 'akunList'));
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('laporan-bmasuk.pdf');
     }
 
@@ -152,6 +153,7 @@ class PDFController extends Controller
             ->values();
 
         $pdf = Pdf::loadView('menu.laporan.pdf.bKeluar', compact('bKeluar', 'tglMasuk', 'tglAkhir', 'grandTotal', 'supplierAkunList'));
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('laporan-bkeluar.pdf');
     }
 
@@ -229,6 +231,7 @@ class PDFController extends Controller
         }
 
         $pdf = Pdf::loadView('menu.laporan.pdf.stok', compact('barang', 'grandTotal', 'tglMasuk', 'tglAkhir'));
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('laporan-stok-barang.pdf');
     }
 
@@ -291,6 +294,7 @@ class PDFController extends Controller
         // dd($supplierList, $akunList);
 
         $pdf = Pdf::loadView('menu.laporan.pdf.bRetur', compact('bRetur', 'tglMasuk', 'tglAkhir', 'supplierList', 'akunList'));
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('laporan-bRetur.pdf');
     }
 
@@ -374,6 +378,7 @@ class PDFController extends Controller
             ->values();
 
         $pdf = Pdf::loadView('menu.laporan.pdf.bRusak', compact('bRusak', 'tglMasuk', 'tglAkhir', 'AkunList', 'BarcodeList'));
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('laporan-bRusak.pdf');
     }
 }

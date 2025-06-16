@@ -85,4 +85,9 @@ class bKeluar extends Model
         return $this->hasMany(bKeluarDetail::class, 'idBarangKeluar', 'idBarangKeluar');
     }
 
+    public function getGrandTotalAttribute()
+    {
+        // Sum all 'subtotal' in related detailKeluar
+        return $this->detailKeluar->sum('subtotal');
+    }
 }

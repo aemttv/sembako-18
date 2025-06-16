@@ -36,6 +36,7 @@
                         <th class="px-4 py-2">ID Barang Masuk</th>
                         <th class="px-4 py-2">ID Supplier</th>
                         <th class="px-4 py-2">ID Akun</th>
+                        <th class="px-4 py-2">Grand Total</th>
                         <th class="px-4 py-2">Tanggal Masuk</th>
                         <th class="px-4 py-2">Nota</th>
                         <th class="px-4 py-2">Proses</th>
@@ -51,6 +52,7 @@
                                 <td class="px-4 py-2">{{ $data->idBarangMasuk }}</td>
                                 <td class="px-4 py-2">{{ explode(' ', trim($data->supplier->nama))[0] }} ({{ $data->idSupplier }})</td>
                                     <td class="px-4 py-2">{{ explode(' ', trim($data->akun->nama))[0] }} ({{ $data->idAkun }})</td>
+                                    <td class="px-4 py-2">Rp{{ number_format($data->grand_total, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}</td>
                                     @if ($data->nota != null)
                                     <td class="px-4 py-2 text-center">

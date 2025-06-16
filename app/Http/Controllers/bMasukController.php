@@ -145,13 +145,13 @@ class bMasukController extends Controller
                 }
 
                 // Logic subtotal: jika satuan == 2 (kg), jumlah masuk dianggap 1
-                if ($barang->satuan->value == 2) { // 2 = kg
-                    $jumlahMasuk = $item['kuantitas_masuk'];
-                    $subtotal = $item['harga_satuan'] * 1;
-                } else {
-                    $jumlahMasuk = $item['kuantitas_masuk'];
-                    $subtotal = $item['harga_satuan'] * $jumlahMasuk;
-                }
+                // if ($barang->satuan->value == 2) { // 2 = kg
+                //     $jumlahMasuk = $item['kuantitas_masuk'];
+                //     $subtotal = $item['harga_satuan'] * 1;
+                // } else {
+                //     $jumlahMasuk = $item['kuantitas_masuk'];
+                //     $subtotal = $item['harga_satuan'];
+                // }
 
                 // Simpan detail barang masuk
                 $detail = new bMasukDetail();
@@ -160,7 +160,7 @@ class bMasukController extends Controller
                 $detail->idBarang = $item['barang_id'];
                 $detail->jumlahMasuk = $item['kuantitas_masuk'];
                 $detail->hargaBeli = $item['harga_satuan'];
-                $detail->subtotal = $subtotal;
+                $detail->subtotal = $detail->hargaBeli;
                 $detail->tglKadaluarsa = $item['tanggal_kadaluwarsa'];
                 $detail->save();
 

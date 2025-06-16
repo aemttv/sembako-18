@@ -59,7 +59,13 @@
                                     </td>
                                 </tr>
                             @endif
+                            @php
+                                $grandTotal = 0;
+                            @endphp
                             @foreach ($bKeluar->detailKeluar as $index => $detail)
+                                @php
+                                    $grandTotal += $detail->subtotal;
+                                @endphp
                                 <tr class="hover:bg-blue-50">
                                     <td class="px-4 py-2 border-b">{{ $index + 1 }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->idDetailBK }}</td>
@@ -76,9 +82,16 @@
                                         @elseif($detail->kategoriAlasan) text-orange-700 @endif ">
                                         {{ $detail->kategoriAlasan?->alasan() ?? '-' }}
                                     </td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->keterangan ?? '-'}}</td>
+                                    <td class="px-4 py-2 border-b">{{ $detail->keterangan ?? 'Tidak Tersedia'}}</td>
                                 </tr>
                             @endforeach
+                            @if (!$bKeluar->detailKeluar->isEmpty())
+                                <tr class="font-bold bg-gray-100">
+                                    <td class="px-4 py-2 border-b text-right" colspan="7">Grand Total:</td>
+                                    <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($grandTotal, 0, ',', '.') }}</td>
+                                    <td class="px-4 py-2 border-b" colspan="2"></td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>

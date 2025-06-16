@@ -63,4 +63,10 @@ class bMasuk extends Model
         return $this->hasMany(bMasukDetail::class, 'idBarangMasuk', 'idBarangMasuk');
     }
 
+    public function getGrandTotalAttribute()
+    {
+        // Sum all 'subtotal' in related detailKeluar
+        return $this->detailMasuk->sum('hargaBeli');
+    }
+
 }
