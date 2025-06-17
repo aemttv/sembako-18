@@ -98,7 +98,7 @@
                     <tr>
                         <th class="px-4 py-2">#</th>
                         <th class="px-4 py-2">ID Barang Rusak</th>
-                        <th class="px-4 py-2">Penanggung Jawab</th>
+                        <th class="px-4 py-2">Staff</th>
                         <th class="px-4 py-2">Barcode</th>
                         <th class="px-4 py-2">Nama Barang</th>
                         <th class="px-4 py-2">Kuantitas</th>
@@ -125,7 +125,7 @@
                                 <tr class="hover:bg-blue-50 even:bg-gray-50">
                                     <td class="px-4 py-2">{{ $no++ }}</td>
                                     <td class="px-4 py-2">{{ $data->idBarangRusak }}</td>
-                                    <td class="px-4 py-2">{{ $data->penanggungJawab }}</td>
+                                    <td class="px-4 py-2">{{ $data->akun->nama }} ({{ $data->penanggungJawab }})</td>
                                     <td class="px-4 py-2">{{ $detail->barcode }}</td>
                                     <td class="px-4 py-2  text-left">
                                         {{ $detail->detailBarangRusak->barang->namaBarang ?? '-' }}</td>

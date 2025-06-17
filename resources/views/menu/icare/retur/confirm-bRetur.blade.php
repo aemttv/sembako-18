@@ -131,7 +131,7 @@
                         <tr>
                             <th class="px-4 py-2">#</th>
                             <th class="px-4 py-2">ID Retur</th>
-                            <th class="px-4 py-2">ID Supplier</th>
+                            <th class="px-4 py-2">Supplier</th>
                             <th class="px-4 py-2">Penanggung Jawab</th>
                             <th class="px-4 py-2">Tanggal Retur</th>
                             <th class="px-4 py-2">Status</th>
@@ -150,9 +150,9 @@
                             <tr>
                                 <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 border-b">{{ $retur->idBarangRetur }}</td>
-                                <td class="px-4 py-2 border-b">{{ $retur->idSupplier }}</td>
+                                <td class="px-4 py-2 border-b">{{ $retur->supplier->nama }} ({{ $retur->idSupplier ?? 'N/A' }})</td>
                                 <td class="px-4 py-2 border-b">
-                                    {{ $retur->penanggungJawab ?? 'N/A' }}
+                                    {{ $retur->akun->nama ?? 'N/A' }} ({{ $retur->penanggungJawab ?? 'N/A' }})
                                 </td>
                                 <td class="px-4 py-2 border-b">
                                     {{ \Carbon\Carbon::parse($retur->tglRetur)->format('d M Y') }}

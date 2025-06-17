@@ -133,15 +133,16 @@
         <table class="pdf-table">
             <thead>
                 <tr>
-                    <th colspan="7" class="text-center">
+                    <th colspan="8" class="text-center">
                         <strong>Barang Rusak Detail</strong>
                     </th>
                 </tr>
                 <tr>
                     <th>ID Barang Rusak</th>
-                    <th>ID Akun</th>
+                    <th>Penanggung Jawab</th>
                     <th>Barcode</th>
-                    <th>Kuantitas</th>
+                    <th>Nama Barang</th>
+                    <th>Kuantitas/Berat</th>
                     <th>Keterangan</th>
                     <th>Tanggal Rusak</th>
                     <th>Status</th>
@@ -153,18 +154,26 @@
                     @foreach ($data->detailRusak as $detail)
                         <tr>
                             {{-- <td class="px-4 py-2">{{ $no++ }}</td> --}}
-                            <td>{{ $data->idBarangRusak }}</td>
-                            <td>{{ $data->penanggungJawab }}</td>
-                            <td>{{ $detail->barcode }}</td>
-                            <td>{{ $detail->jumlah }}</td>
-                            <td>{{ $detail->kategoriAlasan->alasan() }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->tglRusak)->translatedFormat('d F Y') }}</td>
-                            <td>
-                                @if ($data->statusRusak == 2)
+                            <td class="px-4 py-2 text-center">{{ $data->idBarangRusak }}</td>
+                            <td class="px-4 py-2 text-center">{{ $data->akun->nama }} ({{ $data->penanggungJawab }})</td>
+                            <td class="px-4 py-2 text-center">{{ $detail->barcode }}</td>
+                            <td class="px-4 py-2 text-left">{{ $detail->detailBarangRusak->barang->namaBarang }}</td>
+                            <td class="px-4 py-2 text-center">
+                                {{ $detail->jumlah }}
+                                @if ($detail->detailBarangRusak->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                    pcs
+                                @elseif($detail->detailBarangRusak->barang->satuan->namaSatuan() == 'kg')
+                                    gr
+                                @endif
+                            </td>
+                            <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
+                            <td class="px-4 py-2 text-center">{{ \Carbon\Carbon::parse($data->tglRusak)->translatedFormat('d F Y') }}</td>
+                            <td class="px-4 py-2 text-center">
+                                @if ($detail->statusRusakDetail == 2)
                                     <span class="text-yellow-500 font-semibold">Pending</span>
-                                @elseif ($data->statusRusak == 1)
+                                @elseif ($detail->statusRusakDetail == 1)
                                     <span class="text-green-500 font-semibold">Approved</span>
-                                @elseif ($data->statusRusak == 0)
+                                @elseif ($detail->statusRusakDetail == 0)
                                     <span class="text-red-500 font-semibold">Rejected</span>
                                 @else
                                     <span class="text-gray-500">Unknown</span>
@@ -175,7 +184,7 @@
                 @endforeach
                 <!-- Grand Total Row -->
                 <tr>
-                    <td colspan="7" style="text-align: center; font-weight: bold;">
+                    <td colspan="8" style="text-align: center; font-weight: bold;">
                         <p><span style="font-weight: bold">Total Barang Rusak</span>
                             <br>
                             {{ $bRusak->sum(function ($data) {
@@ -187,53 +196,6 @@
                 </tr>
             </tbody>
         </table>
-
-        <div style="margin-top: 24px;">
-    <strong>Keterangan:</strong>
-    {{-- Barcode List Table --}}
-<table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px;">
-    <thead>
-        <tr>
-            <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">Barcode</th>
-            <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">Nama Barang</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($BarcodeList as $barcode)
-            <tr>
-                <td style="border: 1px solid #444; padding: 4px 8px;">
-                    {{ $barcode['barcode'] ?? '' }}
-                </td>
-                <td style="border: 1px solid #444; padding: 4px 8px;">
-                    {{ $barcode['namaBarang'] ?? '' }}
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
-
-{{-- Akun List Table --}}
-<table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px;">
-    <thead>
-        <tr>
-            <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">ID Akun</th>
-            <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">Nama Penanggung Jawab</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($AkunList as $akun)
-            <tr>
-                <td style="border: 1px solid #444; padding: 4px 8px;">
-                    {{ $akun['idAkun'] ?? '' }}
-                </td>
-                <td style="border: 1px solid #444; padding: 4px 8px;">
-                    {{ $akun['namaAkun'] ?? '' }}
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
-    </div>
 </body>
 
 </html>

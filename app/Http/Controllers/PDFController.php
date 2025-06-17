@@ -242,7 +242,7 @@ class PDFController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $query = bRetur::with('detailRetur.detailBarangRetur.barang', 'supplier')->where('statusRetur', 1)->orWhere('statusRetur', 0);
+        $query = bRetur::with('detailRetur.detailBarangRetur.barang', 'supplier');
 
         $tglMasuk = $request->input('tanggal_awal');
         $tglAkhir = $request->input('tanggal_akhir');
@@ -305,7 +305,7 @@ class PDFController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $query = bRusak::with('detailRusak.detailBarangRusak.barang')->where('statusRusak', 1)->orWhere('statusRusak', 0);
+        $query = bRusak::with('detailRusak.detailBarangRusak.barang');
 
         $tglMasuk = $request->input('tanggal_awal');
         $tglAkhir = $request->input('tanggal_akhir');

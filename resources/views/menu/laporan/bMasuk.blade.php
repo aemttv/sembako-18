@@ -95,13 +95,12 @@
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-4 py-2">#</th>
-                        <th class="px-4 py-2">Nama Barang</th>
                         <th class="px-4 py-2">ID Barang</th>
-                        <th class="px-4 py-2">ID Supplier</th>
-                        <th class="px-4 py-2">ID Akun</th>
-                        <th class="px-4 py-2">Kuantitas</th>
-                        <th class="px-4 py-2">Harga Satuan (Rp)</th>
-                        <th class="px-4 py-2">Subtotal</th>
+                        <th class="px-4 py-2">Supplier</th>
+                        <th class="px-4 py-2">Staff</th>
+                        <th class="px-4 py-2">Nama Barang</th>
+                        <th class="px-4 py-2">Kuantitas/Berat</th>
+                        <th class="px-4 py-2">Harga Beli(Subtotal)</th>
                         <th class="px-4 py-2">Tanggal Masuk</th>
                         <th class="px-4 py-2">Tanggal Kadaluarsa</th>
                     </tr>
@@ -123,13 +122,18 @@
                         @foreach ($data->detailMasuk as $detail)
                             <tr>
                                 <td class="px-4 py-2">{{ $no++ }}</td>
+                                <td class="px-4 py-2">{{ $detail->idBarang }}</td>
+                                <td class="px-4 py-2">{{ $data->supplier->nama }} ({{ $data->idSupplier }})</td>
+                                <td class="px-4 py-2">{{ $data->akun->nama }} ({{ $data->idAkun }})</td>
                                 <td class="px-4 py-2 text-left">
                                     {{ $detail->barangDetail->barang->namaBarang ?? 'Nama Barang Tidak Ditemukan' }}</td>
-                                <td class="px-4 py-2">{{ $detail->idBarang }}</td>
-                                <td class="px-4 py-2">{{ $data->idSupplier }}</td>
-                                <td class="px-4 py-2">{{ $data->idAkun }}</td>
-                                <td class="px-4 py-2">{{ $detail->jumlahMasuk }}</td>
-                                <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}
+                                <td class="px-4 py-2">
+                                    {{ $detail->jumlahMasuk }}
+                                @if ($detail->barangDetail->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                    pcs
+                                @elseif($detail->barangDetail->barang->satuan->namaSatuan() == 'kg')
+                                    kg
+                                @endif
                                 </td>
                                 <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                 </td>

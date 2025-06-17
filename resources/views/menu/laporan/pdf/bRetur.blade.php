@@ -130,11 +130,11 @@
                 <tr>
                     <th>No.</th>
                     <th>ID Retur</th>
-                    <th>ID Supplier</th>
-                    <th>ID Akun</th>
+                    <th>Nama Supplier</th>
+                    <th>Penanggung Jawab</th>
                     <th>Barcode</th>
                     <th>Nama Barang</th>
-                    <th>Kuantitas</th>
+                    <th>Kuantitas/Berat</th>
                     <th>Keterangan</th>
                     <th>Tanggal Retur</th>
                     <th>Status</th>
@@ -145,21 +145,28 @@
                 @foreach ($bRetur as $data)
                     @foreach ($data->detailRetur as $detail)
                         <tr>
-                            <td class="px-4 py-2">{{ $no++ }}</td>
-                            <td class="px-4 py-2">{{ $detail->idBarangRetur }}</td>
-                            <td class="px-4 py-2">{{ $data->idSupplier }}</td>
-                            <td class="px-4 py-2">{{ $data->penanggungJawab }}</td>
-                            <td class="px-4 py-2">{{ $detail->detailBarangRetur->barcode ?? '-'}}</td>
-                            <td class="px-4 py-2  text-left">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-'}}</td>
-                            <td class="px-4 py-2">{{ $detail->jumlah }}</td>
-                            <td>{{ $detail->kategoriAlasan->alasan() }}</td>
-                            <td class="px-4 py-2"> {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') }}</td>
-                            <td class="px-4 py-2">
-                                @if ($data->statusRetur == 2)
+                            <td class="px-4 py-2 text-center">{{ $no++ }}</td>
+                            <td class="px-4 py-2 text-center">{{ $detail->idBarangRetur }}</td>
+                            <td class="px-4 py-2 text-center">{{ $data->supplier->nama }} ({{ $data->idSupplier }})</td>
+                            <td class="px-4 py-2 text-center">{{ $data->akun->nama }} ({{ $data->penanggungJawab }})</td>
+                            <td class="px-4 py-2 text-center">{{ $detail->detailBarangRetur->barcode ?? '-'}}</td>
+                            <td class="px-4 py-2 text-left">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-'}}</td>
+                            <td class="px-4 py-2 text-center">
+                                {{ $detail->jumlah }}
+                                @if ($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                    pcs
+                                @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'kg')
+                                    gr
+                                @endif
+                            </td>
+                            <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
+                            <td class="px-4 py-2 text-center"> {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') }}</td>
+                            <td class="px-4 py-2 text-center">
+                                @if ($detail->statusReturDetail == 2)
                                     <span class="text-yellow-500 font-semibold">Pending</span>
-                                @elseif ($data->statusRetur == 1)
+                                @elseif ($detail->statusReturDetail == 1)
                                     <span class="text-green-500 font-semibold">Approved</span>
-                                @elseif ($data->statusRetur == 0)
+                                @elseif ($detail->statusReturDetail == 0)
                                     <span class="text-red-500 font-semibold">Rejected</span>
                                 @else
                                     <span class="text-gray-500">Unknown</span>
@@ -184,40 +191,6 @@
             </tbody>
         </table>
 
-<div style="margin-top: 24px;">
-    <strong>Keterangan:</strong>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px;">
-        <thead>
-            <tr>
-                <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">ID Supplier</th>
-                <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">Nama Supplier</th>
-                <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">ID Akun</th>
-                <th style="border: 1px solid #444; padding: 4px 8px; background: #f2f2f2;">Nama Akun</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $maxRows = max(count($supplierList), count($akunList));
-            @endphp
-            @for($i = 0; $i < $maxRows; $i++)
-                <tr>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">
-                        {{ $supplierList[$i]['idSupplier'] ?? '' }}
-                    </td>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">
-                        {{ $supplierList[$i]['namaSupplier'] ?? '' }}
-                    </td>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">
-                        {{ $akunList[$i]['idAkun'] ?? '' }}
-                    </td>
-                    <td style="border: 1px solid #444; padding: 4px 8px;">
-                        {{ $akunList[$i]['namaAkun'] ?? '' }}
-                    </td>
-                </tr>
-            @endfor
-        </tbody>
-    </table>
-</div>
 </body>
 
 </html>

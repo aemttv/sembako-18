@@ -99,7 +99,7 @@
                         <th class="px-4 py-2">Invoice</th>
                         <th class="px-4 py-2">ID Barang</th>
                         <th class="px-4 py-2">Nama Barang</th>
-                        <th class="px-4 py-2">Kuantitas</th>
+                        <th class="px-4 py-2">Kuantitas/Berat</th>
                         <th class="px-4 py-2">Subtotal</th>
                         <th class="px-4 py-2">Kategori Keterangan</th>
                         <th class="px-4 py-2">Tanggal Keluar</th>
@@ -126,7 +126,14 @@
                                     <td class="px-4 py-2">{{ $detail->idBarang }}</td>
                                     <td class="px-4 py-2  text-left">{{ $detail->barangDetailKeluar->barang->namaBarang }}
                                     </td>
-                                    <td class="px-4 py-2">{{ $detail->jumlahKeluar }}</td>
+                                    <td class="px-4 py-2">
+                                        {{ $detail->jumlahKeluar }}
+                                        @if ($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                            pcs
+                                        @elseif($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'kg')
+                                            gr
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                     </td>
                                     <td>{{ $detail->kategoriAlasan->alasan() }}</td>

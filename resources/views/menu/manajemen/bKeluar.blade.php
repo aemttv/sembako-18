@@ -20,7 +20,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Date, Cashier, Customer -->
             <div class="space-y-2 bg-white rounded-md shadow p-4">
-                <label class="block text-sm font-medium">Date</label>
+                <label class="block text-sm font-medium">Tanggal Pencatatan</label>
                 <input type="date" id="tanggal_keluar_external" class="w-full border border-gray-300 rounded p-2"
                     value="{{ now()->format('Y-m-d') }}" min="{{ now()->subMonth()->format('Y-m-d') }}"
                     max="{{ now()->addYear()->format('Y-m-d') }}">
@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <button id="add-barcode-btn" class="bg-blue-600 text-white px-4 py-2 rounded">+ Add</button>
+                    <button id="add-barcode-btn" class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah</button>
                 </div>
             </div>
 
@@ -125,10 +125,10 @@
                     <input id="invoice-total-input" value="" type="text"
                         class="w-full border border-gray-300 rounded p-2" readonly>
 
-                    <label class="block text-sm font-medium">Cash</label>
+                    <label class="block text-sm font-medium">Uang</label>
                     <input id="cash-input" type="text" value="0" class="w-full border border-gray-300 rounded p-2">
 
-                    <label class="block text-sm font-medium">Change</label>
+                    <label class="block text-sm font-medium">Uang Kembali</label>
                     <input id="change-output" type="text" class="w-full border border-gray-300 rounded p-2" readonly>
 
                 </div>
@@ -143,7 +143,7 @@
                     <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
 
 
-                    <button id="process-button" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 mt-2 w-full text-center justify-center items-center">Process</button>
+                    <button id="process-button" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 mt-2 w-full text-center justify-center items-center">Proses</button>
 
                 </div>
 

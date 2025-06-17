@@ -339,6 +339,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('barang_id').value = ''
         document.getElementById('nama_supplier').value = ''
         document.getElementById('supplier_id').value = ''
+        selectedSupplierName = ''
+        document.getElementById('kuantitas').value = 1
         document.querySelector('textarea').value = ''
     })
 

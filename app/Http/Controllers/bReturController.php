@@ -99,14 +99,14 @@ class bReturController extends Controller
     public function ajukanBRetur(Request $request)
     {
         DB::beginTransaction();
-
+// dd(session('user_data'));   
         try {
             // Step 1: Create the main bRetur record
             $retur = new bRetur();
             $retur->idBarangRetur = bRetur::generateNewIdReturBarang();
             $retur->tglRetur = $request->retur[1]['tanggal_retur']; // Use the first row to get the date
             $retur->idSupplier = $request->retur[1]['id_supplier']; // Use the first row to get the supplier
-            $retur->penanggungJawab = $request->retur[1]['id_akun']; // Or get from session if needed
+            $retur->penanggungJawab = session('user_data')->idAkun; // Or get from session if needed
             $retur->statusRetur = 2; // pending
             $retur->save();
             // dd($retur);
