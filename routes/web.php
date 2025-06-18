@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AkunController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BackupDBController;
 use App\Http\Controllers\BarangController;
@@ -28,6 +29,12 @@ Route::middleware('web')->group(function () {
     Route::get('login', [LoginController::class, 'viewLogin'])->name('login');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile/{idAkun}', [LoginController::class, 'viewProfile'])->name('profile');
+});
+
+Route::middleware('web')->group(function () {
+    Route::get('/password/forget', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
