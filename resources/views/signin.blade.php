@@ -40,6 +40,11 @@
             <div class="flex flex-col flex-1 w-full lg:w-1/2">
                 <div class="flex flex-col justify-center flex-1 w-full max-w-md px-4 mx-auto sm:px-0">
                     <div>
+                        @if (session('success'))
+                            <x-ui.alert type="success" :message="session('success')" />
+                        @elseif (session('error'))
+                            <x-ui.alert type="error" :message="session('error')" />
+                        @endif
                         <div class="mb-5">
                             <h1
                                 class="mb-2 font-semibold text-gray-900 text-5xl sm:text-title-md">

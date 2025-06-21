@@ -21,6 +21,17 @@
                 <div class="p-6 space-y-4">
                     <!-- Row 1: Barcode Search & Penanggung Jawab -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Penanggung Jawab -->
+                        <div class="relative flex-grow">
+                            <label class="block text-sm text-gray-600 mb-1">Penanggung Jawab</label>
+                            <input id="nama_akun" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop" readonly
+                                value="{{ session('user_data.nama', '') }}" placeholder="Search Akun..." autocomplete="off">
+                            {{-- <div id="akun-suggestions"
+                                class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
+                                <!-- Suggestions will appear here -->
+                            </div>
+                            <input type="hidden" id="akun_id" name="idAkun" /> --}}
+                        </div>
                         <!-- Barcode Search -->
                         <div class="relative flex-grow">
                             <label class="block text-sm text-gray-600 mb-1">Barcode Barang</label>
@@ -50,17 +61,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Penanggung Jawab -->
-                        <div class="relative flex-grow">
-                            <label class="block text-sm text-gray-600 mb-1">Penanggung Jawab</label>
-                            <input id="nama_akun" type="text" class="w-full border rounded-md px-3 py-2"
-                                value="{{ old('nama_akun') }}" placeholder="Search Akun..." autocomplete="off">
-                            <div id="akun-suggestions"
-                                class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
-                                <!-- Suggestions will appear here -->
-                            </div>
-                            <input type="hidden" id="akun_id" name="idAkun" />
-                        </div>
+
                     </div>
 
                     <!-- Row 2: Jumlah Pengeluaran & Satuan -->

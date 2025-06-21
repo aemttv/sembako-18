@@ -23,13 +23,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="relative flex-grow">
                             <label class="block text-sm text-gray-600 mb-1">Penanggung Jawab</label>
-                            <input id="nama_akun" type="text" class="w-full border rounded-md px-3 py-2"
-                                value="{{ old('nama_akun') }}" placeholder="Search Akun..." autocomplete="off">
-                            <div id="akun-suggestions"
+                            <input id="nama_akun" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop"
+                                value="{{ session('user_data.nama', '') }}" placeholder="Search Akun..." autocomplete="off">
+                            {{-- <div id="akun-suggestions"
                                 class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
                                 <!-- Suggestions will appear here -->
                             </div>
-                            <input type="hidden" id="akun_id" name="idAkun" />
+                            <input type="hidden" id="akun_id" name="idAkun" /> --}}
                         </div>
                         <div class="relative flex-grow">
                             <label class="block text-sm text-gray-600 mb-1">Barcode Barang</label>
@@ -66,7 +66,7 @@
 
                     <!-- Row 2: Password -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        
+
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Supplier ID</label>
                             <input type="text" id="nama_supplier" name="nama_supplier"

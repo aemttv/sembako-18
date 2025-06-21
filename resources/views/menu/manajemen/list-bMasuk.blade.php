@@ -81,6 +81,7 @@
                                 <td class="px-4 py-2">{{ $data->idBarangMasuk }}</td>
                                 <td class="px-4 py-2">{{ explode(' ', trim($data->supplier->nama))[0] }} ({{ $data->idSupplier }})</td>
                                     <td class="px-4 py-2">{{ explode(' ', trim($data->akun->nama))[0] }} ({{ $data->idAkun }})</td>
+                                    <td class="px-4 py-2">Rp{{ number_format($data->grand_total, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2">{{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}</td>
                                     @if ($data->nota != null)
                                     <td class="px-4 py-2 text-center">

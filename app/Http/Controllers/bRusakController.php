@@ -119,7 +119,7 @@ class bRusakController extends Controller
             $rusak = new bRusak();
             $rusak->idBarangRusak = bRusak::generateNewIdBarangRusak();
             $rusak->tglRusak = $request->rusak[1]['tanggal_rusak']; // Use the first row to get the date
-            $rusak->penanggungJawab = $request->rusak[1]['id_akun']; // Or get from session if needed
+            $rusak->penanggungJawab =  session('user_data')->idAkun; // Or get from session if needed
             $rusak->statusRusak = 2; // pending
             $rusak->save();
 

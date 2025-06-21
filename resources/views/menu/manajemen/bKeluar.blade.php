@@ -21,18 +21,18 @@
             <!-- Date, Cashier, Customer -->
             <div class="space-y-2 bg-white rounded-md shadow p-4">
                 <label class="block text-sm font-medium">Tanggal Pencatatan</label>
-                <input type="date" id="tanggal_keluar_external" class="w-full border border-gray-300 rounded p-2"
+                <input type="date" id="tanggal_keluar_external" class="w-full border border-gray-300 rounded p-2 cursor-pointer"
                     value="{{ now()->format('Y-m-d') }}" min="{{ now()->subMonth()->format('Y-m-d') }}"
                     max="{{ now()->addYear()->format('Y-m-d') }}">
 
                 <div class="relative flex-grow">
                     <label class="block text-sm font-medium mb-2">Staff</label>
-                    <input id="nama_akun" type="text" class="w-full border border-gray-300 rounded p-2">
-                    <div id="staff-suggestions"
+                    <input id="nama_akun" type="text" class="w-full border border-gray-300 rounded p-2 pointer-events-none" value="{{ session('user_data.nama', '') }}" readonly>
+                    {{-- <div id="staff-suggestions"
                         class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
                         <!-- Suggestions will appear here -->
-                    </div>
-                    <input type="hidden" id="akun_id" name="idAkun" />
+                    </div> --}}
+                    {{-- <input type="hidden" id="akun_id" name="idAkun" /> --}}
                 </div>
             </div>
 
@@ -123,13 +123,13 @@
                 <div class="space-y-2 bg-white rounded-md shadow p-4">
                     <label class="block text-sm font-medium">Grand Total</label>
                     <input id="invoice-total-input" value="" type="text"
-                        class="w-full border border-gray-300 rounded p-2" readonly>
+                        class="w-full border border-gray-300 rounded p-2 pointer-events-none" readonly>
 
                     <label class="block text-sm font-medium">Uang</label>
                     <input id="cash-input" type="text" value="0" class="w-full border border-gray-300 rounded p-2">
 
                     <label class="block text-sm font-medium">Uang Kembali</label>
-                    <input id="change-output" type="text" class="w-full border border-gray-300 rounded p-2" readonly>
+                    <input id="change-output" type="text" class="w-full border border-gray-300 rounded p-2 pointer-events-none" readonly >
 
                 </div>
 

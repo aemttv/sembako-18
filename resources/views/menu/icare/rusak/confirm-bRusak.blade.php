@@ -138,7 +138,7 @@
                             <tr>
                                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2">{{ $rusakStaff->idBarangRusak }}</td>
-                                <td class="px-4 py-2">{{ $rusakStaff->penanggungJawab }}</td>
+                                <td class="px-4 py-2 border-b"> {{ explode(' ', trim($rusakStaff->akun->nama))[0] }} ({{ $rusakStaff->penanggungJawab ?? 'N/A' }}) </td>
                                 <td class="px-4 py-2">{{ \Carbon\Carbon::parse($rusakStaff->tglRusak)->format('d M Y') }}</td>
                                 <td class="px-4 py-2">
                                     @if ($rusakStaff->statusRusak == 2)

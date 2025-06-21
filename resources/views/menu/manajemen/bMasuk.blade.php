@@ -184,7 +184,7 @@
             document.getElementById('satuan').addEventListener('change', function() {
                 this.disabled = true;
             });
-            // get search inputs - nama barang atau supplier 
+            // get search inputs - nama barang atau supplier
             document.addEventListener('DOMContentLoaded', function() {
                 setupSearchableInput({
                     inputId: 'nama_barang',
@@ -306,63 +306,92 @@
             }
 
             // File upload handling
-            const uploadArea = document.getElementById('uploadArea');
-            const notaFileInput = document.getElementById('notaFile');
-            const fileNameDisplay = document.getElementById('fileName');
-            const imagePreview = document.getElementById('imagePreview');
-            const uploadPrompt = document.getElementById('uploadPrompt');
+const uploadArea = document.getElementById('uploadArea');
+const notaFileInput = document.getElementById('notaFile');
+const fileNameDisplay = document.getElementById('fileName');
+const imagePreview = document.getElementById('imagePreview');
+const uploadPrompt = document.getElementById('uploadPrompt');
 
-            // Click to open file dialog
-            uploadArea.addEventListener('click', () => {
-                notaFileInput.click();
-            });
+// Click to open file dialog
+uploadArea.addEventListener('click', () => {
+    notaFileInput.click();
+});
 
-            // Handle drag and drop
-            uploadArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                uploadArea.classList.add('border-blue-500', 'bg-blue-50');
-            });
+// Handle drag and drop
+uploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+});
 
-            uploadArea.addEventListener('dragleave', function() {
-                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
-            });
+uploadArea.addEventListener('dragleave', function() {
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+});
 
-            uploadArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
-                if (e.dataTransfer.files.length) {
-                    notaFileInput.files = e.dataTransfer.files;
-                    updateFileNameAndPreview();
-                }
-            });
+uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+    if (e.dataTransfer.files.length) {
+        notaFileInput.files = e.dataTransfer.files;
+        updateFileNameAndPreview();
+    }
+});
 
-            // Handle file selection
-            notaFileInput.addEventListener('change', updateFileNameAndPreview);
+// Handle file selection
+notaFileInput.addEventListener('change', updateFileNameAndPreview);
 
-            function updateFileNameAndPreview() {
-                if (notaFileInput.files.length > 0) {
-                    const file = notaFileInput.files[0];
-                    fileNameDisplay.textContent = `Selected file: ${file.name}`;
-                    // If image, show preview
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            imagePreview.src = e.target.result;
-                            imagePreview.classList.remove('hidden');
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        imagePreview.src = '';
-                        imagePreview.classList.add('hidden');
-                    }
-                    uploadPrompt.classList.add('hidden');
+function updateFileNameAndPreview() {
+    if (notaFileInput.files.length > 0) {
+        const file = notaFileInput.files[0];
+        fileNameDisplay.textContent = `Selected file: ${file.name}`;
+
+        // Validate file type
+        const allowedImageTypes = ['image/jpeg', 'image/png'];
+        if (!allowedImageTypes.includes(file.type)) {
+            alert('Invalid image type. Please upload a JPEG or PNG image.');
+            resetFileInput();
+            return;
+        }
+
+        // If image, show preview and validate dimensions
+        if (file.type.startsWith('image/')) {
+            const img = new Image();
+            img.onload = function() {
+                if (img.width < 400 || img.height < 400 || img.width > 1200 || img.height > 1200) {
+                    alert('Image resolution must be between 400x400px and 1200x1200px.');
+                    resetFileInput();
                 } else {
-                    fileNameDisplay.textContent = '';
-                    imagePreview.src = '';
-                    imagePreview.classList.add('hidden');
-                    uploadPrompt.classList.remove('hidden');
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                    uploadPrompt.classList.add('hidden');
                 }
-            }
+            };
+            img.onerror = function() {
+                alert('Failed to load the image. Please try again.');
+                resetFileInput();
+            };
+            img.src = URL.createObjectURL(file);
+        } else {
+            imagePreview.src = '';
+            imagePreview.classList.add('hidden');
+            uploadPrompt.classList.remove('hidden');
+        }
+    } else {
+        resetFileInput();
+    }
+}
+
+function resetFileInput() {
+    fileNameDisplay.textContent = '';
+    imagePreview.src = '';
+    imagePreview.classList.add('hidden');
+    uploadPrompt.classList.remove('hidden');
+    notaFileInput.value = ''; // Reset the file input
+}
+
 
             // Helper to format number as Rupiah
             function formatRupiah(angka) {

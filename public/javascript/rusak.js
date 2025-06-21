@@ -12,18 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
-    setupSearchableInput({
-        inputId: 'nama_akun',
-        hiddenId: 'akun_id',
-        suggestionBoxId: 'akun-suggestions',
-        searchUrl: '/akun/search',
-        valueKeys: {
-            id: 'idAkun',
-            name: 'nama'
-        }
-    })
 
-    
 /**
  * Initializes a searchable input field with autocomplete suggestions.
  *
@@ -150,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         data.satuan || 0
                     document.getElementById('popup-kadaluarsa').innerText =
                         data.kadaluarsa || '-'
-                        
+
                     if (data.barcode) {
                         document.getElementById('nama_barang').value =
                             data.barcode
@@ -229,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
     addRowBtn.addEventListener('click', async function () {
         // Get all input values
         const namaAkun = document.getElementById('nama_akun').value;
-        const akunId = document.getElementById('akun_id').value;
+        // const akunId = document.getElementById('akun_id').value;
         const namaBarang = document.getElementById('nama_barang').value;
         const barcode = namaBarang;
         const barangId = document.getElementById('barang_id').value;
@@ -311,9 +300,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         rusakTableBody.appendChild(newRow);
 
+        // Remove the "No data" row if it exists
+        const noDataRow = document.getElementById('noDataRow');
+        if (noDataRow) {
+            noDataRow.remove();
+        }
+
         // Create hidden inputs for form submission
         const hiddenInputs = `
-            <input type="hidden" name="rusak[${rowCount}][id_akun]" value="${akunId}">
+            <input type="hidden" name="rusak[${rowCount}][id_akun]" value="${namaAkun}">
             <input type="hidden" name="rusak[${rowCount}][id_barang]" value="${barangId}">
             <input type="hidden" name="rusak[${rowCount}][barcode]" value="${barcode}">
             <input type="hidden" name="rusak[${rowCount}][kuantitas]" value="${kuantitas}">
@@ -326,14 +321,14 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add event listener to the remove button
         newRow.querySelector('.remove-row').addEventListener('click', function () {
             newRow.remove();
-            
+
             updateRowNumbers();
             updateNoDataRow();
         });
 
         updateNoDataRow();
 
-        // Clear the form fields 
+        // Clear the form fields
         document.getElementById('nama_barang').value = '';
         document.getElementById('barang_id').value = '';
         document.getElementById('kuantitas').value = '';
@@ -356,5 +351,5 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
-    
+
 });

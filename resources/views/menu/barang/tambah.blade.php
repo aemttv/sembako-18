@@ -22,11 +22,11 @@
             <div class="border rounded-lg bg-white shadow-sm">
                 <div class="border-b px-6 py-3 font-medium text-gray-700">Informasi Barang</div>
                 <div class="p-6 space-y-4">
-                        <div class="relative w-full">
+                    <div class="relative w-full">
                         <label class="block text-sm text-gray-600 mb-1">Nama Barang</label>
                         <input type="text" id="nama_barang" name="nama_barang" class="w-full border rounded-md px-3 py-2"
                             placeholder="Nama Barang..." autocomplete="off" maxlength="100">
-                        </div>
+                    </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="relative w-full">
                             <label class="block text-sm text-gray-600 mb-1">Merek Barang</label>
@@ -45,7 +45,8 @@
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Harga Jual</label>
-                            <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2" maxlength="16"/>
+                            <input type="text" id="harga_satuan" class="w-full border rounded-md px-3 py-2"
+                                maxlength="16" />
                         </div>
 
                         <div>
@@ -72,7 +73,7 @@
 
                     </div>
 
-                        <input type="hidden" id="kuantitas_masuk" value="0" readonly />
+                    <input type="hidden" id="kuantitas_masuk" value="0" readonly />
 
                     <!-- Buttons -->
                     <div class="pt-4 flex justify-end gap-4">
@@ -362,26 +363,26 @@
 
                 letKategoriLabel = '';
                 switch (kategoriBarang) {
-                case '1':
-                    kategoriLabel = 'Kebutuhan Harian';
-                    break;
-                case '2':
-                    kategoriLabel = 'Perawatan Kebersihan';
-                    break;
-                case '3':
-                    kategoriLabel = 'Produk Kesehatan';
-                    break;
-                case '4':
-                    kategoriLabel = 'Peralatan Sekolah';
-                    break;
-                case '5':
-                    kategoriLabel = 'Aksesoris Fashion';
-                    break;
-                case '6':
-                    kategoriLabel = 'Aksesoris Hiasan';
-                    break;
-                default:
-                    kategoriLabel = kategoriBarang;
+                    case '1':
+                        kategoriLabel = 'Kebutuhan Harian';
+                        break;
+                    case '2':
+                        kategoriLabel = 'Perawatan Kebersihan';
+                        break;
+                    case '3':
+                        kategoriLabel = 'Produk Kesehatan';
+                        break;
+                    case '4':
+                        kategoriLabel = 'Peralatan Sekolah';
+                        break;
+                    case '5':
+                        kategoriLabel = 'Aksesoris Fashion';
+                        break;
+                    case '6':
+                        kategoriLabel = 'Aksesoris Hiasan';
+                        break;
+                    default:
+                        kategoriLabel = kategoriBarang;
                 }
 
                 let satuanLabel = '';
@@ -397,23 +398,23 @@
                 const tableBody = document.getElementById('barangTableBody');
 
                 let isDuplicate = false;
-for (let i = 0; i < tableBody.rows.length; i++) {
-    const cellNamaBarang = tableBody.rows[i].cells[1]; // 2nd column (index 1)
-    const cellNamaMerek = tableBody.rows[i].cells[2]; // 3rd column (index 2)
-    if (
-        cellNamaBarang &&
-        cellNamaMerek &&
-        cellNamaBarang.textContent.trim().toLowerCase() === namaBarang.trim().toLowerCase() &&
-        cellNamaMerek.textContent.trim().toLowerCase() === namaMerek.trim().toLowerCase()
-    ) {
-        isDuplicate = true;
-        break;
-    }
-}
-if (isDuplicate) {
-    alert('Nama barang dengan merek yang sama sudah ada di tabel!');
-    return;
-}
+                for (let i = 0; i < tableBody.rows.length; i++) {
+                    const cellNamaBarang = tableBody.rows[i].cells[1]; // 2nd column (index 1)
+                    const cellNamaMerek = tableBody.rows[i].cells[2]; // 3rd column (index 2)
+                    if (
+                        cellNamaBarang &&
+                        cellNamaMerek &&
+                        cellNamaBarang.textContent.trim().toLowerCase() === namaBarang.trim().toLowerCase() &&
+                        cellNamaMerek.textContent.trim().toLowerCase() === namaMerek.trim().toLowerCase()
+                    ) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (isDuplicate) {
+                    alert('Nama barang dengan merek yang sama sudah ada di tabel!');
+                    return;
+                }
 
                 const newRow = tableBody.insertRow();
                 newRow.id = `row-${rowIndex}`;
@@ -446,7 +447,7 @@ if (isDuplicate) {
                             <!-- Preview container with border placeholder -->
                             <div id="${previewId}" class="border-2 border-dashed border-gray-300 rounded-lg w-1/2 min-h-[80px] flex flex-wrap items-center justify-center gap-2">
                                 <!-- Images will appear here -->
-                                <span class="text-gray-400 text-sm text-center ${previewContainer.innerHTML ? 'hidden' : ''}">No images uploaded (max 1200x1200px)</span>
+                                <span class="text-gray-400 text-sm text-center ${previewContainer.innerHTML ? 'hidden' : ''}"></span>
                             </div>
 
                             <!-- Upload button -->
@@ -468,75 +469,94 @@ if (isDuplicate) {
                 newRow.querySelector(`td:nth-child(7)`).appendChild(fileInput);
 
                 // Define the function to remove an image from the file input
-function removeImageFromInput(fileInput, index) {
-    const dataTransfer = new DataTransfer();
-    const files = fileInput.files;
+                function removeImageFromInput(fileInput, index) {
+                    const dataTransfer = new DataTransfer();
+                    const files = fileInput.files;
 
-    // Add all files except the one to be removed
-    for (let i = 0; i < files.length; i++) {
-        if (i !== index) {
-            dataTransfer.items.add(files[i]);
-        }
-    }
+                    // Add all files except the one to be removed
+                    for (let i = 0; i < files.length; i++) {
+                        if (i !== index) {
+                            dataTransfer.items.add(files[i]);
+                        }
+                    }
 
-    // Update the file input with the new file list
-    fileInput.files = dataTransfer.files;
-}
+                    // Update the file input with the new file list
+                    fileInput.files = dataTransfer.files;
+                }
 
                 // Handle file selection for this row
-                fileInput.addEventListener('change', function(e) {
-                    const files = e.target.files;
-                    const previewContainer = document.getElementById(previewId);
-                    const placeholderText = previewContainer.querySelector('span');
+fileInput.addEventListener('change', function(e) {
+    const files = e.target.files;
+    const previewContainer = document.getElementById(previewId);
+    const placeholderText = previewContainer.querySelector('span');
 
-                    previewContainer.innerHTML = '';
+    previewContainer.innerHTML = '';
 
-                    if (files.length > 0) {
-                        // Hide placeholder text if it exists
-                        if (placeholderText) placeholderText.classList.add('hidden');
+    if (files.length > 0) {
+        // Hide placeholder text if it exists
+        if (placeholderText) placeholderText.classList.add('hidden');
 
-                        Array.from(files).forEach((file, i) => {
-                            if (file.type.startsWith('image/')) {
-                                const reader = new FileReader();
-                                reader.onload = function(e) {
-                                    const previewDiv = document.createElement('div');
-                                    previewDiv.className = 'relative group';
+        Array.from(files).forEach((file, i) => {
+            if (file.type.startsWith('image/')) {
+                // Validate file type
+                const allowedImageTypes = ['image/jpeg', 'image/png'];
+                if (!allowedImageTypes.includes(file.type)) {
+                    alert('Invalid image type. Please upload a JPEG or PNG image.');
+                    return;
+                }
 
-                                    const img = document.createElement('img');
-                                    img.src = e.target.result;
-                                    img.className =
-                                        'h-16 w-16 object-cover rounded cursor-pointer hover:opacity-80';
-                                    img.onclick = function() {
-                                        showImageModal(e.target.result);
-                                    };
-
-                                    const deleteBtn = document.createElement('button');
-                                    deleteBtn.innerHTML = '&times;';
-                                    deleteBtn.className =
-                                        'absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100';
-                                    deleteBtn.onclick = function(ev) {
-                                        ev.stopPropagation();
-                                        removeImageFromInput(fileInput, i);
-                                        previewDiv.remove();
-
-                                        // Show placeholder if no images left
-                                        if (previewContainer.children.length === 0 &&
-                                            placeholderText) {
-                                            placeholderText.classList.remove('hidden');
-                                        }
-                                    };
-
-                                    previewDiv.appendChild(img);
-                                    previewDiv.appendChild(deleteBtn);
-                                    previewContainer.appendChild(previewDiv);
-                                };
-                                reader.readAsDataURL(file);
-                            }
-                        });
-                    } else if (placeholderText) {
-                        placeholderText.classList.remove('hidden');
+                const img = new Image();
+                img.onload = function() {
+                    // Validate image dimensions
+                    if (img.width < 400 || img.height < 400 || img.width > 1200 || img.height > 1200) {
+                        alert('Image resolution must be between 400x400px and 1200x1200px.');
+                        return;
                     }
-                });
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'relative group';
+
+                        const imgElement = document.createElement('img');
+                        imgElement.src = e.target.result;
+                        imgElement.className =
+                            'h-16 w-16 object-cover rounded cursor-pointer hover:opacity-80';
+                        imgElement.onclick = function() {
+                            showImageModal(e.target.result);
+                        };
+
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.innerHTML = '&times;';
+                        deleteBtn.className =
+                            'absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100';
+                        deleteBtn.onclick = function(ev) {
+                            ev.stopPropagation();
+                            removeImageFromInput(fileInput, i);
+                            previewDiv.remove();
+
+                            // Show placeholder if no images left
+                            if (previewContainer.children.length === 0 && placeholderText) {
+                                placeholderText.classList.remove('hidden');
+                            }
+                        };
+
+                        previewDiv.appendChild(imgElement);
+                        previewDiv.appendChild(deleteBtn);
+                        previewContainer.appendChild(previewDiv);
+                    };
+                    reader.readAsDataURL(file);
+                };
+                img.onerror = function() {
+                    alert('Failed to load the image. Please try again.');
+                };
+                img.src = URL.createObjectURL(file);
+            }
+        });
+    } else if (placeholderText) {
+        placeholderText.classList.remove('hidden');
+    }
+});
 
                 // Add hidden inputs for form submission
                 const hiddenInputs = document.createElement('div');
