@@ -48,7 +48,7 @@
                         <div class="mb-5">
                             <h1
                                 class="mb-2 font-semibold text-gray-900 text-5xl sm:text-title-md">
-                                Sembako 18 test
+                                Sembako 18
                             </h1>
                             <p class="text-sm text-gray-600">
                                 Masukkan ID dan Password Anda!
