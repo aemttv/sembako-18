@@ -201,37 +201,48 @@ class BarangController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function searchBarcode(Request $request)
-    {
-        if(!isUserLoggedIn()){
-            abort(403, 'Unauthorized action.');
-        }
-
-        $query = $request->get('q');
-
-        $results = Barang::with([
-            'detailBarang' => function ($queryBuilder) use ($query) {
-                $queryBuilder
-                    ->where('barcode', 'like', "%$query%") // load barcode
-                    ->where('statusDetailBarang', 1);
-            },
-        ])
-            ->whereHas('detailBarang', function ($queryBuilder) use ($query) {
-                $queryBuilder->where('barcode', 'like', "%$query%")->where('statusDetailBarang', 1); // filterkan parent barang yang barcodenya related sama detailbarang
-            })
-            ->select('idBarang') // barcode is in the relation
-            ->get();
-
-        // Flatten result for easier frontend use (just the latest barcode)
-        $formatted = $results->map(function ($item) {
-            $barcode = $item->detailBarang->first()->barcode ?? '';
-            return [
-                'idBarang' => $item->idBarang,
-                'barcode' => $barcode,
-            ];
-        });
-
-        return response()->json($formatted);
+{
+    if (!isUserLoggedIn()) {
+        abort(403, 'Unauthorized action.');
     }
+
+    $query = $request->get('q');
+
+    // Start from detailBarang instead of Barang
+    $results = BarangDetail::with(['supplier', 'barang.merek'])
+        ->where('statusDetailBarang', 1)
+        ->where(function ($qBuilder) use ($query) {
+            $qBuilder->where('barcode', 'like', "%$query%")
+                ->orWhereHas('barang', function ($barangQuery) use ($query) {
+                    $barangQuery->where('namaBarang', 'like', "%$query%")
+                        ->orWhereHas('merek', function ($merekQuery) use ($query) {
+                            $merekQuery->where('namaMerek', 'like', "%$query%");
+                        });
+                });
+        })->orderby('tglKadaluarsa', 'asc')
+        ->get();
+
+
+    $formatted = $results->map(function ($detail) {
+        $barang = $detail->barang;
+
+        return [
+            'idBarang' => $barang->idBarang ?? null,
+            'namaBarang' => $detail->namaBarang ?? $barang->namaBarang ?? 'Unknown',
+            'barcode' => $detail->barcode,
+            'stok' => $detail->quantity,
+            'satuan' => $barang->satuan ?? '-',
+            'merekNama' => $barang->merek->namaMerek ?? '-',
+            'tglKadaluarsa' => $detail->tglKadaluarsa ?? '-',
+            'idSupplier' => $detail->supplier?->idSupplier,
+            'namaSupplier' => $detail->supplier?->nama ?? 'Unknown',
+        ];
+    });
+
+    return response()->json($formatted);
+}
+
+
 
     /**
      * Search for a barang detail by barcode and return its information.
@@ -246,31 +257,40 @@ class BarangController extends Controller
      */
 
     public function searchDetail(Request $request)
-    {
-        if(!isUserLoggedIn()){
-            abort(403, 'Unauthorized action.');
-        }
-
-        $barcode = $request->get('barcode');
-
-        $detail = BarangDetail::with('barang')->where('barcode', $barcode)->where('statusDetailBarang', 1)->first();
-
-        if ($detail) {
-            return response()->json([
-                'idBarang' => $detail->idBarang,
-                'idSupplier' => $detail->idSupplier,
-                'namaSupplier' => $detail->supplier->nama ?? '',
-                'barcode' => $detail->barcode,
-                'nama' => $detail->barang->namaBarang ?? '',
-                'harga' => $detail->barang->hargaJual ?? 0,
-                'stok' => $detail->quantity ?? 0,
-                'satuan' => $detail->barang->satuan ?? '',
-                'kadaluarsa' => $detail->tglKadaluarsa,
-            ]);
-        } else {
-            return response()->json(null, 404);
-        }
+{
+    if (!isUserLoggedIn()) {
+        abort(403, 'Unauthorized action.');
     }
+
+    $search = $request->get('barcode'); // still using 'barcode' as query param for backward compatibility
+
+    $detail = BarangDetail::with(['barang', 'supplier'])
+        ->where('statusDetailBarang', 1)
+        ->where(function ($query) use ($search) {
+            $query->where('barcode', $search)
+                  ->orWhereHas('barang', function ($subQuery) use ($search) {
+                      $subQuery->where('namaBarang', 'like', "%$search%");
+                  });
+        })
+        ->first();
+
+    if ($detail) {
+        return response()->json([
+            'idBarang' => $detail->idBarang,
+            'idSupplier' => $detail->idSupplier,
+            'namaSupplier' => $detail->supplier->nama ?? '',
+            'barcode' => $detail->barcode,
+            'nama' => $detail->barang->namaBarang ?? '',
+            'harga' => $detail->barang->hargaJual ?? 0,
+            'stok' => $detail->quantity ?? 0,
+            'satuan' => $detail->barang->satuan ?? '',
+            'kadaluarsa' => $detail->tglKadaluarsa,
+        ]);
+    } else {
+        return response()->json(null, 404);
+    }
+}
+
 
     /**
      * Display the details of a specific product.
