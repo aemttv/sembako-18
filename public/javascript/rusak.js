@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
         searchUrl: '/daftar-produk/search/barcode',
         valueKeys: {
             id: 'idBarang',
-            name: 'barcode',
+            name: 'namaBarang',
+            barcode: 'barcode',
             satuan: 'satuan',
-            tglKadaluarsa: 'tglKadaluarsa'
+            merek: 'merekNama',
+            tglKadaluarsa: 'tglKadaluarsa',
         }
     })
 
@@ -44,19 +46,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         if (data.length > 0) {
-                            suggestionBox.innerHTML = data
-                                .map(
-                                    item => `
-                    <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                        data-id="${item[valueKeys.id]}"
-                        data-name="${item[valueKeys.name]}"
-                        data-satuan="${item[valueKeys.satuan]}"
-                        data-kadaluarsa="${item[valueKeys.tglKadaluarsa]}">
-                        ${item[valueKeys.name]} (${item[valueKeys.id]})
-                    </div>
-                `
-                                )
-                                .join('')
+                            suggestionBox.innerHTML = data.map(item => `
+                                <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                                    data-id="${item[valueKeys.id]}"
+                                    data-name="${item[valueKeys.name]}"
+                                    data-barcode="${item[valueKeys.barcode]}"
+                                    data-satuan="${item[valueKeys.satuan]}"
+                                    data-merek="${item[valueKeys.merek]}"
+                                    data-tgl="${item[valueKeys.tglKadaluarsa]}"
+                                    data-stok="${item['stok']}">
+                                    <div class="font-semibold">${item[valueKeys.name]}</div>
+                                    <div class="text-sm text-gray-600">Barcode: ${item[valueKeys.barcode]}<br>
+                                    Exp: ${item[valueKeys.tglKadaluarsa]}<br>
+                                    Stok: ${item['stok']}
+                                    </div>
+                                </div>
+                            `).join('');
                             suggestionBox.classList.remove('hidden')
                             addSuggestionClickListeners()
                         } else {
@@ -87,6 +92,33 @@ document.addEventListener('DOMContentLoaded', function () {
                     input.value = item.getAttribute('data-name')
                     hiddenInput.value = item.getAttribute('data-id')
                     suggestionBox.classList.add('hidden')
+
+                    const namaBarangField = document.getElementById('nama_barang');
+                    const barcodeField = document.getElementById('barcode_field');
+                    const tglKadaluarsaField = document.getElementById('tglKadaluarsa_field');
+                    const merekField = document.getElementById('merek_field');
+                    const satuanField = document.getElementById('satuan');
+                    const kuantitasField = document.getElementById('kuantitas');
+
+                    if(namaBarangField){
+                        barcodeField.value = item.getAttribute('data-barcode');
+                        tglKadaluarsaField.value = item.getAttribute('data-tgl');
+                        merekField.value = item.getAttribute('data-merek');
+
+                        cacheKadaluarsa = item.getAttribute('data-tgl');
+                        satuanField.value = item.getAttribute('data-satuan') || 'Pcs';
+
+                        if(satuanField.value == 2){
+                            kuantitasField.value = item.getAttribute('data-stok');
+                            stokInput = kuantitasField.value;
+                            kuantitasField.readOnly = true;
+                        } else {
+                            kuantitasField.value = item.getAttribute('data-stok');
+                            stokInput = kuantitasField.value;
+                            kuantitasField.readOnly = false;
+                        }
+                        console.log(satuanField.value);
+                    }
                 })
             })
         }
@@ -98,93 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (!hiddenInput.value) {
                     input.value = ''
+
                 }
             }
         })
     }
 
     let cacheKadaluarsa = null;
-
-    // search popup function
-    document
-        .getElementById('search-barcode-btn')
-        .addEventListener('click', function (e) {
-            e.preventDefault()
-            e.stopPropagation() // Prevent event from bubbling up to document click handler
-
-            const barcode = document.getElementById('nama_barang').value
-            if (!barcode) return
-
-            fetch(
-                `/daftar-produk/search-detail?barcode=${encodeURIComponent(
-                    barcode
-                )}`
-            )
-                .then(res => res.json())
-                .then(data => {
-                    if (!barcode) {
-                        alert('Masukan Barcode terlebih dahulu!')
-                        return
-                    }
-
-                    // Fill popup content
-                    document.getElementById('popup-barcode').innerText =
-                        data.barcode
-                    document.getElementById('popup-name').innerText = data.nama
-                    document.getElementById('popup-price').innerText =
-                        data.harga || '-'
-                    document.getElementById('popup-stock').innerText =
-                        data.stok || 0
-                    document.getElementById('popup-satuan').innerText =
-                        data.satuan || 0
-                    document.getElementById('popup-kadaluarsa').innerText =
-                        data.kadaluarsa || '-'
-
-                    if (data.barcode) {
-                        document.getElementById('nama_barang').value =
-                            data.barcode
-                        selectedBarcode = data.barcode
-                        selectedSatuan = data.satuan // Save satuan for logic below
-
-                        stokInput = data.stok
-                        document.getElementById('kuantitas').value = stokInput
-
-                        // Set the satuan select to the correct value
-                        const satuanSelect = document.getElementById('satuan')
-                        if (satuanSelect) {
-                            satuanSelect.value = data.satuan
-                        }
-
-                        // If satuan is kg (2), make kuantitas readonly and show total grams
-                        const kuantitasInput =
-                            document.getElementById('kuantitas')
-                        if (data.satuan == 2) {
-                            kuantitasInput.readOnly = true
-                            kuantitasInput.value = parseFloat(data.stok)
-                        } else {
-                            kuantitasInput.readOnly = false
-                        }
-
-                        cacheKadaluarsa = data.kadaluarsa || null;
-                    }
-
-                    // Toggle popup visibility - no manual positioning needed
-                    const popup = document.getElementById('barcode-popup')
-                    popup.classList.toggle('hidden')
-
-                })
-                .catch(err => console.error('Error loading detail:', err))
-        })
-
-    // Close popup when clicking outside
-    document.addEventListener('click', function (e) {
-        const popup = document.getElementById('barcode-popup')
-        const button = document.getElementById('search-barcode-btn')
-
-        if (!popup.contains(e.target) && e.target !== button) {
-            popup.classList.add('hidden')
-        }
-    })
 
     function updateNoDataRow() {
         const tableBody = document.getElementById('rusakTableBody');
@@ -220,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const namaAkun = document.getElementById('nama_akun').value;
         // const akunId = document.getElementById('akun_id').value;
         const namaBarang = document.getElementById('nama_barang').value;
-        const barcode = namaBarang;
+        const barcode = document.getElementById('barcode_field').value;
         const barangId = document.getElementById('barang_id').value;
         const kuantitas = document.getElementById('kuantitas').value;
         const kategoriKet = document.getElementById('kategoriKet');
@@ -237,10 +189,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if(kuantitas > stokInput) {
             alert('Stok melebihi batas stok pada saat ini.')
+            document.getElementById('nama_barang').value = ''
+            document.getElementById('supplier_field').value = ''
+            document.getElementById('barcode_field').value = ''
+            document.getElementById('tglKadaluarsa_field').value = ''
+            document.getElementById('merek_field').value = ''
+            document.getElementById('kuantitas').value = 1
             return
         }
-
-        // console.log(kategoriKetValue);
 
         if (kategoriKetValue === "5") { // 1 = kadaluarsa
             if (!cacheKadaluarsa) {
@@ -254,6 +210,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (todayStr <= kadaluarsaStrOnly) {
                 alert('Barang ini belum kadaluarsa, tidak dapat diproses sebagai kadaluarsa.');
+                document.getElementById('nama_barang').value = ''
+                document.getElementById('barcode_field').value = ''
+                document.getElementById('tglKadaluarsa_field').value = ''
+                document.getElementById('merek_field').value = ''
+                document.getElementById('kuantitas').value = 1
                 return;
             }
         }
@@ -269,6 +230,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const newTotal = totalKuantitasForBarcode + parseInt(kuantitas, 10);
         if (newTotal > stokInput) {
             alert(`Total kuantitas untuk barcode ini (${newTotal}) melebihi stok (${stokInput})!`);
+            document.getElementById('nama_barang').value = ''
+            document.getElementById('barcode_field').value = ''
+            document.getElementById('tglKadaluarsa_field').value = ''
+            document.getElementById('merek_field').value = ''
+            document.getElementById('kuantitas').value = 1
             return;
         }
 

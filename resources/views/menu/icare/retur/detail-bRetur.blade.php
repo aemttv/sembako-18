@@ -48,7 +48,7 @@
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Kategori Keterangan
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Keterangan</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Status</th>
-                                @if (isOwner())   
+                                @if (isOwner())
                                     <th class="px-4 py-2 border-b border-gray-300 bg-white">Proses</th>
                                 @endif
                             </tr>
@@ -71,8 +71,10 @@
                                     <td class="px-4 py-2 border-b">
                                         {{ $detail->barcode }}
                                     </td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->jumlah }}</td>
-                                    <td class="px-4 py-2 border-b 
+                                    <td class="px-4 py-2 border-b">
+                                        {{ $detail->jumlah }}
+                                    </td>
+                                    <td class="px-4 py-2 border-b
                                         @if ($detail->kategoriAlasan === \App\enum\Alasan::cacat) text-blue-700
                                         @elseif($detail->kategoriAlasan) text-orange-700 @endif ">
                                         {{ $detail->kategoriAlasan?->alasan() ?? '-' }}
@@ -89,7 +91,7 @@
                                             <span class="text-gray-500">Unknown</span>
                                         @endif
                                     </td>
-                                    @if (isOwner())                                       
+                                    @if (isOwner())
                                     <td class="px-4 py-2 border-b flex gap-1 items-center justify-center">
                                         <form action="{{ route('detail.bRetur.approve', ['idDetailRetur' => $detail->idDetailRetur]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyetujui detail barang ini?')">
                                             @csrf

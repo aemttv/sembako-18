@@ -32,55 +32,46 @@
                             <input type="hidden" id="akun_id" name="idAkun" /> --}}
                         </div>
                         <div class="relative flex-grow">
-                            <label class="block text-sm text-gray-600 mb-1">Barcode Barang</label>
+                            <label class="block text-sm text-gray-600 mb-1">Nama / Barcode Barang(*)</label>
                             <div class="flex w-full gap-2">
                                 <div class="relative flex-grow">
-                                    <input id="nama_barang" type="text"
-                                        class="w-full border rounded-md px-3 py-2">
-                                    <div id="barang-suggestions"
-                                        class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
-                                        <!-- Suggestions will appear here -->
-                                    </div>
-                                    <input type="hidden" id="barang_id" name="idBarang" />
-                                </div>
-                                <div class="relative"> <!-- Added wrapper div with relative positioning -->
-                                    <button id="search-barcode-btn" class="bg-blue-500 text-white px-3 py-2 rounded">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <!-- Popup container - now positioned relative to search button -->
-                                    <div id="barcode-popup"
-                                        class="absolute bg-white border shadow rounded-md p-4 text-sm hidden z-50 left-0 mt-1 w-64">
-                                        <strong>Barcode Details</strong>
-                                        <div>Barcode: <span id="popup-barcode"></span></div>
-                                        <div>Name: <span id="popup-name"></span></div>
-                                        <div>Price: <span id="popup-price"></span></div>
-                                        <div>Stock: <span id="popup-stock"></span></div>
-                                        <div>Satuan: <span id="popup-satuan"></span></div>
-                                        <div>Supplier ID: <span id="popup-id-supplier"></span></div>
-                                        <div>Supplier Name: <span id="popup-supplier-nama"></span></div>
-                                    </div>
+                                    <input type="text" id="nama_barang" name="nama_barang"
+                                class="w-full border rounded-md px-3 py-2"
+                                placeholder="Cari nama barang atau barcode barang..." autocomplete="off">
+                            <div id="barang-suggestions"
+                                class="absolute z-10 w-full bg-white border mt-1 rounded-md hidden max-h-60 overflow-auto">
+                                <!-- Suggestions will appear here -->
+                            </div>
+                            <!-- Hidden input to store supplier ID -->
+                            <input type="hidden" id="barang_id" name="barang_id" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Barcode</label>
+                            <input id="barcode_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop" >
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Tanggal Kadaluarsa</label>
+                            <input id="tglKadaluarsa_field" type="date" class="w-full border rounded-md px-3 py-2 cursor-no-drop" >
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-1">Merek</label>
+                            <input id="merek_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop">
+                        </div>
+                    </div>
+
                     <!-- Row 2: Password -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Supplier ID</label>
-                            <input type="text" id="nama_supplier" name="nama_supplier"
-                                class="w-full border rounded-md px-3 py-2 cursor-no-drop" placeholder="Search Supplier..."
-                                autocomplete="off" readonly >
-                            <div id="supplier-suggestions"
-                                class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
-                                <!-- Suggestions will appear here -->
-                            </div>
-                            <!-- Hidden input to store supplier ID -->
-                            <input type="hidden" id="supplier_id" name="supplier_id" value="{{ old('supplier_id') }}" />
+                            <input id="supplier_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop">
                         </div>
                         <div class="relative">
-                            <label class="block text-sm text-gray-600 mb-1">Jumlah Pengeluaran</label>
+                            <label class="block text-sm text-gray-600 mb-1">Jumlah Pengeluaran(*)</label>
                             <input type="number" id="kuantitas" class="w-full border rounded-md px-3 py-2" min="1"
                                 value="1" max="100"
                             oninput="
@@ -147,7 +138,7 @@
             <div id="hiddenRows"></div>
 
             <div class="mt-6 border rounded-lg bg-white shadow-sm">
-                <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Simulasi Retur</div>
+                <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Simulasi Pengajuan Barang Retur</div>
                 <div class="p-6">
                     <table id="barangTable" class="min-w-full border border-gray-300 text-sm">
                         <thead class="bg-gray-100 uppercase text-md">

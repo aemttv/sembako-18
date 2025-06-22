@@ -21,13 +21,15 @@
             <!-- Date, Cashier, Customer -->
             <div class="space-y-2 bg-white rounded-md shadow p-4">
                 <label class="block text-sm font-medium">Tanggal Pencatatan</label>
-                <input type="date" id="tanggal_keluar_external" class="w-full border border-gray-300 rounded p-2 cursor-pointer"
-                    value="{{ now()->format('Y-m-d') }}" min="{{ now()->subMonth()->format('Y-m-d') }}"
-                    max="{{ now()->addYear()->format('Y-m-d') }}">
+                <input type="date" id="tanggal_keluar_external"
+                    class="w-full border border-gray-300 rounded p-2 cursor-pointer" value="{{ now()->format('Y-m-d') }}"
+                    min="{{ now()->subMonth()->format('Y-m-d') }}" max="{{ now()->addYear()->format('Y-m-d') }}">
 
                 <div class="relative flex-grow">
                     <label class="block text-sm font-medium mb-2">Staff</label>
-                    <input id="nama_akun" type="text" class="w-full border border-gray-300 rounded p-2 pointer-events-none" value="{{ session('user_data.nama', '') }}" readonly>
+                    <input id="nama_akun" type="text"
+                        class="w-full border border-gray-300 rounded p-2 pointer-events-none"
+                        value="{{ session('user_data.nama', '') }}" readonly>
                     {{-- <div id="staff-suggestions"
                         class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
                         <!-- Suggestions will appear here -->
@@ -39,18 +41,27 @@
             <!-- Barcode & Qty Input -->
             <div class="bg-white rounded-md shadow p-4 flex flex-col justify-between h-full min-h-[220px]">
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium">Barcode</label>
+                    <label class="block text-sm font-medium">Nama Barang / Barcode (*)</label>
                     <div class="flex w-full gap-2">
                         <div class="relative flex-grow">
-                            <input id="nama_barang" type="text" class="w-full border border-gray-300 rounded p-2">
+                            {{-- <input id="nama_barang" type="text" class="w-full border border-gray-300 rounded p-2">
                             <div id="barang-suggestions"
                                 class="w-full border rounded-md px-3 py-2 absolute z-10 bg-white mt-1 hidden max-h-60 overflow-auto">
                                 <!-- Suggestions will appear here -->
                             </div>
-                            <input type="hidden" id="barang_id" name="idBarang" />
+                            <input type="hidden" id="barang_id" name="idBarang" /> --}}
+                            <input type="text" id="nama_barang" name="nama_barang"
+                                class="w-full border rounded-md px-3 py-2"
+                                placeholder="Cari nama barang atau barcode barang..." autocomplete="off">
+                            <div id="barang-suggestions"
+                                class="absolute z-10 w-full bg-white border mt-1 rounded-md hidden max-h-60 overflow-auto">
+                                <!-- Suggestions will appear here -->
+                            </div>
+                            <!-- Hidden input to store supplier ID -->
+                            <input type="hidden" id="barang_id" name="barang_id" />
                         </div>
                         <button id="search-barcode-btn" class="bg-blue-500 text-white px-3 py-2 rounded">
-                            <i class="fas fa-search"></i>
+                            <i class="fas fa-info"></i>
                         </button>
 
                         <!-- Popup container -->
@@ -65,18 +76,36 @@
 
                     </div>
 
-                    <label class="block text-sm font-medium">Kuantitas/Berat(gr)</label>
-                    <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2" min="0"
-                        max="10000"
-                        oninput="
-                            if(this.value.length > 6) this.value = this.value.slice(0,5);
-                            if(this.value == 0) this.value = 1;
-                        ">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium">Barcode</label>
+                            <input id="barcode_field" type="text" class="w-full border border-gray-300 rounded p-2 pointer-events-none cursor-no-drop" >
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Tanggal Kadaluarsa</label>
+                            <input id="tglKadaluarsa_field" type="date" class="w-full border border-gray-300 rounded p-2 pointer-events-none cursor-no-drop" >
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium">Merek</label>
+                            <input id="merek_field" type="text" class="w-full border border-gray-300 rounded p-2 pointer-events-none cursor-no-drop">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Kuantitas/Berat(gr) (*)</label>
+                            <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2"
+                                min="0" max="10000"
+                                oninput="
+                                        if(this.value.length > 6) this.value = this.value.slice(0,5);
+                                        if(this.value == 0) this.value = 1;
+                                    ">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="flex justify-end mt-4">
+                {{-- <div class="flex justify-end mt-4">
                     <button id="add-barcode-btn" class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah</button>
-                </div>
+                </div> --}}
             </div>
 
             <!-- Invoice Total -->
@@ -90,6 +119,11 @@
             </div>
 
         </div>
+
+        <div class="mt-6 border rounded-lg shadow-sm bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 text-center cursor-pointer"
+                id="add-barcode-btn">
+                (+) Tambah Data Barang Ke Tabel
+            </div>
 
 
         <form id="form-bkeluar" action="{{ route('barang-keluar.submit') }}" method="POST">
@@ -111,7 +145,8 @@
                     </thead>
                     <tbody id="transaction-table-body">
                         <tr id="noDataRow">
-                            <td colspan="7" class="text-center text-gray-500 p-2">Tidak ada data barang keluar saat ini..</td>
+                            <td colspan="7" class="text-center text-gray-500 p-2">Tidak ada data barang keluar saat ini..
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -126,10 +161,12 @@
                         class="w-full border border-gray-300 rounded p-2 pointer-events-none" readonly>
 
                     <label class="block text-sm font-medium">Uang</label>
-                    <input id="cash-input" type="text" value="0" class="w-full border border-gray-300 rounded p-2">
+                    <input id="cash-input" type="text" value="0"
+                        class="w-full border border-gray-300 rounded p-2">
 
                     <label class="block text-sm font-medium">Uang Kembali</label>
-                    <input id="change-output" type="text" class="w-full border border-gray-300 rounded p-2 pointer-events-none" readonly >
+                    <input id="change-output" type="text"
+                        class="w-full border border-gray-300 rounded p-2 pointer-events-none" readonly>
 
                 </div>
 
@@ -143,7 +180,8 @@
                     <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
 
 
-                    <button id="process-button" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 mt-2 w-full text-center justify-center items-center">Proses</button>
+                    <button id="process-button"
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 mt-2 w-full text-center justify-center items-center">Proses</button>
 
                 </div>
 

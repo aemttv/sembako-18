@@ -73,7 +73,14 @@
                                     <td class="px-4 py-2 border-b">{{ $detail->idBarang }}</td>
                                     <td class="px-4 py-2 border-b text-left">{{ mb_strimwidth($detail->barangDetailKeluar->barang->namaBarang, 0, 40, '...') }}</td>
                                     <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barcode }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $detail->jumlahKeluar }}</td>
+                                    <td class="px-4 py-2 border-b">
+                                    {{ $detail->jumlahKeluar }}
+                                    @if ($detail->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                        pcs
+                                    @elseif($detail->barang->satuan->namaSatuan() == 'kg')
+                                        gr
+                                    @endif
+                                </td>
                                     {{-- <td class="px-4 py-2 border-b">{{ $detail->barangDetailKeluar->barang->satuan->namaSatuan() }}</td> --}}
                                     <td class="px-4 py-2 border-b text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                     </td>

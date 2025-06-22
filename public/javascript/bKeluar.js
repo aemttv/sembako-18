@@ -1,15 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
-            setupSearchableInput({
-                inputId: 'nama_barang',
-                hiddenId: 'barang_id',
-                suggestionBoxId: 'barang-suggestions',
-                searchUrl: '/daftar-produk/search/barcode',
-                valueKeys: {
-                    id: 'idBarang',
-                    name: 'barcode',
-                    satuan: 'satuan'
-                }
-            });
+
+        setupSearchableInput({
+        inputId: 'nama_barang',
+        hiddenId: 'barang_id',
+        suggestionBoxId: 'barang-suggestions',
+        searchUrl: '/daftar-produk/search/barcode',
+        valueKeys: {
+            id: 'idBarang',
+            name: 'namaBarang',
+            barcode: 'barcode',
+            satuan: 'satuan',
+            merek: 'merekNama',
+            tglKadaluarsa: 'tglKadaluarsa'
+        }
+    });
+
             setupSearchableInput({
                 inputId: 'nama_akun',
                 hiddenId: 'akun_id',
@@ -34,19 +39,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 input.addEventListener('input', function() {
                     const query = input.value.trim();
+                    if(query === '') {
+                        hiddenInput.value = '';
+                        document.getElementById('barcode_field').value = '';
+                        document.getElementById('tglKadaluarsa_field').value = '';
+                        document.getElementById('merek_field').value = '';
+                        suggestionBox.classList.add('hidden');
+                        return;
+                    }
                     if (query.length >= 2) {
                         fetch(`${searchUrl}?q=${encodeURIComponent(query)}`)
                             .then(response => response.json())
                             .then(data => {
                                 if (data.length > 0) {
                                     suggestionBox.innerHTML = data.map(item => `
-                                <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                                    data-id="${item[valueKeys.id]}"
-                                    data-name="${item[valueKeys.name]}"
-                                    data-satuan="${item[valueKeys.satuan]}">
-                                    ${item[valueKeys.name]} (${item[valueKeys.id]})
-                                </div>
-                            `).join('');
+                                        <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                                            data-id="${item[valueKeys.id]}"
+                                            data-name="${item[valueKeys.name]}"
+                                            data-barcode="${item[valueKeys.barcode]}"
+                                            data-satuan="${item[valueKeys.satuan]}"
+                                            data-merek="${item[valueKeys.merek]}"
+                                            data-tgl="${item[valueKeys.tglKadaluarsa]}">
+                                            <div class="font-semibold">${item[valueKeys.name]}</div>
+                                            <div class="text-sm text-gray-600">Barcode: ${item[valueKeys.barcode]}, Exp: ${item[valueKeys.tglKadaluarsa]}</div>
+                                        </div>
+                                    `).join('');
                                     suggestionBox.classList.remove('hidden');
                                     addSuggestionClickListeners();
                                 } else {
@@ -69,6 +86,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             input.value = item.getAttribute('data-name');
                             hiddenInput.value = item.getAttribute('data-id');
                             suggestionBox.classList.add('hidden');
+
+                            const namaBarangField = document.getElementById('nama_barang');
+                            const barcodeField = document.getElementById('barcode_field');
+                            const tglKadaluarsaField = document.getElementById('tglKadaluarsa_field');
+                            const merekField = document.getElementById('merek_field');
+
+                            if(namaBarangField){
+                                barcodeField.value = item.getAttribute('data-barcode');
+                                tglKadaluarsaField.value = item.getAttribute('data-tgl');
+                                merekField.value = item.getAttribute('data-merek');
+                            }
+
                         });
                     });
                 }
@@ -77,8 +106,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!suggestionBox.contains(e.target) && e.target !== input) {
                         suggestionBox.classList.add('hidden');
 
+                        const barcodeField = document.getElementById('barcode_field');
+                        const tglKadaluarsaField = document.getElementById('tglKadaluarsa_field');
+                        const merekField = document.getElementById('merek_field');
+
                         if (!hiddenInput.value) {
-                            input.value = ''
+                            input.value = '';
+                            barcodeField.value = '';
+                            tglKadaluarsaField.value = '';
+                            merekField.value = '';
                         }
                     }
                 });
@@ -114,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const barcode = document.getElementById('nama_barang').value;
             if (!barcode) {
-                alert('Please input barcode.');
+                alert('Silakan masukkan nama barang atau barcode.');
                 return;
             }
 
@@ -182,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // add item to row
         document.getElementById('add-barcode-btn').addEventListener('click', async function() {
-            const barcode = document.getElementById('nama_barang').value.trim();
+            const barcode = document.getElementById('barcode_field').value.trim();
             const nama_akun = document.getElementById('nama_akun').value.trim();
             const qty = parseInt(document.getElementById('qty')?.value || "1", 10);
             const totalInvoiceElement = document.getElementById('invoice-total'); // Get the total invoice element
@@ -278,6 +314,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Reset inputs
             document.getElementById('nama_barang').value = '';
             document.getElementById('qty').value = 1;
+            document.getElementById('barcode_field').value = '';
+            document.getElementById('tglKadaluarsa_field').value = '';
+            document.getElementById('merek_field').value = '';
 
             // Add remove event
             row.querySelector('.remove-item').addEventListener('click', function() {

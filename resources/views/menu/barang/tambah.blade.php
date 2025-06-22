@@ -91,7 +91,7 @@
             <div id="hiddenRows"></div>
 
             <div class="mt-6 border rounded-lg bg-white shadow-sm">
-                <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Simulasi Barang Masuk</div>
+                <div class="border-b px-6 py-3 font-medium text-gray-700">Daftar Simulasi Informasi Barang Baru</div>
                 <div class="p-6">
                     <table id="barangTable" class="min-w-full border border-gray-300 text-sm">
                         <thead class="bg-gray-100 uppercase text-md">
