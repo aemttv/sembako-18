@@ -148,7 +148,7 @@ Route::middleware('web')->group(function () {
 });
 
 Route::get('/backup', [BackupDBController::class, 'backup']);
-Route::get('/log', [LogController::class, 'index']);
+Route::get('/log-action-view', [LogController::class, 'index']);
 
 Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');
 Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
