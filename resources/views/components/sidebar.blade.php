@@ -250,7 +250,7 @@
                                 </a>
                             </li> --}}
                             <li>
-                                <a href="/log"
+                                <a href="/log-action-view"
                                     class="flex items-center gap-3 rounded-lg pl-6 pr-4 py-2 text-sm font-medium
                                             {{ Request::is('log') ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
                                     <i
