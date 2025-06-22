@@ -45,17 +45,17 @@ class BarangDetail extends Model
                     ->lockForUpdate()
                     ->orderBy('idDetailBarang', 'desc')
                     ->first();
-    
+
                 if ($latest) {
                     $last = intval(substr($latest->idDetailBarang, 3)); // Strip "DBM"
                     $newId = 'DB' . str_pad($last + 1, 3, '0', STR_PAD_LEFT);
                 } else {
                     $newId = 'DB001';
                 }
-    
+
                 $exists = DB::table('detail_barang')->where('idDetailBarang', $newId)->exists();
             } while ($exists);
-    
+
             return $newId;
         });
     }
@@ -72,7 +72,7 @@ class BarangDetail extends Model
         $length = 12; // adjust the length of the barcode as needed
         $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $barcode = '';
-        
+
         for ($i = 0; $i < $length; $i++) {
             $barcode .= $characters[rand(0, strlen($characters) - 1)];
         }
@@ -81,7 +81,7 @@ class BarangDetail extends Model
 
     public function barang()
     {
-        return $this->belongsTo(barang::class, 'idBarang');
+        return $this->belongsTo(Barang::class, 'idBarang');
     }
 
     public function supplier()
