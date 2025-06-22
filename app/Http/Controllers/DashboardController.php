@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\bKeluarDetail;
 use App\Models\bMasukDetail;
-use App\Enum\KategoriBarang; // adjust if needed
+use App\enum\KategoriBarang; // adjust if needed
 use App\Models\BarangDetail;
 
 class DashboardController extends Controller
