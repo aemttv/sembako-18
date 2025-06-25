@@ -33,7 +33,14 @@ class DashboardController extends Controller
 
         $totalStok = Barang::with(['detailBarang' => function($query) {
             $query->where('statusDetailBarang', 1);
-        }])->get()->sum(fn($barang) => $barang->detailBarang->sum('quantity'));
+            }])->get()->sum(function($barang) {
+                // If satuan == 2, count the details; else, sum the quantity
+                if ($barang->satuan->value == 2) {
+                    return $barang->detailBarang->count();
+                } else {
+                    return $barang->detailBarang->sum('quantity');
+                }
+            });
 
         $bMasukDetails = bMasukDetail::with('barangDetail.barang')->get();
         $bKeluarDetails = bKeluarDetail::with('barangDetailKeluar.barang')->get();

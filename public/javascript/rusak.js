@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const todayStr = today.toISOString().slice(0, 10);
             const kadaluarsaStrOnly = cacheKadaluarsa.slice(0, 10);
 
-            if (todayStr <= kadaluarsaStrOnly) {
+            if (todayStr < kadaluarsaStrOnly) {
                 alert('Barang ini belum kadaluarsa, tidak dapat diproses sebagai kadaluarsa.');
                 document.getElementById('nama_barang').value = ''
                 document.getElementById('barcode_field').value = ''

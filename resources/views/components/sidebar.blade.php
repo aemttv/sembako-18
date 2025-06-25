@@ -279,10 +279,10 @@
     // Clock script
     function updateClock() {
         const now = new Date();
-        const time = now.toLocaleTimeString('en-US', {
+        const time = now.toLocaleTimeString('id-ID', {
             hour12: false
         });
-        const date = now.toLocaleDateString('en-US', {
+        const date = now.toLocaleDateString('id-ID', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
