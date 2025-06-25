@@ -130,9 +130,11 @@
                                 <td class="px-4 py-2">
                                     {{ $detail->jumlahMasuk }}
                                 @if ($detail->barangDetail->barang->satuan->namaSatuan() == 'pcs/eceran')
-                                    pcs
+                                    Pcs
                                 @elseif($detail->barangDetail->barang->satuan->namaSatuan() == 'kg')
-                                    kg
+                                    Kg
+                                @elseif($detail->barangDetail->barang->satuan->namaSatuan() == 'dus')
+                                    Dus
                                 @endif
                                 </td>
                                 <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}

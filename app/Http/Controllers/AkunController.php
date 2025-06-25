@@ -26,9 +26,10 @@ class AkunController extends Controller
         return view('account.tambah');
     }
 
-    function tambahAkun(Request $request) {
-        
-        DB::beginTransaction();
+    public function tambahAkun(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
             foreach ($request->staff_input as $jsonItem) {
                 $item = json_decode($jsonItem, true);
@@ -44,10 +45,17 @@ class AkunController extends Controller
                 $akun->save();
             }
 
-        DB::commit();
+            DB::commit();
 
-        return redirect()->route('view.akun')->with('success', 'Informasi Staff berhasil disimpan');
-        
+            // Print success message (for debugging/logging)
+            // You can use logger or echo, but for web, use session flash or redirect with message
+            // For demonstration, we'll log and redirect with success
+            return redirect()->route('view.akun')->with('success', 'Informasi Staff berhasil disimpan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Print error message (for debugging/logging)
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan staff');
+        }
     }
 
     public function editAkun(Request $request, $idAkun) {

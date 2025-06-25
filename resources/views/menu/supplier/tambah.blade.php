@@ -1,7 +1,6 @@
 @extends('layout')
 
 @section('content')
-
     <div class="p-6 space-y-4">
         @if (session('success'))
             <x-ui.alert type="success" :message="session('success')" />
@@ -25,12 +24,12 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Nama Lengkap</label>
                             <input type="text" id="nama" name="nama" class="w-full border rounded-md px-3 py-2"
-                                placeholder="Nama Lengkap" autocomplete="off" maxlength="50"/>
+                                placeholder="Nama Lengkap" autocomplete="off" maxlength="50" />
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">No.HP/No.WA</label>
-                            <input type="text" id="no_hp"name="no_hp" class="w-full border rounded-md px-3 py-2" maxlength="15"
-                                placeholder="08xxxxxxxx/6281xxxxx" />
+                            <input type="text" id="no_hp"name="no_hp" class="w-full border rounded-md px-3 py-2"
+                                maxlength="15" placeholder="08xxxxxxxx/6281xxxxx" />
                         </div>
                     </div>
 
@@ -45,8 +44,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Alamat</label>
-                            <textarea type="text" id="alamat"name="alamat" class="w-full border rounded-md px-3 py-2 min-h-[100px] max-h-[200px]"
-                                placeholder="Jl..." maxlength="255"> </textarea>
+                            <textarea type="text" id="alamat"name="alamat"
+                                class="w-full border rounded-md px-3 py-2 min-h-[100px] max-h-[200px]" placeholder="Jl..." maxlength="255"> </textarea>
                         </div>
                     </div>
 
@@ -127,98 +126,96 @@
                 });
             }
 
+            // Helper to clear form fields
+            function clearSupplierFields() {
+                document.getElementById('nama').value = '';
+                document.getElementById('no_hp').value = '';
+                document.getElementById('alamat').value = '';
+                document.getElementById('status').value = '1';
+            }
+
             // Menambahkan baris baru ke dalam tabel
             document.getElementById('addRow').addEventListener('click', function() {
-    var namaLengkap = document.getElementById('nama').value;
-    var noHp = document.getElementById('no_hp').value;
-    var alamat = document.getElementById('alamat').value;
-    var status = document.getElementById('status').value;
+                var namaLengkap = document.getElementById('nama').value;
+                var noHp = document.getElementById('no_hp').value;
+                var alamat = document.getElementById('alamat').value;
+                var status = document.getElementById('status').value;
 
-    // Add new row to the table
-    var tableBody = document.getElementById('supplierTableBody');
-    const isNumeric = /^\d+$/.test(noHp);
+                // Add new row to the table
+                var tableBody = document.getElementById('supplierTableBody');
+                const isNumeric = /^\d+$/.test(noHp);
 
-    if (!namaLengkap || !noHp || !alamat || !status) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
-        alert('No HP harus berupa angka dan dimulai dengan 08 atau 628');
-        return;
-    }
+                if (!namaLengkap || !noHp || !alamat || !status) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
+                    alert('No HP harus berupa angka dan dimulai dengan 08 atau 628');
+                    return;
+                }
 
-    // Check for duplicate entries
-    for (let i = 0; i < tableBody.rows.length; i++) {
-        let row = tableBody.rows[i];
-        if (row.cells[1].innerText === namaLengkap &&
-            row.cells[2].innerText === noHp &&
-            row.cells[3].innerText === alamat &&
-            row.cells[4].innerText === (status == 1 ? 'Aktif' : 'Tidak Aktif')) {
-            alert('Duplicate entry detected. Please enter unique values.');
-            return;
-        }
-    }
+                // Check for duplicate entries
+                for (let i = 0; i < tableBody.rows.length; i++) {
+                    let row = tableBody.rows[i];
+                    if (row.cells[1].innerText === namaLengkap &&
+                        row.cells[2].innerText === noHp &&
+                        row.cells[3].innerText === alamat &&
+                        row.cells[4].innerText === (status == 1 ? 'Aktif' : 'Tidak Aktif')) {
+                        alert('Duplicate entry detected. Please enter unique values.');
+                        return;
+                    }
+                }
 
-    var newRow = tableBody.insertRow();
-    var rowId = `row-${tableBody.rows.length}`;
-    newRow.id = rowId;
-    newRow.innerHTML = `
-        <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
-        <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>
-        <td class="px-4 py-2 border-b text-center">${noHp}</td>
-        <td class="px-4 py-2 border-b text-center">${alamat}</td>
-        <td class="px-4 py-2 border-b text-center">${status == 1 ? 'Aktif' : 'Tidak Aktif'} </td>
-        <td class="px-4 py-2 border-b text-center">
-            <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow('${rowId}')">Hapus</button>
-        </td>
-    `;
+                var uniqueId = Date.now(); // Safer unique ID
+                var rowId = `row-${uniqueId}`;
+                var newRow = tableBody.insertRow();
+                newRow.id = rowId;
+                newRow.innerHTML = `
+                    <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
+                    <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>
+                    <td class="px-4 py-2 border-b text-center">${noHp}</td>
+                    <td class="px-4 py-2 border-b text-center">${alamat}</td>
+                    <td class="px-4 py-2 border-b text-center">${status == 1 ? 'Aktif' : 'Tidak Aktif'}</td>
+                    <td class="px-4 py-2 border-b text-center">
+                        <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow('${rowId}', 'hidden-${rowId}')">Hapus</button>
+                    </td>
+                `;
 
-    // Menambahkan input tersembunyi untuk setiap row ke dalam form
-    var hiddenRows = document.getElementById('hiddenRows');
-    var hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = `supplier_input[]`;
-    hiddenInput.value = JSON.stringify({
-        nama: namaLengkap,
-        no_hp: noHp,
-        alamat: alamat,
-        status: status
-    });
-    hiddenRows.appendChild(hiddenInput);
+                // Menambahkan input tersembunyi untuk setiap row ke dalam form
+                var hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `supplier_input[]`;
+                hiddenInput.id = `hidden-${rowId}`;
+                hiddenInput.value = JSON.stringify({
+                    nama: namaLengkap,
+                    no_hp: noHp,
+                    alamat: alamat,
+                    status: status
+                });
+                hiddenRows.appendChild(hiddenInput);
 
-    // Clear form fields
-    document.getElementById('clearFields').addEventListener('click', function () {
-        document.getElementById('nama').value = '';
-        document.getElementById('no_hp').value = '';
-        document.getElementById('alamat').value = '';
-        document.getElementById('status').value = '';
-    });
-});
+                // Clear form fields
+                clearSupplierFields();
+            });
 
-window.removeRow = function(rowId) {
-    const row = document.getElementById(rowId);
-    if (row) {
-        row.remove();
-        updateNoDataRow();
-    }
-};
+            window.removeRow = function(rowId, hiddenInputId) {
+                const row = document.getElementById(rowId);
+                const hiddenInput = document.getElementById(hiddenInputId);
+
+                if (row) row.remove();
+                if (hiddenInput) hiddenInput.remove();
+
+                updateNoDataRow(); // Optional: Only if you show "no data" messages
+            };
 
             // Kosongkan semua field
-            document.getElementById('clearFields').addEventListener('click', function () {
-                document.getElementById('nama').value = '';
-                    document.getElementById('no_hp').value = '';
-                    document.getElementById('alamat').value = '';
-                    document.getElementById('status').value = '1';
-            });
+            clearSupplierFields();
 
 
             // Pastikan form bisa submit ke backend
             document.getElementById('submitData').addEventListener('click', function() {
 
             });
-
-
-
         </script>
 
     </div>

@@ -49,7 +49,9 @@
                                 <label class="block text-sm text-gray-600 mb-1">Satuan</label>
                                 <select id="satuan" name="satuan" disabled class="w-full border rounded-md px-3 py-2">
                                     <option value="1" selected>Pcs/Eceran</option>
-                                    <option value="2">Kg</option>
+                                    <option value="2">Kilogram</option>
+                                    <option value="3">Dus</option>
+                                    <option value="4">Sak</option>
                                 </select>
                             </div>
                             <div>

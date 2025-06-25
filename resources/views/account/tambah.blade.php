@@ -67,7 +67,7 @@
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Status Peran</label>
                             <select id="statusPeran" class="w-full border rounded-md px-3 py-2">
-                                <option selected value="1">Admin</option>
+                                <option selected value="1">Owner</option>
                                 <option value="2">Staff</option>
                             </select>
                         </div>

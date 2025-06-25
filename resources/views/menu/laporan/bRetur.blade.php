@@ -130,7 +130,16 @@
                                     <td class="px-4 py-2">{{ $detail->barcode ?? '-' }}</td>
                                     <td class="px-4 py-2  text-left">
                                         {{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
-                                    <td class="px-4 py-2">{{ $detail->jumlah ?? '-' }}</td>
+                                    <td class="px-4 py-2">
+                                        {{ $detail->jumlah ?? '-' }}
+                                        @if ($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                            Pcs
+                                        @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'kg')
+                                            Kg
+                                        @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'dus')
+                                            Dus
+                                        @endif
+                                    </td>
                                     <td>{{ $detail->kategoriAlasan->alasan() ?? '-' }}</td>
                                     <td class="px-4 py-2">
                                         {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') ?? '-' }}</td>

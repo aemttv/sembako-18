@@ -22,7 +22,7 @@ class Barang extends Model
     public $incrementing = false;
 
     // Specify the fillable columns for mass-assignment
-    protected $fillable = ['namaBarang', 'kategoriBarang', 'merekBarang', 'stokBarang', 'satuan', 'tglMasuk', 'kondisiBarang', 'hargaJual', 'gambarProduk'];
+    protected $fillable = ['namaBarang', 'kategoriBarang', 'merekBarang', 'stokBarang', 'satuan', 'tglMasuk', 'kondisiBarang', 'hargaJual', 'pcsPerBox', 'gambarProduk'];
 
     // Specify if you're using timestamps or not
     public $timestamps = true;

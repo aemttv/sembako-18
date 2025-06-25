@@ -25,6 +25,7 @@ return new class extends Migration
             $table->float('stokBarang')->default(0);;
             $table->integer('satuan')->nullable();
             $table->float('hargaJual');
+            $table->integer('pcsPerBox')->nullable();
             $table->text('gambarProduk')->nullable();
             $table->integer('statusBarang')->default(1); //aktif
             $table->timestamps();

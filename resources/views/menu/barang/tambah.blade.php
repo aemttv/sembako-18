@@ -390,7 +390,9 @@
                     satuanLabel = 'pcs/eceran';
                 } else if (satuan === '2') {
                     satuanLabel = 'kg';
-                } else {
+                } else if (satuan === '3') {
+                    satuanLabel = 'dus';
+                else {
                     satuanLabel = satuan;
                 }
 

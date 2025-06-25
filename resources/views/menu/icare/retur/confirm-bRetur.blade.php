@@ -1,187 +1,124 @@
 @extends('layout')
 
 @section('content')
-    <div class="p-6 space-y-4">
-        @if (session('success'))
-            <x-ui.alert type="success" :message="session('success')" />
-        @elseif (session('error'))
-            <x-ui.alert type="error" :message="session('error')" />
-        @endif
+<div class="p-6 lg:p-8 bg-gray-50 min-h-screen">
 
-        @if (isOwner())
-            <!-- Header -->
-            <div class="flex justify-between items-center">
-                <div class="flex-1">
-                    <h1 class="text-xl font-semibold">Konfirmasi Retur Barang</h1>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm text-gray-500">Home > Retur Barang</p>
-                </div>
-            </div>
+    {{-- Session Alerts --}}
+    @if (session('success'))
+        <x-ui.alert type="success" :message="session('success')" />
+    @elseif (session('error'))
+        <x-ui.alert type="error" :message="session('error')" />
+    @endif
 
+    @php
+        $pageTitle = isOwner() ? 'Konfirmasi Pengajuan Retur' : 'Daftar Pengajuan Retur';
+        $transactions = isOwner() ? $bRetur : $staffBRetur;
+    @endphp
 
-            <!-- Tabs -->
-            <div class="flex items-center justify-between border rounded-lg p-2 bg-white">
-                <!-- Centered Search Form -->
-                <div class="flex-1 flex justify-center">
-                    <form action="{{ route('bRetur.search') }}" method="GET"
-                        class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm h-11">
-                        <i class="fas fa-search text-gray-400 mr-2"></i>
-                        <input type="text" name="q" placeholder="ID Retur / ID Supplier / Penanggung Jawab..."
-                            value="{{ request('q') }}"
-                            class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400 h-full" />
-                    </form>
-                </div>
-                <!-- Button Far Right -->
-                <a href="/ajukan-retur"
-                    class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-11 flex items-center ml-4">
-                    Ajukan Retur Barang
-                </a>
-            </div>
-
-
-            <!-- Table -->
-            <div class="border rounded-lg overflow-x-auto">
-                <table class="min-w-full text-lg text-center items-center">
-                    <thead class="bg-gray-800 text-white">
-                        <tr>
-                            <th class="px-4 py-2">#</th>
-                            <th class="px-4 py-2">ID Retur</th>
-                            <th class="px-4 py-2">ID Supplier</th>
-                            <th class="px-4 py-2">Penanggung Jawab</th>
-                            <th class="px-4 py-2">Tanggal Retur</th>
-                            <th class="px-4 py-2">Status</th>
-                            <th class="px-4 py-2">Proses</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y">
-
-                        @if ($bRetur->isEmpty())
-                            <tr>
-                                <td class="px-4 py-2 border-b text-center" colspan="8">Tidak ada barang yang diajukan
-                                    saat ini..</td>
-                            </tr>
-                        @endif
-                        @foreach ($bRetur as $retur)
-                            <tr class="hover:bg-blue-50 even:bg-gray-50">
-                                <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border-b">{{ $retur->idBarangRetur }}</td>
-                                <td class="px-4 py-2 border-b">{{ explode(' ', trim($retur->supplier->nama))[0] }} ({{ $retur->idSupplier ?? 'N/A' }})</td>
-                                <td class="px-4 py-2 border-b"> {{ explode(' ', trim($retur->akun->nama))[0] }} ({{ $retur->penanggungJawab ?? 'N/A' }}) </td>
-                                <td class="px-4 py-2 border-b">
-                                    {{ \Carbon\Carbon::parse($retur->tglRetur)->format('d M Y') }}
-                                </td>
-                                <td class="px-4 py-2 border-b">
-                                    @if ($retur->statusRetur == 2)
-                                        <span class="text-yellow-500 font-semibold">Pending</span>
-                                    @elseif ($retur->statusRetur == 1)
-                                        <span class="text-green-500 font-semibold">Approved</span>
-                                    @elseif ($retur->statusRetur == 0)
-                                        <span class="text-red-500 font-semibold">Rejected</span>
-                                    @else
-                                        <span class="text-gray-500">Unknown</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-2 border-b flex gap-1 items-center justify-center">
-                                    <a href="{{ route('detail.bRetur', ['idBarangRetur' => $retur->idBarangRetur]) }}"
-                                        class="px-2 py-1 bg-blue-500 text-white rounded text-xs leading-5 h-8">Detail
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            {{ $bRetur->links() }}
-        @else
-            <!-- Header -->
-            <div class="flex justify-between items-center">
-                <div class="flex-1">
-                    <h1 class="text-xl font-semibold">Halaman Retur Barang</h1>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm text-gray-500">Home > Retur Barang</p>
-                </div>
-            </div>
-
-            <!-- Tabs -->
-            <div class="flex items-center justify-between border rounded-lg p-2 bg-white">
-                <!-- Centered Search Form -->
-                <div class="flex-1 flex justify-center">
-                    <form action="{{ route('bRetur.search') }}" method="GET"
-                        class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 w-[360px] shadow-sm h-11">
-                        <i class="fas fa-search text-gray-400 mr-2"></i>
-                        <input type="text" name="q" placeholder="ID Retur / ID Supplier / Penanggung Jawab..."
-                            value="{{ request('q') }}"
-                            class="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-sm text-gray-700 placeholder-gray-400 h-full" />
-                    </form>
-                </div>
-                <!-- Button Far Right -->
-                <a href="/ajukan-retur"
-                    class="px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-md hover:bg-green-600 h-11 flex items-center ml-4">
-                    Ajukan Retur Barang
-                </a>
-            </div>
-            <!-- Table -->
-            <div class="border rounded-lg overflow-x-auto">
-                <table class="min-w-full text-lg text-center items-center">
-                    <thead class="bg-gray-800 text-white">
-                        <tr>
-                            <th class="px-4 py-2">#</th>
-                            <th class="px-4 py-2">ID Retur</th>
-                            <th class="px-4 py-2">Supplier</th>
-                            <th class="px-4 py-2">Penanggung Jawab</th>
-                            <th class="px-4 py-2">Tanggal Retur</th>
-                            <th class="px-4 py-2">Status</th>
-                            <th class="px-4 py-2">Proses</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y">
-
-                        @if ($staffBRetur->isEmpty())
-                            <tr>
-                                <td class="px-4 py-2 border-b text-center" colspan="8">Tidak ada barang yang diajukan
-                                    saat ini..</td>
-                            </tr>
-                        @endif
-                        @foreach ($staffBRetur as $retur)
-                            <tr>
-                                <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 border-b">{{ $retur->idBarangRetur }}</td>
-                                <td class="px-4 py-2 border-b">{{ $retur->supplier->nama }} ({{ $retur->idSupplier ?? 'N/A' }})</td>
-                                <td class="px-4 py-2 border-b">
-                                    {{ $retur->akun->nama ?? 'N/A' }} ({{ $retur->penanggungJawab ?? 'N/A' }})
-                                </td>
-                                <td class="px-4 py-2 border-b">
-                                    {{ \Carbon\Carbon::parse($retur->tglRetur)->format('d M Y') }}
-                                </td>
-                                <td class="px-4 py-2 border-b">
-                                    @if ($retur->statusRetur == 2)
-                                        <span class="text-yellow-500 font-semibold">Pending</span>
-                                    @elseif ($retur->statusRetur == 1)
-                                        <span class="text-green-500 font-semibold">Approved</span>
-                                    @elseif ($retur->statusRetur == 0)
-                                        <span class="text-red-500 font-semibold">Rejected</span>
-                                    @else
-                                        <span class="text-gray-500">Unknown</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-2 border-b flex gap-1 items-center justify-center">
-                                    <a href="{{ route('detail.bRetur', ['idBarangRetur' => $retur->idBarangRetur]) }}"
-                                        class="px-2 py-1 bg-blue-500 text-white rounded text-xs">Detail
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            {{ $staffBRetur->links() }}
-        @endif
-
+    {{-- Page Header & Actions --}}
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">{{ $pageTitle }}</h1>
+            <p class="text-sm text-gray-500 mt-1">Home > Retur Barang</p>
+        </div>
+        <div class="flex items-center gap-2 mt-4 sm:mt-0">
+            <a href="/ajukan-retur" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition text-sm font-medium shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Ajukan Retur
+            </a>
+        </div>
     </div>
+
+    {{-- Main Content Card --}}
+    <div class="bg-white rounded-xl shadow-md border border-gray-200">
+        {{-- Card Header with Search --}}
+        <div class="p-4 sm:p-6 border-b border-gray-200">
+            <form action="{{ route('bRetur.search') }}" method="GET" class="max-w-lg mx-auto">
+                <label for="search" class="sr-only">Search</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                         <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="text" name="q" id="search"
+                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Cari ID Retur / Supplier / Penanggung Jawab..."
+                           value="{{ request('q') }}">
+                </div>
+            </form>
+        </div>
+
+        {{-- Table --}}
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Pengajuan Retur</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Penanggung Jawab</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Proses</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+
+                    @forelse ($transactions as $retur)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="font-medium text-gray-900">#{{ $retur->idBarangRetur }}</div>
+                                <div class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($retur->tglRetur)->translatedFormat('d M Y') }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="font-medium text-gray-900">{{ optional($retur->supplier)->nama ?? 'N/A' }}</div>
+                                <div class="text-sm text-gray-500">ID: {{ $retur->idSupplier ?? 'N/A' }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="font-medium text-gray-900">{{ optional($retur->akun)->nama ?? 'N/A' }}</div>
+                                <div class="text-sm text-gray-500">ID: {{ $retur->penanggungJawab ?? 'N/A' }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                @if ($retur->statusRetur == 2)
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                @elseif ($retur->statusRetur == 1)
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
+                                @elseif ($retur->statusRetur == 0)
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                                @else
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Unknown</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <a href="{{ route('detail.bRetur', ['idBarangRetur' => $retur->idBarangRetur]) }}" class="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-sm">
+                                    Detail
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-16 text-gray-500">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                  <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" />
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak Ada Pengajuan Retur</h3>
+                                <p class="mt-1 text-sm text-gray-500">Belum ada data retur yang diajukan saat ini.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Pagination --}}
+        <div class="p-4 sm:p-6 border-t border-gray-200">
+            @if (isOwner())
+                {{ $bRetur->links() }}
+            @else
+                {{ $staffBRetur->links() }}
+            @endif
+        </div>
+    </div>
+</div>
 @endsection
