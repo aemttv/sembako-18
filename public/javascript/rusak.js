@@ -117,7 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             stokInput = kuantitasField.value;
                             kuantitasField.readOnly = false;
                         }
-                        console.log(satuanField.value);
                     }
                 })
             })
@@ -198,17 +197,22 @@ document.addEventListener('DOMContentLoaded', function () {
             return
         }
 
-        if (kategoriKetValue === "5") { // 1 = kadaluarsa
+        if (kategoriKetValue === "5") { // 5 = kadaluarsa
             if (!cacheKadaluarsa) {
                 alert('Data kadaluarsa untuk barcode ini tidak ditemukan!');
                 return;
             }
             // Compare only the date part as string (YYYY-MM-DD)
             const today = new Date();
-            const todayStr = today.toISOString().slice(0, 10);
+            const todayStr = today.getFullYear() + '-' +
+                String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                String(today.getDate()).padStart(2, '0');
             const kadaluarsaStrOnly = cacheKadaluarsa.slice(0, 10);
 
+            console.log(todayStr, kadaluarsaStrOnly);
+
             if (todayStr < kadaluarsaStrOnly) {
+                console.log(cacheKadaluarsa);
                 alert('Barang ini belum kadaluarsa, tidak dapat diproses sebagai kadaluarsa.');
                 document.getElementById('nama_barang').value = ''
                 document.getElementById('barcode_field').value = ''
