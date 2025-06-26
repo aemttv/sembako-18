@@ -76,6 +76,7 @@ class AkunController extends Controller
                 'nama' => $request->nama,
                 'nohp' => $request->nohp,
                 'email' => $request->email,
+                'alamat' => $request->alamat,
                 'peran' => $request->peran,
                 'statusAkun' => $request->statusAkun,
             ];
@@ -91,6 +92,47 @@ class AkunController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Gagal mengubah akun: ' . $e->getMessage())
+                ->withInput();
+        }
+        
+    }
+
+    public function editProfil(Request $request, $idAkun) {
+        try {
+            $request->validate([
+            'nama' => 'required',
+            'nohp' => 'required',
+            'email' => 'required|email|unique:akun,email,' . $idAkun . ',idAkun',
+            ]);
+
+            $akun = Akun::where('idAkun', $idAkun)->first();
+
+            if (!$akun) {
+                return redirect()->route('view.akun')->with(['success' => false, 'message' => 'Akun not found'], 404);
+            }
+
+            $updateData = [
+                'nama' => $request->nama,
+                'nohp' => $request->nohp,
+                'email' => $request->email,
+                'alamat' => $request->alamat,
+            ];
+            
+            if ($request->filled('password')) {
+                $updateData['password'] = bcrypt($request->password);
+            }
+
+            $akun->update($updateData);
+
+            // Refresh session data
+            session(['user_data' => $akun]);
+
+            return redirect()->route('profile', ['idAkun' => $akun->idAkun])
+                ->with('success', 'Informasi Personal berhasil disimpan');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal mengubah profil: ' . $e->getMessage())
                 ->withInput();
         }
         

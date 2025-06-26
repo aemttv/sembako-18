@@ -119,15 +119,15 @@
             @csrf
             <input type="hidden" id="editIdAkun" name="idAkun">
             <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
                     <div>
                         <label for="editNama" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
                         <input type="text" id="editNama" name="nama" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" maxlength="100">
                     </div>
-                    <div>
+                    {{-- <div>
                         <label for="editPassword" class="block text-sm font-medium text-gray-700">Password Baru</label>
                         <input type="password" id="editPassword" name="password" maxlength="50" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Kosongkan jika tidak diubah">
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
