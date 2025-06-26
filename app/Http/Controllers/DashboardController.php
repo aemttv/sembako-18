@@ -23,12 +23,23 @@ class DashboardController extends Controller
         foreach ($categories as $kategori) {
             $labels[] = $kategori->namaKategori();
 
-            // Sum jumlahKeluar for all barang in this category
-            $jumlahKeluar = bKeluarDetail::whereHas('barang.detailBarang', function($query) use ($kategori) {
+            // Remove with('satuan') as 'satuan' is not a relationship
+            $barangs = Barang::whereHas('detailBarang', function($query) use ($kategori) {
                 $query->where('kategoriBarang', $kategori->value);
-            })->sum('jumlahKeluar');
+            })->get();
 
-            $data[] = $jumlahKeluar;
+            $jumlahKeluarKategori = 0;
+
+            foreach ($barangs as $barang) {
+                if ($barang->satuan && $barang->satuan->value == 2) {
+                    $jumlahKeluarBarang = bKeluarDetail::where('idBarang', $barang->idBarang)->count();
+                } else {
+                    $jumlahKeluarBarang = bKeluarDetail::where('idBarang', $barang->idBarang)->sum('jumlahKeluar');
+                }
+                $jumlahKeluarKategori += $jumlahKeluarBarang;
+            }
+
+            $data[] = $jumlahKeluarKategori;
         }
 
         $totalStok = Barang::with(['detailBarang' => function($query) {

@@ -52,15 +52,15 @@
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Barcode</label>
-                            <input id="barcode_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop" >
+                            <input id="barcode_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop" readonly>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Tanggal Kadaluarsa</label>
-                            <input id="tglKadaluarsa_field" type="date" class="w-full border rounded-md px-3 py-2 cursor-no-drop" >
+                            <input id="tglKadaluarsa_field" type="date" class="w-full border rounded-md px-3 py-2 cursor-no-drop" readonly>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Merek</label>
-                            <input id="merek_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop">
+                            <input id="merek_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop" readonly>
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Supplier ID</label>
-                            <input id="supplier_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop">
+                            <input id="supplier_field" type="text" class="w-full border rounded-md px-3 py-2 cursor-no-drop" readonly>
                         </div>
                         <div class="relative">
                             <label class="block text-sm text-gray-600 mb-1">Jumlah Pengeluaran(*)</label>

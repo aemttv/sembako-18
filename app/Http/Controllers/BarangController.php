@@ -130,7 +130,7 @@ class BarangController extends Controller
                 $q2->where('namaMerek', 'like', "%$query%");
             });
         })
-        ->select('idBarang', 'namaBarang', 'satuan', 'merekBarang')
+        ->select('idBarang', 'namaBarang', 'satuan', 'merekBarang', 'kategoriBarang')
         ->get();
 
         // Transform the results to include merek name
@@ -141,6 +141,7 @@ class BarangController extends Controller
                 'satuan' => $item->satuan,
                 'merekBarang' => $item->merekBarang,
                 'merekNama' => $item->merek ? $item->merek->namaMerek : 'Unknown',
+                'kategoriBarang' => $item->kategoriBarang,  
             ];
         });
 
@@ -236,6 +237,8 @@ class BarangController extends Controller
             'tglKadaluarsa' => $detail->tglKadaluarsa ?? '-',
             'idSupplier' => $detail->supplier?->idSupplier,
             'namaSupplier' => $detail->supplier?->nama ?? 'Unknown',
+            'hargaJual' => $barang->hargaJual ?? '0',
+            'kategoriBarang' => $barang->kategoriBarang ?? 'Unknown',
         ];
     });
 

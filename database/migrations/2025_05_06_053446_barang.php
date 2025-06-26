@@ -41,7 +41,7 @@ return new class extends Migration
             $table->float('quantity');
             $table->float('hargaBeli');
             $table->date('tglMasuk');
-            $table->date('tglKadaluarsa');
+            $table->date('tglKadaluarsa')->nullable();
             $table->string('barcode');
             $table->integer('statusDetailBarang')->default(1); //aktif
             $table->timestamps();

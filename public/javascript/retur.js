@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tglKadaluarsa: 'tglKadaluarsa',
             idSupplier: 'idSupplier',
             namaSupplier: 'namaSupplier',
+            kategori: 'kategoriBarang',
         }
     })
 
@@ -48,24 +49,33 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         if (data.length > 0) {
-                            suggestionBox.innerHTML = data.map(item => `
-                                <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                                    data-id="${item[valueKeys.id]}"
-                                    data-name="${item[valueKeys.name]}"
-                                    data-barcode="${item[valueKeys.barcode]}"
-                                    data-satuan="${item[valueKeys.satuan]}"
-                                    data-merek="${item[valueKeys.merek]}"
-                                    data-tgl="${item[valueKeys.tglKadaluarsa]}"
-                                    data-supplier="${item['idSupplier'] || ''}"
-                                    data-stok="${item['stok']}">
-                                    <div class="font-semibold">${item[valueKeys.name]}</div>
-                                    <div class="text-sm text-gray-600">Barcode: ${item[valueKeys.barcode]}<br>
-                                    Exp: ${item[valueKeys.tglKadaluarsa]}<br>
-                                    Supplier: ${item[valueKeys.namaSupplier]} (${item[valueKeys.idSupplier] || ''})<br>
-                                    Stok: ${item['stok']}
-                                    </div>
-                                </div>
-                            `).join('');
+                            suggestionBox.innerHTML = data.map(item => {
+    const kategori = parseInt(item[valueKeys.kategori]);
+    let expDisplay = '';
+    if ([1, 2, 3].includes(kategori)) {
+        expDisplay = `Exp: ${item[valueKeys.tglKadaluarsa] || 'Tidak tersedia'}<br>`;
+    }
+    return `
+        <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
+            data-id="${item[valueKeys.id]}"
+            data-name="${item[valueKeys.name]}"
+            data-barcode="${item[valueKeys.barcode]}"
+            data-satuan="${item[valueKeys.satuan]}"
+            data-merek="${item[valueKeys.merek]}"
+            data-tgl="${item[valueKeys.tglKadaluarsa] || ''}"
+            data-supplier="${item['idSupplier'] || ''}"
+            data-stok="${item['stok']}"
+            data-kategori="${item[valueKeys.kategori] || ''}">
+            <div class="font-semibold">${item[valueKeys.name]}</div>
+            <div class="text-sm text-gray-600">
+                Barcode: ${item[valueKeys.barcode]}<br>
+                ${expDisplay}
+                Supplier: ${item[valueKeys.namaSupplier]} (${item[valueKeys.idSupplier] || ''})<br>
+                Stok: ${item['stok']}
+            </div>
+        </div>
+    `;
+}).join('');
                             suggestionBox.classList.remove('hidden')
                             addSuggestionClickListeners()
                         } else {
@@ -111,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         merekField.value = item.getAttribute('data-merek');
                         supplierField.value = item.getAttribute('data-supplier');
                         satuanField.value = item.getAttribute('data-satuan') || 'Pcs';
-
 
                         if(satuanField.value == 2){
                             kuantitasField.value = item.getAttribute('data-stok');

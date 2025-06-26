@@ -141,8 +141,15 @@
                                 </td>
                                 <td class="px-4 py-2">
                                     {{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}</td>
-                                <td class="px-4 py-2">
-                                    {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}</td>
+                                @if (in_array($detail->barangDetail->barang->kategoriBarang->value, [1, 2, 3]))
+                                    <td class="px-4 py-2">
+                                        {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}
+                                    </td>
+                                @else
+                                    <td class="px-4 py-2">
+                                        <span class="text-sm text-gray-400 italic">Tidak tersedia</span>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     @endforeach

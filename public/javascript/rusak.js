@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
             satuan: 'satuan',
             merek: 'merekNama',
             tglKadaluarsa: 'tglKadaluarsa',
+            kategori: 'kategoriBarang',
         }
     })
 
@@ -46,22 +47,31 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         if (data.length > 0) {
-                            suggestionBox.innerHTML = data.map(item => `
-                                <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                                    data-id="${item[valueKeys.id]}"
-                                    data-name="${item[valueKeys.name]}"
-                                    data-barcode="${item[valueKeys.barcode]}"
-                                    data-satuan="${item[valueKeys.satuan]}"
-                                    data-merek="${item[valueKeys.merek]}"
-                                    data-tgl="${item[valueKeys.tglKadaluarsa]}"
-                                    data-stok="${item['stok']}">
-                                    <div class="font-semibold">${item[valueKeys.name]}</div>
-                                    <div class="text-sm text-gray-600">Barcode: ${item[valueKeys.barcode]}<br>
-                                    Exp: ${item[valueKeys.tglKadaluarsa]}<br>
-                                    Stok: ${item['stok']}
+                            suggestionBox.innerHTML = data.map(item => {
+                                const kategori = parseInt(item[valueKeys.kategori]);
+                                let expDisplay = '';
+                                if ([1, 2, 3].includes(kategori)) {
+                                    expDisplay = `Exp: ${item[valueKeys.tglKadaluarsa] || 'Tidak tersedia'}<br>`;
+                                }
+                                return `
+                                    <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                                        data-id="${item[valueKeys.id]}"
+                                        data-name="${item[valueKeys.name]}"
+                                        data-barcode="${item[valueKeys.barcode]}"
+                                        data-satuan="${item[valueKeys.satuan]}"
+                                        data-merek="${item[valueKeys.merek]}"
+                                        data-tgl="${item[valueKeys.tglKadaluarsa]}"
+                                        data-stok="${item['stok']}"
+                                        data-kategori="${item[valueKeys.kategori]}">
+                                        <div class="font-semibold">${item[valueKeys.name]}</div>
+                                        <div class="text-sm text-gray-600">
+                                            Barcode: ${item[valueKeys.barcode]}<br>
+                                            ${expDisplay}
+                                            Stok: ${item['stok']}
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('');
+                                `;
+                            }).join('');
                             suggestionBox.classList.remove('hidden')
                             addSuggestionClickListeners()
                         } else {
@@ -107,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         cacheKadaluarsa = item.getAttribute('data-tgl');
                         satuanField.value = item.getAttribute('data-satuan') || 'Pcs';
+                        kategoriBarangValue = item.getAttribute('data-kategori');
 
                         if(satuanField.value == 2){
                             kuantitasField.value = item.getAttribute('data-stok');
@@ -136,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let cacheKadaluarsa = null;
+    let kategoriBarangValue = null;
 
     function updateNoDataRow() {
         const tableBody = document.getElementById('rusakTableBody');
@@ -186,22 +198,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if(kuantitas > stokInput) {
-            alert('Stok melebihi batas stok pada saat ini.')
-            document.getElementById('nama_barang').value = ''
-            document.getElementById('supplier_field').value = ''
-            document.getElementById('barcode_field').value = ''
-            document.getElementById('tglKadaluarsa_field').value = ''
-            document.getElementById('merek_field').value = ''
-            document.getElementById('kuantitas').value = 1
-            return
-        }
-
         if (kategoriKetValue === "5") { // 5 = kadaluarsa
+
+            if (!["1", "2", "3", 1, 2, 3].includes(kategoriBarangValue)) {
+                alert('Barang ini tidak tersedia untuk di proses sebagai kadaluarsa.');
+
+                return;
+            }
+
             if (!cacheKadaluarsa) {
                 alert('Data kadaluarsa untuk barcode ini tidak ditemukan!');
                 return;
             }
+
             // Compare only the date part as string (YYYY-MM-DD)
             const today = new Date();
             const todayStr = today.getFullYear() + '-' +
@@ -255,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Create a new table row
         rowCount++;
         const newRow = document.createElement('tr');
+        newRow.setAttribute('data-row', rowCount);
         newRow.innerHTML = `
             <td class="px-4 py-2 border-b">${rowCount}</td>
             <td class="px-4 py-2 border-b">${namaAkun}</td>
@@ -278,19 +288,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Create hidden inputs for form submission
         const hiddenInputs = `
-            <input type="hidden" name="rusak[${rowCount}][id_akun]" value="${namaAkun}">
-            <input type="hidden" name="rusak[${rowCount}][id_barang]" value="${barangId}">
-            <input type="hidden" name="rusak[${rowCount}][barcode]" value="${barcode}">
-            <input type="hidden" name="rusak[${rowCount}][kuantitas]" value="${kuantitas}">
-            <input type="hidden" name="rusak[${rowCount}][kategori_ket]" value="${kategoriKetValue}">
-            <input type="hidden" name="rusak[${rowCount}][tanggal_rusak]" value="${tanggalRusak}">
-            <input type="hidden" name="rusak[${rowCount}][note]" value="${note}">
+            <div class="hidden-row-group" data-row="${rowCount}">
+                <input type="hidden" name="rusak[${rowCount}][id_akun]" value="${namaAkun}">
+                <input type="hidden" name="rusak[${rowCount}][id_barang]" value="${barangId}">
+                <input type="hidden" name="rusak[${rowCount}][barcode]" value="${barcode}">
+                <input type="hidden" name="rusak[${rowCount}][kuantitas]" value="${kuantitas}">
+                <input type="hidden" name="rusak[${rowCount}][kategori_ket]" value="${kategoriKetValue}">
+                <input type="hidden" name="rusak[${rowCount}][tanggal_rusak]" value="${tanggalRusak}">
+                <input type="hidden" name="rusak[${rowCount}][note]" value="${note}">
+            </div>
         `;
         hiddenRowsDiv.insertAdjacentHTML('beforeend', hiddenInputs);
 
         // Add event listener to the remove button
         newRow.querySelector('.remove-row').addEventListener('click', function () {
+            const rowNum = newRow.getAttribute('data-row');
             newRow.remove();
+
+            // Remove the corresponding hidden inputs
+            const hiddenGroup = hiddenRowsDiv.querySelector(`.hidden-row-group[data-row="${rowNum}"]`);
+            if (hiddenGroup) hiddenGroup.remove();
 
             updateRowNumbers();
             updateNoDataRow();

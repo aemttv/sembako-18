@@ -7,11 +7,14 @@ use App\Models\bKeluar;
 use App\Models\bMasuk;
 use App\Models\bRetur;
 use App\Models\bRusak;
+use Illuminate\Support\Carbon;
 
 class LogController extends Controller
 {
     public function index()
     {
+        Carbon::setLocale('id');
+
         if(!isOwner() || !isUserLoggedIn()) {
         abort(403, 'Unauthorized action.');
         }

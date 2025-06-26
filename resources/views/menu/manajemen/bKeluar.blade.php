@@ -41,7 +41,7 @@
             <!-- Barcode & Qty Input -->
             <div class="bg-white rounded-md shadow p-4 flex flex-col justify-between h-full min-h-[220px]">
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium">Nama Barang / Barcode (*)</label>
+                    <label class="block text-sm font-medium">Nama Barang / Barcode (*) <span id="hargaBarang"></span></label>
                     <div class="flex w-full gap-2">
                         <div class="relative flex-grow">
                             {{-- <input id="nama_barang" type="text" class="w-full border border-gray-300 rounded p-2">

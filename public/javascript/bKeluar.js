@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
             barcode: 'barcode',
             satuan: 'satuan',
             merek: 'merekNama',
-            tglKadaluarsa: 'tglKadaluarsa'
+            tglKadaluarsa: 'tglKadaluarsa',
+            harga: 'hargaJual',
+            kategori: 'kategoriBarang',
         }
     });
 
@@ -52,18 +54,32 @@ document.addEventListener('DOMContentLoaded', function() {
                             .then(response => response.json())
                             .then(data => {
                                 if (data.length > 0) {
-                                    suggestionBox.innerHTML = data.map(item => `
-                                        <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                                            data-id="${item[valueKeys.id]}"
-                                            data-name="${item[valueKeys.name]}"
-                                            data-barcode="${item[valueKeys.barcode]}"
-                                            data-satuan="${item[valueKeys.satuan]}"
-                                            data-merek="${item[valueKeys.merek]}"
-                                            data-tgl="${item[valueKeys.tglKadaluarsa]}">
-                                            <div class="font-semibold">${item[valueKeys.name]}</div>
-                                            <div class="text-sm text-gray-600">Barcode: ${item[valueKeys.barcode]}, Exp: ${item[valueKeys.tglKadaluarsa]}</div>
-                                        </div>
-                                    `).join('');
+                                   suggestionBox.innerHTML = data.map(item => {
+                                        const kategori = parseInt(item[valueKeys.kategori]);
+                                        // Only show Exp: if kategori is 1, 2, or 3
+                                        let expDisplay = '';
+                                        if ([1, 2, 3].includes(kategori)) {
+                                            expDisplay = `Exp: ${item[valueKeys.tglKadaluarsa] ? item[valueKeys.tglKadaluarsa] : 'Tidak Tersedia'} <br>`;
+                                        }
+                                        return `
+                                            <div class="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                                                data-id="${item[valueKeys.id]}"
+                                                data-name="${item[valueKeys.name]}"
+                                                data-barcode="${item[valueKeys.barcode]}"
+                                                data-satuan="${item[valueKeys.satuan]}"
+                                                data-merek="${item[valueKeys.merek]}"
+                                                data-tgl="${item[valueKeys.tglKadaluarsa]}"
+                                                data-harga="${item[valueKeys.harga]}"
+                                                data-kategori="${item[valueKeys.kategori] || ''}">
+                                                <div class="font-semibold">${item[valueKeys.name]}</div>
+                                                <div class="text-sm text-gray-600">
+                                                    Barcode: ${item[valueKeys.barcode]} <br>
+                                                    ${expDisplay}
+                                                    Harga: ${formatRupiah(item[valueKeys.harga])}
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('');
                                     suggestionBox.classList.remove('hidden');
                                     addSuggestionClickListeners();
                                 } else {
@@ -91,11 +107,23 @@ document.addEventListener('DOMContentLoaded', function() {
                             const barcodeField = document.getElementById('barcode_field');
                             const tglKadaluarsaField = document.getElementById('tglKadaluarsa_field');
                             const merekField = document.getElementById('merek_field');
+                            const hargaField = document.getElementById('hargaBarang');
+                            const satuan = item.getAttribute('data-satuan');
+                            let satuanText = '';
+
+                            if(satuan == 1){
+                                satuanText = 'Pcs';
+                            } else if(satuan == 2){
+                                satuanText = 'Kg';
+                            } else if(satuan == 3){
+                                satuanText = 'Dus';
+                            }
 
                             if(namaBarangField){
                                 barcodeField.value = item.getAttribute('data-barcode');
                                 tglKadaluarsaField.value = item.getAttribute('data-tgl');
                                 merekField.value = item.getAttribute('data-merek');
+                                hargaField.textContent = "Harga: " + formatRupiah(item.getAttribute('data-harga')) + " / " + satuanText;
                             }
 
                         });
@@ -109,12 +137,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         const barcodeField = document.getElementById('barcode_field');
                         const tglKadaluarsaField = document.getElementById('tglKadaluarsa_field');
                         const merekField = document.getElementById('merek_field');
+                        const hargaField = document.getElementById('hargaBarang');
 
                         if (!hiddenInput.value) {
                             input.value = '';
                             barcodeField.value = '';
                             tglKadaluarsaField.value = '';
                             merekField.value = '';
+                            hargaField.textContent = '';
                         }
                     }
                 });

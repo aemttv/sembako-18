@@ -19,7 +19,7 @@
         </div>
 
         <!-- Form Container -->
-        <div class="border rounded-lg bg-white shadow-sm" x-data="{ editing: false }">
+        <div class="border rounded-lg bg-white shadow-sm" x-data="{ editing: false }" x-transition>
             <div class="flex items-center justify-between border-b px-6 py-4 bg-white rounded-t-lg shadow-sm mb-2">
                 <div class="flex items-center gap-3">
                     <a href="{{ url()->previous() }}"
@@ -51,7 +51,8 @@
                 </button>
             </div>
 
-            <form method="POST" action="{{ route('detail.barang.update', $barang->idBarang) }}"
+            <form method="POST"
+                action="{{ route('detail.barang.update', $barang->idBarang) }} "x-transition.opacity.duration.500ms
                 enctype="multipart/form-data">
                 @csrf
                 {{-- @method('PUT') --}}
@@ -114,7 +115,7 @@
 
                     <!-- Right Column: Product Detail Inputs -->
                     <div class="grid gap-4 font-semibold">
-                        {{-- Row 1: Nama Barang (full width) --}}
+                        {{-- Row 1: Nama Barang --}}
                         <div class="w-full">
                             <label class="block text-sm mb-1">Nama Barang</label>
                             <input type="text" id="nama_barang" name="nama_barang"
@@ -147,7 +148,7 @@
                                     :disabled="!editing">
                                     @foreach ($kategori as $kat)
                                         <option value="{{ $kat->value }}"
-                                            {{ old('kategori', $barang->kategoriBarang ?? null) == $kat->value ? 'selected' : '' }}>
+                                            {{ (old('kategori') ?? optional($barang->kategoriBarang)->value) == $kat->value ? 'selected' : '' }}>
                                             {{ $kat->namaKategori() }}
                                         </option>
                                     @endforeach
@@ -198,7 +199,7 @@
                         <button type="button" @click="editing = false" x-show="editing"
                             class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
                         <button type="button" @click="window.location.href='/daftar-produk'" x-show="!editing"
-    class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Kembali</button>
+                            class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Kembali</button>
                     </div>
                 </div>
             </form>
@@ -225,7 +226,9 @@
                                 @endif
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Kondisi</th>
                                 <th class="px-4 py-2 border-b border-gray-300 bg-white">Tanggal Masuk</th>
-                                <th class="px-4 py-2 border-b border-gray-300 bg-white">Tanggal Kadaluarsa
+                                @if (in_array($barang->kategoriBarang->value, [1, 2, 3]))
+                                    <th class="px-4 py-2 border-b border-gray-300 bg-white">Tanggal Kadaluarsa</th>
+                                @endif
                                 </th>
                                 @if (isOwner())
                                     <th class="px-4 py-2 border-b border-gray-300 bg-white">Aksi</th>
@@ -291,9 +294,11 @@
                                     </td>
                                     <td class="px-4 py-2 border-b">
                                         {{ \Carbon\Carbon::parse($detail->tglMasuk)->translatedFormat('d F Y') }}</td>
-                                    <td class="px-4 py-2 border-b">
-                                        {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}
-                                    </td>
+                                    @if (in_array($barang->kategoriBarang->value, [1, 2, 3]))
+                                        <td class="px-4 py-2 border-b">
+                                            {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}
+                                        </td>
+                                    @endif
                                     @if (isOwner())
                                         <td class="px-4 py-2 border-b">
                                             <form

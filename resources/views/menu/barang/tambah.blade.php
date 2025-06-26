@@ -392,7 +392,7 @@
                     satuanLabel = 'kg';
                 } else if (satuan === '3') {
                     satuanLabel = 'dus';
-                else {
+                } else {
                     satuanLabel = satuan;
                 }
 

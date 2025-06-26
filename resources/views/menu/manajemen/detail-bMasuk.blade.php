@@ -3,7 +3,7 @@
 @section('content')
 <div class="p-6 lg:p-8 bg-gray-50 min-h-screen">
 
-    {{-- Session Alerts (Kept from your original code) --}}
+    {{-- Session Alerts --}}
     @if (session('success'))
         <x-ui.alert type="success" :message="session('success')" />
     @elseif (session('error'))
@@ -13,7 +13,6 @@
     {{-- Page Header --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div>
-            {{-- Title changed to be more accurate to your data --}}
             <h1 class="text-2xl font-bold text-gray-800">Detail Pemasukan Barang</h1>
             <p class="text-sm text-gray-500 mt-1">Home > Barang Masuk > Detail</p>
         </div>
@@ -42,7 +41,6 @@
                     No. Barang Masuk <span class="text-blue-600">#{{ $bMasuk->idBarangMasuk }}</span>
                 </h2>
                 <p class="text-sm text-gray-500">
-                    {{-- Assuming the date is in the 'created_at' field of the $bMasuk object --}}
                     Tanggal Transaksi: {{ \Carbon\Carbon::parse($bMasuk->created_at ?? now())->translatedFormat('d F Y, H:i') }}
                 </p>
             </div>
@@ -56,17 +54,14 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
                 <label class="text-xs text-gray-500">Supplier</label>
-                {{-- Assuming you have a supplier relationship like $bMasuk->supplier->namaSupplier --}}
                 <p class="text-md font-semibold text-gray-900">{{ $bMasuk->supplier->nama ?? 'Nama Supplier' }}</p>
             </div>
             <div>
                 <label class="text-xs text-gray-500">Petugas</label>
-                {{-- Assuming you have a user relationship --}}
                 <p class="text-md font-semibold text-gray-900">{{ $bMasuk->akun->nama ?? 'Nama Petugas' }}</p>
             </div>
              <div>
                 <label class="text-xs text-gray-500">Total Harga Barang</label>
-                 {{-- We will calculate this total from your loop --}}
                 <p class="text-md font-bold text-blue-600">Rp.{{ number_format($bMasuk->detailMasuk->sum('hargaBeli'), 0, ',', '.') }}</p>
             </div>
         </div>
@@ -81,9 +76,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-3 text-left font-semibold text-gray-600">No.</th>
-                            {{-- MERGED: Product Name + ID --}}
                             <th class="px-4 py-3 text-left font-semibold text-gray-600">NAMA BARANG</th>
-                            {{-- MERGED: Quantity + Unit --}}
                             <th class="px-4 py-3 text-center font-semibold text-gray-600">KUANTITAS</th>
                             <th class="px-4 py-3 text-right font-semibold text-gray-600">HARGA SATUAN</th>
                             <th class="px-4 py-3 text-right font-semibold text-gray-600">SUBTOTAL BELI</th>
@@ -92,7 +85,6 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         
-                        {{-- Kept your Grand Total logic exactly --}}
                         @php $grandTotal = 0; @endphp 
 
                         @forelse ($bMasuk->detailMasuk as $index => $detail)
@@ -100,12 +92,10 @@
                             <tr>
                                 <td class="px-4 py-4 text-gray-500">{{ $index + 1 }}</td>
                                 <td class="px-4 py-4">
-                                    {{-- Product column using your exact variables --}}
                                     <div class="font-medium text-gray-800">{{ $detail->barangDetail->barang->namaBarang }}</div>
                                     <div class="text-xs text-gray-500">ID: {{ $detail->idBarang }}</div>
                                 </td>
                                 <td class="px-4 py-4 text-center text-gray-700">
-                                    {{-- Quantity column using your exact variables --}}
                                     {{ $detail->jumlahMasuk }}
                                     @if ($detail->barangDetail->barang->satuan->namaSatuan() == 'pcs/eceran')
                                         Pcs
@@ -118,16 +108,17 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-4 text-right text-gray-700">
-                                    {{-- Calculated unit price, as it wasn't in the original data --}}
                                     Rp.{{ number_format($detail->hargaBeli / $detail->jumlahMasuk, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-right font-semibold text-gray-800">
-                                    {{-- Subtotal column using your exact variable --}}
                                     Rp.{{ number_format($detail->hargaBeli, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-center text-gray-600">
-                                    {{-- Expiry date using your exact variable --}}
-                                    {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d M Y') }}
+                                    @if (in_array($detail->barangDetail->barang->kategoriBarang->value, [1, 2, 3]))
+                                        {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d M Y') }}
+                                    @else
+                                        <span class="text-sm text-gray-400 italic">Tidak tersedia</span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -148,7 +139,6 @@
                             <tr>
                                 <td colspan="4" class="px-4 py-4 text-right font-bold text-gray-800 text-base">Grand Total</td>
                                 <td class="px-4 py-4 text-right font-bold text-blue-600 text-base">
-                                    {{-- Grand Total display using your exact logic --}}
                                     Rp.{{ number_format($grandTotal, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4"></td>

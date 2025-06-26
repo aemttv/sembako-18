@@ -20,7 +20,7 @@
 
         {{-- Main Profile Card --}}
         <div class="bg-white rounded-xl shadow-md border border-gray-200" x-data="{ editing: false }">
-            {{-- Card Header with Edit/Cancel Button --}}
+            {{-- Card Header --}}
             <div class="p-4 sm:p-6 flex justify-between items-center border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-800">Informasi Personal</h3>
                 <button @click="editing = !editing"

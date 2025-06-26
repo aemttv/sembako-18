@@ -197,7 +197,8 @@
                         id: 'idBarang',
                         name: 'namaBarang',
                         satuan: 'satuan',
-                        merek: 'merekNama'
+                        merek: 'merekNama',
+                        kategori: 'kategoriBarang'
                     }
                 });
 
@@ -235,7 +236,8 @@
                                     data-id="${item[valueKeys.id]}"
                                     data-name="${item[valueKeys.name]}"
                                     data-satuan="${item[valueKeys.satuan]}"
-                                    data-merek="${item[valueKeys.merek] || ''}">
+                                    data-merek="${item[valueKeys.merek] || ''}"
+                                    data-kategori="${item[valueKeys.kategori] || ''}">
                                     ${item[valueKeys.merek] ? `[${item[valueKeys.merek]}] ` : ''}${item[valueKeys.name]} (${item[valueKeys.id]})
                                 </div>
                             `).join('');
@@ -265,9 +267,17 @@
                                 // Set satuan if available and if this is the barang input
                                 if (inputId === 'nama_barang' && item.hasAttribute('data-satuan')) {
                                     const satuanSelect = document.getElementById('satuan');
+                                    const kategori = parseInt(item.getAttribute('data-kategori'));
+                                    const kadaluwarsa = document.getElementById('tanggal_kadaluwarsa');
                                     if (satuanSelect) {
                                         satuanSelect.value = item.getAttribute('data-satuan');
                                         satuanSelect.disabled = true; // Make it readonly/disabled
+                                    }
+                                    if(kategori === 4 || kategori === 5 || kategori === 6) {
+                                        kadaluwarsa.disabled = true;
+                                        kadaluwarsa.value = '';
+                                    } else {
+                                        kadaluwarsa.disabled = false;
                                     }
                                 }
                             });
@@ -308,91 +318,91 @@
             }
 
             // File upload handling
-const uploadArea = document.getElementById('uploadArea');
-const notaFileInput = document.getElementById('notaFile');
-const fileNameDisplay = document.getElementById('fileName');
-const imagePreview = document.getElementById('imagePreview');
-const uploadPrompt = document.getElementById('uploadPrompt');
+            const uploadArea = document.getElementById('uploadArea');
+            const notaFileInput = document.getElementById('notaFile');
+            const fileNameDisplay = document.getElementById('fileName');
+            const imagePreview = document.getElementById('imagePreview');
+            const uploadPrompt = document.getElementById('uploadPrompt');
 
-// Click to open file dialog
-uploadArea.addEventListener('click', () => {
-    notaFileInput.click();
-});
+            // Click to open file dialog
+            uploadArea.addEventListener('click', () => {
+                notaFileInput.click();
+            });
 
-// Handle drag and drop
-uploadArea.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    uploadArea.classList.add('border-blue-500', 'bg-blue-50');
-});
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+            });
 
-uploadArea.addEventListener('dragleave', function() {
-    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
-});
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            });
 
-uploadArea.addEventListener('drop', function(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
-    if (e.dataTransfer.files.length) {
-        notaFileInput.files = e.dataTransfer.files;
-        updateFileNameAndPreview();
-    }
-});
-
-// Handle file selection
-notaFileInput.addEventListener('change', updateFileNameAndPreview);
-
-function updateFileNameAndPreview() {
-    if (notaFileInput.files.length > 0) {
-        const file = notaFileInput.files[0];
-        fileNameDisplay.textContent = `Selected file: ${file.name}`;
-
-        // Validate file type
-        const allowedImageTypes = ['image/jpeg', 'image/png'];
-        if (!allowedImageTypes.includes(file.type)) {
-            alert('Invalid image type. Please upload a JPEG or PNG image.');
-            resetFileInput();
-            return;
-        }
-
-        // If image, show preview and validate dimensions
-        if (file.type.startsWith('image/')) {
-            const img = new Image();
-            img.onload = function() {
-                if (img.width < 400 || img.height < 400 || img.width > 1200 || img.height > 1200) {
-                    alert('Image resolution must be between 400x400px and 1200x1200px.');
-                    resetFileInput();
-                } else {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        imagePreview.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                    uploadPrompt.classList.add('hidden');
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+                if (e.dataTransfer.files.length) {
+                    notaFileInput.files = e.dataTransfer.files;
+                    updateFileNameAndPreview();
                 }
-            };
-            img.onerror = function() {
-                alert('Failed to load the image. Please try again.');
-                resetFileInput();
-            };
-            img.src = URL.createObjectURL(file);
-        } else {
-            imagePreview.src = '';
-            imagePreview.classList.add('hidden');
-            uploadPrompt.classList.remove('hidden');
-        }
-    } else {
-        resetFileInput();
-    }
-}
+            });
 
-function resetFileInput() {
-    fileNameDisplay.textContent = '';
-    imagePreview.src = '';
-    imagePreview.classList.add('hidden');
-    uploadPrompt.classList.remove('hidden');
-    notaFileInput.value = ''; // Reset the file input
-}
+            // Handle file selection
+            notaFileInput.addEventListener('change', updateFileNameAndPreview);
+
+            function updateFileNameAndPreview() {
+                if (notaFileInput.files.length > 0) {
+                    const file = notaFileInput.files[0];
+                    fileNameDisplay.textContent = `Selected file: ${file.name}`;
+
+                    // Validate file type
+                    const allowedImageTypes = ['image/jpeg', 'image/png'];
+                    if (!allowedImageTypes.includes(file.type)) {
+                        alert('Invalid image type. Please upload a JPEG or PNG image.');
+                        resetFileInput();
+                        return;
+                    }
+
+                    // If image, show preview and validate dimensions
+                    if (file.type.startsWith('image/')) {
+                        const img = new Image();
+                        img.onload = function() {
+                            if (img.width < 400 || img.height < 400 || img.width > 1200 || img.height > 1200) {
+                                alert('Image resolution must be between 400x400px and 1200x1200px.');
+                                resetFileInput();
+                            } else {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    imagePreview.src = e.target.result;
+                                    imagePreview.classList.remove('hidden');
+                                };
+                                reader.readAsDataURL(file);
+                                uploadPrompt.classList.add('hidden');
+                            }
+                        };
+                        img.onerror = function() {
+                            alert('Failed to load the image. Please try again.');
+                            resetFileInput();
+                        };
+                        img.src = URL.createObjectURL(file);
+                    } else {
+                        imagePreview.src = '';
+                        imagePreview.classList.add('hidden');
+                        uploadPrompt.classList.remove('hidden');
+                    }
+                } else {
+                    resetFileInput();
+                }
+            }
+
+            function resetFileInput() {
+                fileNameDisplay.textContent = '';
+                imagePreview.src = '';
+                imagePreview.classList.add('hidden');
+                uploadPrompt.classList.remove('hidden');
+                notaFileInput.value = ''; // Reset the file input
+            }
 
 
             // Helper to format number as Rupiah
@@ -537,8 +547,7 @@ function resetFileInput() {
                     const tanggalMasuk = document.getElementById('tanggal_masuk').value;
                     const tanggalKadaluwarsa = document.getElementById('tanggal_kadaluwarsa').value;
 
-                    if (!barangId || !namaBarang || !hargaSatuanFormatted || !kuantitas || !tanggalMasuk || !
-                        tanggalKadaluwarsa) {
+                    if (!barangId || !namaBarang || !hargaSatuanFormatted || !kuantitas || !tanggalMasuk) {
                         alert('Mohon lengkapi semua field penting.');
                         return;
                     }
@@ -576,7 +585,7 @@ function resetFileInput() {
                         <td class="px-4 py-2 border-b">${satuanLabel}</td>
                         <td class="px-4 py-2 border-b">${kuantitas}</td>
                         <td class="px-4 py-2 border-b">${formatTanggalMasuk(tanggalMasuk)}</td>
-                        <td class="px-4 py-2 border-b">${formatTanggalMasuk(tanggalKadaluwarsa)}</td>
+                        <td class="px-4 py-2 border-b">${tanggalKadaluwarsa ? formatTanggalMasuk(tanggalKadaluwarsa) : 'Tidak Tersedia'}</td>
                         <td class="px-4 py-2 border-b">
                             <button type="button" class="text-red-500 hover:underline remove-row" data-index="${rowIndex}">Hapus</button>
                         </td>
@@ -619,14 +628,6 @@ function resetFileInput() {
                     }
                 });
 
-                // Tombol kosongkan field
-                document.getElementById('clearFields').addEventListener('click', function() {
-                    document.getElementById('nama_barang').value = '';
-                    document.getElementById('barang_id').value = '';
-                    document.getElementById('harga_satuan').value = '';
-                    document.getElementById('kuantitas_masuk').value = '1';
-                    document.getElementById('tanggal_kadaluwarsa').value = '';
-                });
                 updateNoDataRow();
             });
 
