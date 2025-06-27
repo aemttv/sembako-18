@@ -58,13 +58,13 @@
                             <form action="{{route('login.submit')}}" method="POST">
                                 @csrf
                                 <div class="space-y-5">
-                                    <!-- Email -->
+                                    <!-- ID Pegawai -->
                                     <div>
                                         <label
                                             class="mb-1.5 block text-sm font-medium text-gray-700">
                                             ID Pegawai<span class="text-red-500">*</span>
                                         </label>
-                                        <input type="text" id="id" name="idAkun" placeholder="A00X"
+                                        <input type="text" id="id" name="idAkun" placeholder="AXXXXX"
                                             class="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30" />
 
                                     </div>

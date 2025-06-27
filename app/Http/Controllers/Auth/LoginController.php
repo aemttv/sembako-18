@@ -20,17 +20,23 @@ class LoginController extends Controller
             // Validate credentials (example using idAkun)
             $user = \App\Models\Akun::where('idAkun', $request->idAkun)->first();
 
-            if ($user && Hash::check($request->password, $user->password)) {
-                // Store manual session
-                session(['user_logged_in' => true]);
-                session(['user_data' => $user]);
-                session(['idAkun' => $user->idAkun]);
-                session(['last_activity' => time()]);
+            if ($user) {
+                if (Hash::check($request->password, $user->password)) {
+                    // Store manual session
+                    session(['user_logged_in' => true]);
+                    session(['user_data' => $user]);
+                    session(['idAkun' => $user->idAkun]);
+                    session(['last_activity' => time()]);
 
-                return redirect('/dashboard');
+                    return redirect('/dashboard');
+                } else {
+                    // idAkun found but password is wrong
+                    return redirect()->back()->with(['error' => 'Password salah!']);
+                }
+            } else {
+                // idAkun not found
+                return redirect()->back()->with(['error' => 'ID Pegawai tidak ditemukan!']);
             }
-
-            return redirect()->back()->with(['error' => 'ID Pegawai Atau Password Salah!']);
         } catch (\Exception $e) {
             return redirect()->back()->with(['error' => 'Terjadi kesalahan. Silahkan coba lagi.']);
         }
