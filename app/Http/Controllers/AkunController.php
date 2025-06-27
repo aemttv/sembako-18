@@ -34,6 +34,19 @@ class AkunController extends Controller
             foreach ($request->staff_input as $jsonItem) {
                 $item = json_decode($jsonItem, true);
 
+                // Check for duplicate by email or nohp
+                $existingAkun = Akun::where('email', $item['email'])
+                ->orWhere('nohp', $item['no_hp'])
+                ->orWhere('nama', $item['nama'])
+                ->first();
+
+                if ($existingAkun) {
+                    DB::rollBack();
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'Akun sudah tersedia dengan nama, email, atau nomor HP tersebut!');
+                }
+
                 $akun = new Akun();
                 $akun->idAkun = Akun::generateNewId();
                 $akun->nama = $item['nama'];
@@ -54,7 +67,7 @@ class AkunController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             // Print error message (for debugging/logging)
-            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan staff');
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan staff : ' . $e->getMessage());
         }
     }
 

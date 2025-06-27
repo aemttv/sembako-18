@@ -146,7 +146,7 @@
                 const isNumeric = /^\d+$/.test(noHp);
 
                 if (!namaLengkap || !noHp || !alamat || !status) {
-                    alert('Please fill in all required fields');
+                    alert('Silakan isi semua kolom (Nama Lengkap, No HP, Alamat dan Status).');
                     return;
                 }
                 if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
@@ -161,7 +161,7 @@
                         row.cells[2].innerText === noHp &&
                         row.cells[3].innerText === alamat &&
                         row.cells[4].innerText === (status == 1 ? 'Aktif' : 'Tidak Aktif')) {
-                        alert('Duplicate entry detected. Please enter unique values.');
+                        alert('Data sudah ada dalam tabel. Silakan coba lagi.');
                         return;
                     }
                 }

@@ -60,7 +60,7 @@
                             <!-- Hidden input to store supplier ID -->
                             <input type="hidden" id="barang_id" name="barang_id" />
                         </div>
-                        <button id="search-barcode-btn" class="bg-blue-500 text-white px-3 py-2 rounded">
+                        {{-- <button id="search-barcode-btn" class="bg-blue-500 text-white px-3 py-2 rounded">
                             <i class="fas fa-info"></i>
                         </button>
 
@@ -72,7 +72,7 @@
                             <div>Name: <span id="popup-name"></span></div>
                             <div>Price: Rp.<span id="popup-price"></span></div>
                             <div>Kuantitas/Berat: <span id="popup-stock"></span> <span id="popup-satuan"></span></div>
-                        </div>
+                        </div> --}}
 
                     </div>
 
@@ -94,7 +94,7 @@
                         <div>
                             <label class="block text-sm font-medium">Kuantitas/Berat(gr) (*)</label>
                             <input id="qty" type="number" class="w-full border border-gray-300 rounded p-2"
-                                min="0" max="10000"
+                                min="0" max="10000" 
                                 oninput="
                                         if(this.value.length > 6) this.value = this.value.slice(0,5);
                                         if(this.value == 0) this.value = 1;
@@ -161,7 +161,7 @@
                         class="w-full border border-gray-300 rounded p-2 pointer-events-none" readonly>
 
                     <label class="block text-sm font-medium">Uang</label>
-                    <input id="cash-input" type="text" value="0"
+                    <input id="cash-input" type="text" value="0" maxlength="16"
                         class="w-full border border-gray-300 rounded p-2">
 
                     <label class="block text-sm font-medium">Uang Kembali</label>
@@ -177,7 +177,7 @@
                         <option value="2">Pribadi</option>
                     </select>
                     <label class="block text-sm font-medium">Note</label>
-                    <textarea class="w-full border border-gray-300 rounded p-2"></textarea>
+                    <textarea class="w-full border border-gray-300 rounded p-2 min-h-20 max-h-40" maxlength="100"></textarea>
 
 
                     <button id="process-button"

@@ -503,7 +503,7 @@ fileInput.addEventListener('change', function(e) {
                 // Validate file type
                 const allowedImageTypes = ['image/jpeg', 'image/png'];
                 if (!allowedImageTypes.includes(file.type)) {
-                    alert('Invalid image type. Please upload a JPEG or PNG image.');
+                    alert('Tipe gambar tidak sesuai(harus JPEG atau PNG).');
                     return;
                 }
 
@@ -511,7 +511,7 @@ fileInput.addEventListener('change', function(e) {
                 img.onload = function() {
                     // Validate image dimensions
                     if (img.width < 400 || img.height < 400 || img.width > 1200 || img.height > 1200) {
-                        alert('Image resolution must be between 400x400px and 1200x1200px.');
+                        alert('Resolusi gambar tidak sesuai(harus 400x400 sampai 1200x1200).');
                         return;
                     }
 

@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tglKadaluarsa: 'tglKadaluarsa',
             harga: 'hargaJual',
             kategori: 'kategoriBarang',
+            quantity: 'quantity',
         }
     });
 
@@ -70,12 +71,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 data-merek="${item[valueKeys.merek]}"
                                                 data-tgl="${item[valueKeys.tglKadaluarsa]}"
                                                 data-harga="${item[valueKeys.harga]}"
-                                                data-kategori="${item[valueKeys.kategori] || ''}">
+                                                data-kategori="${item[valueKeys.kategori] || ''}"
+                                                data-quantity="${item[valueKeys.quantity] || ''}">
                                                 <div class="font-semibold">${item[valueKeys.name]}</div>
                                                 <div class="text-sm text-gray-600">
                                                     Barcode: ${item[valueKeys.barcode]} <br>
                                                     ${expDisplay}
-                                                    Harga: ${formatRupiah(item[valueKeys.harga])}
+                                                    Harga: ${formatRupiah(item[valueKeys.harga])} <br>
+                                                    Stok: ${item[valueKeys.quantity] || 'Tidak tersedia'}
                                                 </div>
                                             </div>
                                         `;
@@ -109,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const merekField = document.getElementById('merek_field');
                             const hargaField = document.getElementById('hargaBarang');
                             const satuan = item.getAttribute('data-satuan');
+                            const kauntitasField = document.getElementById('qty');
                             let satuanText = '';
 
                             if(satuan == 1){
@@ -124,6 +128,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 tglKadaluarsaField.value = item.getAttribute('data-tgl');
                                 merekField.value = item.getAttribute('data-merek');
                                 hargaField.textContent = "Harga: " + formatRupiah(item.getAttribute('data-harga')) + " / " + satuanText;
+
+                                if(satuan == 1){
+                                    kauntitasField.value = item.getAttribute('data-quantity');
+                                } else if(satuan == 2){
+                                    kauntitasField.value = item.getAttribute('data-quantity') + "000";
+                                } else if(satuan == 3){
+                                    kauntitasField.value = item.getAttribute('data-quantity');
+                                }
                             }
 
                         });
@@ -175,57 +187,57 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // search popup function
-        document.getElementById('search-barcode-btn').addEventListener('click', function(e) {
-            e.preventDefault();
+        // document.getElementById('search-barcode-btn').addEventListener('click', function(e) {
+        //     e.preventDefault();
 
-            const barcode = document.getElementById('nama_barang').value;
-            if (!barcode) {
-                alert('Silakan masukkan nama barang atau barcode.');
-                return;
-            }
+        //     const barcode = document.getElementById('nama_barang').value;
+        //     if (!barcode) {
+        //         alert('Silakan masukkan nama barang atau barcode.');
+        //         return;
+        //     }
 
-            fetch(`/daftar-produk/search-detail?barcode=${encodeURIComponent(barcode)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (!data) {
-                        alert('Barcode not found.');
-                        return;
-                    };
+        //     fetch(`/daftar-produk/search-detail?barcode=${encodeURIComponent(barcode)}`)
+        //         .then(res => res.json())
+        //         .then(data => {
+        //             if (!data) {
+        //                 alert('Barcode not found.');
+        //                 return;
+        //             };
 
-                    let satuanLabel = '';
-                    if(data.satuan == 2){
-                        satuanLabel = 'Kg';
-                    } else
-                    {
-                        satuanLabel = 'pcs';
-                    }
+        //             let satuanLabel = '';
+        //             if(data.satuan == 2){
+        //                 satuanLabel = 'Kg';
+        //             } else
+        //             {
+        //                 satuanLabel = 'pcs';
+        //             }
 
-                    // Fill popup content
-                    document.getElementById('popup-barcode').innerText = data.barcode;
-                    document.getElementById('popup-name').innerText = data.nama;
-                    document.getElementById('popup-price').innerText = data.harga || '-';
-                    document.getElementById('popup-satuan').innerText = satuanLabel;
-                    document.getElementById('popup-stock').innerText = data.stok || 0;
+        //             // Fill popup content
+        //             document.getElementById('popup-barcode').innerText = data.barcode;
+        //             document.getElementById('popup-name').innerText = data.nama;
+        //             document.getElementById('popup-price').innerText = data.harga || '-';
+        //             document.getElementById('popup-satuan').innerText = satuanLabel;
+        //             document.getElementById('popup-stock').innerText = data.stok || 0;
 
-                    // Position popup near button
-                    const btn = document.getElementById('search-barcode-btn');
-                    const popup = document.getElementById('barcode-popup');
-                    const rect = btn.getBoundingClientRect();
+        //             // Position popup near button
+        //             const btn = document.getElementById('search-barcode-btn');
+        //             const popup = document.getElementById('barcode-popup');
+        //             const rect = btn.getBoundingClientRect();
 
-                    popup.style.top = `${rect.bottom + window.scrollY + 8}px`;
-                    popup.style.left = `${rect.left + window.scrollX}px`;
-                    popup.classList.remove('hidden');
-                })
-                .catch(err => console.error('Error loading detail:', err));
-        });
-        document.addEventListener('click', function(e) {
-            const popup = document.getElementById('barcode-popup');
-            const button = document.getElementById('search-barcode-btn');
+        //             popup.style.top = `${rect.bottom + window.scrollY + 8}px`;
+        //             popup.style.left = `${rect.left + window.scrollX}px`;
+        //             popup.classList.remove('hidden');
+        //         })
+        //         .catch(err => console.error('Error loading detail:', err));
+        // });
+        // document.addEventListener('click', function(e) {
+        //     const popup = document.getElementById('barcode-popup');
+        //     const button = document.getElementById('search-barcode-btn');
 
-            if (!popup.contains(e.target) && !button.contains(e.target)) {
-                popup.classList.add('hidden');
-            }
-        });
+        //     if (!popup.contains(e.target) && !button.contains(e.target)) {
+        //         popup.classList.add('hidden');
+        //     }
+        // });
 
         document.addEventListener('DOMContentLoaded', function() {
             const externalDateInput = document.getElementById('tanggal_keluar_external');
@@ -254,12 +266,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const totalInvoiceElement = document.getElementById('invoice-total'); // Get the total invoice element
 
             if (!barcode || qty <= 0) {
-                alert('Please enter a valid barcode and quantity.');
+                alert('Silakan masukkan nama barang atau barcode dan kuantitas.');
                 return;
             }
 
             if(!nama_akun){
-                alert('Please enter a valid Penanggung Jawab.')
+                alert('Nama Penanggung Jawab belum diisi.')
                 return
             }
 

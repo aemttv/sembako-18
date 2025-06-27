@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (kuantitas > stokInput) {
-            alert('Stok melebihi batas stok pada saat ini.')
+            alert('Total kuantitas input melebihi stok pada saat ini!')
             document.getElementById('nama_barang').value = ''
             document.getElementById('supplier_field').value = ''
             document.getElementById('barcode_field').value = ''
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
     submitBtn.addEventListener('click', function (e) {
         if (rowCount === 0) {
             e.preventDefault()
-            alert('Please add at least one item to the table before submitting')
+            alert('Silahkan menambahkan barang terlebih dahulu.')
         }
     })
 })

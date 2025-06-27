@@ -359,7 +359,7 @@
                     // Validate file type
                     const allowedImageTypes = ['image/jpeg', 'image/png'];
                     if (!allowedImageTypes.includes(file.type)) {
-                        alert('Invalid image type. Please upload a JPEG or PNG image.');
+                        alert('Tipe gambar tidak sesuai(harus JPEG atau PNG).');
                         resetFileInput();
                         return;
                     }
@@ -369,7 +369,7 @@
                         const img = new Image();
                         img.onload = function() {
                             if (img.width < 400 || img.height < 400 || img.width > 1200 || img.height > 1200) {
-                                alert('Image resolution must be between 400x400px and 1200x1200px.');
+                                alert('Resolusi gambar tidak sesuai(harus 400x400 sampai 1200x1200).');
                                 resetFileInput();
                             } else {
                                 const reader = new FileReader();
@@ -382,7 +382,7 @@
                             }
                         };
                         img.onerror = function() {
-                            alert('Failed to load the image. Please try again.');
+                            alert('Gagal memuat gambar. Silakan coba lagi.');
                             resetFileInput();
                         };
                         img.src = URL.createObjectURL(file);
@@ -636,14 +636,14 @@
                 e.preventDefault();
                 const supplierId = document.getElementById('supplier_id').value;
                 if (!supplierId) {
-                    alert('Please select a supplier first');
+                    alert('Silahkan memilih supplier terlebih dahulu.');
                     return;
                 }
 
                 // Validate at least one row exists
                 const rowCount = document.getElementById('barangTableBody').rows.length;
                 if (rowCount === 0) {
-                    alert('Please add at least one item');
+                    alert('Silahkan menambahkan barang terlebih dahulu.');
                     return;
                 }
 

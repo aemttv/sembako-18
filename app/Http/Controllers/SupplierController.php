@@ -72,6 +72,17 @@ class SupplierController extends Controller
             foreach ($request->supplier_input as $jsonItem) {
                 $item = json_decode($jsonItem, true);
 
+                $existingSupplier = Supplier::where('nama', $item['nama'])
+                    ->orWhere('nohp', $item['no_hp'])
+                    ->first();
+
+                if ($existingSupplier) {
+                    DB::rollBack();
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'Supplier sudah tersedia dengan nama, alamat, atau nomor HP tersebut!');
+                }
+
                 $supplier = new Supplier();
                 $supplier->idSupplier = Supplier::generateNewIdSupplier();
                 $supplier->nama = $item['nama'];

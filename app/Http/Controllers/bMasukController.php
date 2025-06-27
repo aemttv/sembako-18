@@ -184,7 +184,7 @@ class bMasukController extends Controller
             DB::rollback();
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat menambahkan barang masuk. Silakan coba lagi.');
         }
     }
 }

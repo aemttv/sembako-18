@@ -231,7 +231,8 @@ class BarangController extends Controller
             'idBarang' => $barang->idBarang ?? null,
             'namaBarang' => $detail->namaBarang ?? $barang->namaBarang ?? 'Unknown',
             'barcode' => $detail->barcode,
-            'stok' => $detail->quantity,
+            'quantity' => $detail->quantity,
+            'stok' => $detail->quantity ?? 0,
             'satuan' => $barang->satuan ?? '-',
             'merekNama' => $barang->merek->namaMerek ?? '-',
             'tglKadaluarsa' => $detail->tglKadaluarsa ?? '-',
@@ -529,7 +530,7 @@ class BarangController extends Controller
             DB::rollBack();
             return redirect()
                 ->back()
-                ->with('error', 'Gagal menambahkan produk: ' . $e->getMessage())
+                ->with('error', 'Terjadi kesalahan saat menambahkan barang. Silakan coba lagi.')
                 ->withInput();
         }
     }

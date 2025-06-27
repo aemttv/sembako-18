@@ -87,3 +87,11 @@ if (editNoHp) {
         }
     })
 }
+
+const submitBtn = document.getElementById('submitData');
+    submitBtn.addEventListener('click', function(e) {
+        if (rowCount === 0) {
+            e.preventDefault();
+            alert('Silahkan menambahkan barang terlebih dahulu.')
+        }
+    })

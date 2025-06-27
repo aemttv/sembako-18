@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function () {
     submitBtn.addEventListener('click', function(e) {
         if (rowCount === 0) {
             e.preventDefault();
-            alert('Please add at least one item to the table before submitting');
+            alert('Silahkan menambahkan barang terlebih dahulu.')
         }
     })
 

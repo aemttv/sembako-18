@@ -124,121 +124,195 @@
         </form>
 
         <script>
-            // Menambahkan baris baru ke dalam tabel
-            document.getElementById('addRow').addEventListener('click', function() {
-                var namaLengkap = document.getElementById('nama').value;
-                var email = document.getElementById('email').value;
-                var password = document.getElementById('password').value;
-                var noHp = document.getElementById('no_hp').value;
-                var statusPeran = document.getElementById('statusPeran').value;
+    // Helper: Clear form fields
+    function clearFields() {
+        document.getElementById('nama').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('no_hp').value = '';
+        document.getElementById('statusPeran').value = '1';
+        clearError();
+    }
 
-                // Add new row to the table
-                var tableBody = document.getElementById('akunTableBody');
-                var newRow = tableBody.insertRow();
+    // Helper: Show error message
+    function showError(message) {
+        let errorDiv = document.getElementById('form_error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'form_error';
+            errorDiv.className = 'text-red-500 text-sm mb-2';
+            const form = document.getElementById('form_fields') || document.querySelector('form');
+            form.parentNode.insertBefore(errorDiv, form);
+        }
+        errorDiv.textContent = message;
+        errorDiv.style.display = '';
+    }
 
-                if(password == '') {
-                    password = 'sembako18';
-                }
+    // Helper: Clear error message
+    function clearError() {
+        const errorDiv = document.getElementById('form_error');
+        if (errorDiv) {
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
+        }
+    }
 
-                newRow.innerHTML = `
-                    <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
-                    <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>
-                    <td class="px-4 py-2 border-b text-center">${email}</td>
-                    <td class="px-4 py-2 border-b text-center">
-                        <span
-                            class="bg-gray-300 text-white px-2 py-1 rounded cursor-pointer"
-                            data-password="${password}"
-                            onclick="
-                            if (this.innerText === '•••••••') {
-                                this.innerText = this.dataset.password;
-                                this.classList.remove('bg-gray-300', 'text-white');
-                                this.classList.add('bg-transparent', 'text-black');
-                            } else {
-                                this.innerText = '•••••••';
-                                this.classList.add('bg-gray-300', 'text-white');
-                                this.classList.remove('bg-transparent', 'text-black');
-                            }
-                            ">
-                            •••••••
-                        </span>
-                    </td>
+    // Add Row Logic
+    // Add Row Logic
+    document.getElementById('addRow').addEventListener('click', function() {
+        clearError();
 
-                    <td class="px-4 py-2 border-b text-center">${noHp}</td>
-                    <td class="px-4 py-2 border-b text-center">${statusPeran}</td>
-                    <td class="px-4 py-2 border-b text-center">
-                        <button class="text-red-500 hover:text-red-700">Hapus</button>
-                    </td>
-                `;
+        var namaLengkap = document.getElementById('nama').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+        var noHp = document.getElementById('no_hp').value.trim();
+        var statusPeran = document.getElementById('statusPeran').value;
+        const isNumeric = /^\d+$/.test(noHp);
 
-                // Menambahkan input tersembunyi untuk setiap row ke dalam form
-                var hiddenRows = document.getElementById('hiddenRows');
-                var hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = `staff_input[]`;
-                hiddenInput.value = JSON.stringify({
-                    nama: namaLengkap,
-                    email: email,
-                    password: password,
-                    no_hp: noHp,
-                    status_peran: statusPeran
-                });
-                hiddenRows.appendChild(hiddenInput);
+        // Prevent add if any field is empty (except password, which can default)
+        if (!namaLengkap || !email || !noHp || !statusPeran) {
+            showError('Semua field (kecuali password) harus diisi!');
+            return;
+        }
 
-                // Clear form fields
-                document.getElementById('clearFields').addEventListener('click', function () {
-                    document.getElementById('nama').value = '';
-                    document.getElementById('email').value = '';
-                    document.getElementById('password').value = '';
-                    document.getElementById('no_hp').value = '';
-                    document.getElementById('statusPeran').value = '1';
-                });
+        if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
+            showError('No HP harus berupa angka dan dimulai dengan 08 atau 628');
+            return;
+        }
 
-            });
+        if(password == '') {
+            password = 'sembako18';
+        }
 
-            // Kosongkan semua field
-            document.getElementById('clearFields').addEventListener('click', function () {
-                document.getElementById('nama').value = '';
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('no_hp').value = '';
-                document.getElementById('statusPeran').value = '1';
-            });
+        var tableBody = document.getElementById('akunTableBody');
+        // Duplicate check: match by email OR by (nama + noHp)
+        for (let i = 0; i < tableBody.rows.length; i++) {
+            let row = tableBody.rows[i];
+            let rowNama = row.cells[1].innerText.trim();
+            let rowEmail = row.cells[2].innerText.trim();
+            let rowNoHp = row.cells[4].innerText.trim();
 
-
-            // Pastikan form bisa submit ke backend
-            document.getElementById('submitData').addEventListener('click', function() {
-                // Di sini bisa tambahkan validasi jika diperlukan sebelum submit
-            });
-
-            // Formatting and live validation for No HP
-            const inputNoHp = document.getElementById('no_hp')
-
-            // Create or get the error message element
-            let noHpError = document.getElementById('no_hp_error')
-            if (!noHpError && inputNoHp) {
-                noHpError = document.createElement('div')
-                noHpError.id = 'no_hp_error'
-                noHpError.className = 'text-red-500 text-xs mt-1'
-                noHpError.style.display = 'none'
-                inputNoHp.parentNode.appendChild(noHpError)
+            if (
+                rowEmail.toLowerCase() === email.toLowerCase() ||
+                (rowNama.toLowerCase() === namaLengkap.toLowerCase() && rowNoHp === noHp)
+            ) {
+                showError('Data sudah ada dalam tabel. Silakan cek kembali input Anda.');
+                alert('Data sudah ada dalam tabel. Silakan cek kembali input Anda.');
+                return;
             }
+        }
 
-            if (inputNoHp) {
-                inputNoHp.addEventListener('input', function () {
-                    const value = this.value.trim()
-                    if (!(value.startsWith('08') || value.startsWith('628'))) {
-                        this.classList.add('border-red-500')
-                        noHpError.textContent = 'No HP harus dimulai dengan 08 atau 628'
-                        noHpError.style.display = ''
+        // Add new row to the table
+        var newRow = tableBody.insertRow();
+
+        newRow.innerHTML = `
+            <td class="px-4 py-2 border-b text-center">${tableBody.rows.length}</td>
+            <td class="px-4 py-2 border-b text-center">${namaLengkap}</td>
+            <td class="px-4 py-2 border-b text-center">${email}</td>
+            <td class="px-4 py-2 border-b text-center">
+                <span
+                    class="bg-gray-300 text-white px-2 py-1 rounded cursor-pointer"
+                    data-password="${password}"
+                    onclick="
+                    if (this.innerText === '•••••••') {
+                        this.innerText = this.dataset.password;
+                        this.classList.remove('bg-gray-300', 'text-white');
+                        this.classList.add('bg-transparent', 'text-black');
                     } else {
-                        this.classList.remove('border-red-500')
-                        noHpError.textContent = ''
-                        noHpError.style.display = 'none'
+                        this.innerText = '•••••••';
+                        this.classList.add('bg-gray-300', 'text-white');
+                        this.classList.remove('bg-transparent', 'text-black');
                     }
-                })
+                    ">
+                    •••••••
+                </span>
+            </td>
+            <td class="px-4 py-2 border-b text-center">${noHp}</td>
+            <td class="px-4 py-2 border-b text-center">${statusPeran}</td>
+            <td class="px-4 py-2 border-b text-center">
+                <button type="button" class="text-red-500 hover:text-red-700 btn-hapus">Hapus</button>
+            </td>
+        `;
+
+        // Add hidden input for backend
+        var hiddenRows = document.getElementById('hiddenRows');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = `staff_input[]`;
+        hiddenInput.value = JSON.stringify({
+            nama: namaLengkap,
+            email: email,
+            password: password,
+            no_hp: noHp,
+            status_peran: statusPeran
+        });
+        hiddenRows.appendChild(hiddenInput);
+
+        clearFields();
+    });
+
+    // Clear fields button
+    document.getElementById('clearFields').addEventListener('click', function() {
+        clearFields();
+        clearError();
+    });
+
+    // Event delegation for dynamic "Hapus" buttons
+    document.getElementById('akunTableBody').addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('btn-hapus')) {
+            // Remove the row
+            const row = e.target.closest('tr');
+            const rowIndex = row.rowIndex - 1; // Adjust for header row
+            row.remove();
+
+            // Remove corresponding hidden input
+            const hiddenRows = document.getElementById('hiddenRows');
+            if (hiddenRows.children[rowIndex]) {
+                hiddenRows.removeChild(hiddenRows.children[rowIndex]);
             }
 
-        </script>
+            // Re-number the rows
+            Array.from(document.getElementById('akunTableBody').rows).forEach((tr, idx) => {
+                tr.cells[0].innerText = idx + 1;
+            });
+        }
+    });
+
+    // Formatting and live validation for No HP
+    const inputNoHp = document.getElementById('no_hp')
+    let noHpError = document.getElementById('no_hp_error')
+    if (!noHpError && inputNoHp) {
+        noHpError = document.createElement('div')
+        noHpError.id = 'no_hp_error'
+        noHpError.className = 'text-red-500 text-xs mt-1'
+        noHpError.style.display = 'none'
+        inputNoHp.parentNode.appendChild(noHpError)
+    }
+
+    if (inputNoHp) {
+        inputNoHp.addEventListener('input', function () {
+            const value = this.value.trim()
+            if (!(value.startsWith('08') || value.startsWith('628'))) {
+                this.classList.add('border-red-500')
+                noHpError.textContent = 'No HP harus dimulai dengan 08 atau 628'
+                noHpError.style.display = ''
+            } else {
+                this.classList.remove('border-red-500')
+                noHpError.textContent = ''
+                noHpError.style.display = 'none'
+            }
+            clearError();
+        })
+    }
+
+    // Clear error when user edits any input field
+    ['nama', 'email', 'password', 'statusPeran'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', clearError);
+        }
+    });
+</script>
 
     </div>
 @endsection
