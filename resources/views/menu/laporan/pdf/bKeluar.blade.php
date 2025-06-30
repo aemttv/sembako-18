@@ -153,29 +153,47 @@
             <tbody>
                 @php $no = 1; @endphp
                 @foreach ($bKeluar as $data)
-                    @foreach ($data->detailKeluar as $detail)
-                        <tr>
-                            <td class="px-4 py-2 text-center">{{ $no++ }}</td>
-                            <td class="px-4 py-2 text-center">{{ $data->invoice }}</td>
-                            <td class="px-4 py-2 text-center">
-                                {{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}</td>
-                            <td class="px-4 py-2 text-center">{{ $detail->idBarang }}</td>
-                            <td class="px-4 py-2">{{ $detail->barangDetailKeluar->barang->namaBarang }}</td>
-                            <td class="px-4 py-2 text-center">{{ $data->akun->nama }} ({{ $data->idAkun }})</td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $detail->jumlahKeluar }}
-                                @if ($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'pcs/eceran')
-                                    pcs
-                                @elseif($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'kg')
-                                    gr
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
-                            </td>
-                            <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
-                        </tr>
-                    @endforeach
-                @endforeach
+        @php
+            $rowspan = $data->detailKeluar->count();
+            $firstRow = true;
+        @endphp
+        @foreach ($data->detailKeluar as $detail)
+            <tr>
+                <td class="px-4 py-2 text-center">{{ $no++ }}</td>
+
+                @if ($firstRow)
+                    <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">{{ $data->invoice }}</td>
+                    <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                        {{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}
+                    </td>
+                @endif
+
+                <td class="px-4 py-2 text-center">{{ $detail->idBarang }}</td>
+                <td class="px-4 py-2">{{ $detail->barangDetailKeluar->barang->namaBarang }}</td>
+
+                @if ($firstRow)
+                    <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                        {{ $data->akun->nama }} ({{ $data->idAkun }})
+                    </td>
+                @endif
+
+                <td class="px-4 py-2 text-center">
+                    {{ $detail->jumlahKeluar }}
+                    @php
+                        $satuan = $detail->barangDetailKeluar->barang->satuan->namaSatuan();
+                    @endphp
+                    @if ($satuan == 'pcs/eceran')
+                        pcs
+                    @elseif ($satuan == 'kg')
+                        gr
+                    @endif
+                </td>
+                <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
+            </tr>
+            @php $firstRow = false; @endphp
+        @endforeach
+    @endforeach
                 <!-- Grand Total Row -->
                 <tr>
                     <td colspan="7" style="text-align: right; font-weight: bold;">Grand Total</td>

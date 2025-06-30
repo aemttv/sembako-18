@@ -132,13 +132,13 @@
                 @php $no = 1; @endphp
                     @foreach ($barang as $data)
                         <tr>
-                            <td>{{ $no++ }}</td>
-                            <td>{{ $data->idBarang }}</td>
-                            <td>{{ $data->namaBarang ?? 'Nama Barang' }}</td>
-                            <td>{{ $data->kategoriBarang->namaKategori() }}</td>
-                            <td>{{ $data->merekBarangName }}</td>
+                            <td class="text-center">{{ $no++ }}</td>
+                            <td class="text-center">{{ $data->idBarang }}</td>
+                            <td class="text-center">{{ $data->namaBarang ?? 'Nama Barang' }}</td>
+                            <td class="text-center">{{ $data->kategoriBarang->namaKategori() }}</td>
+                            <td class="text-center">{{ $data->merekBarangName }}</td>
                             <td class="text-center">{{ $data->totalStok }}</td>
-                            <td>Rp.{{ number_format($data->hargaJual, 0, ',', '.') }}</td>
+                            <td class="text-right">Rp.{{ number_format($data->hargaJual, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
             </tbody>

@@ -142,39 +142,65 @@
             </thead>
             <tbody>
                 @php $no = 1; @endphp
-                @foreach ($bRetur as $data)
-                    @foreach ($data->detailRetur as $detail)
-                        <tr>
-                            <td class="px-4 py-2 text-center">{{ $no++ }}</td>
-                            <td class="px-4 py-2 text-center">{{ $detail->idBarangRetur }}</td>
-                            <td class="px-4 py-2 text-center">{{ $data->supplier->nama }} ({{ $data->idSupplier }})</td>
-                            <td class="px-4 py-2 text-center">{{ $data->akun->nama }} ({{ $data->penanggungJawab }})</td>
-                            <td class="px-4 py-2 text-center">{{ $detail->detailBarangRetur->barcode ?? '-'}}</td>
-                            <td class="px-4 py-2 text-left">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-'}}</td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $detail->jumlah }}
-                                @if ($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'pcs/eceran')
-                                    pcs
-                                @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'kg')
-                                    gr
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
-                            <td class="px-4 py-2 text-center"> {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') }}</td>
-                            <td class="px-4 py-2 text-center">
-                                @if ($detail->statusReturDetail == 2)
-                                    <span class="text-yellow-500 font-semibold">Pending</span>
-                                @elseif ($detail->statusReturDetail == 1)
-                                    <span class="text-green-500 font-semibold">Approved</span>
-                                @elseif ($detail->statusReturDetail == 0)
-                                    <span class="text-red-500 font-semibold">Rejected</span>
-                                @else
-                                    <span class="text-gray-500">Unknown</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                @endforeach
+                @php $no = 1; @endphp
+@foreach ($bRetur as $data)
+    @php
+        $rowspan = $data->detailRetur->count();
+        $firstRow = true;
+    @endphp
+    @foreach ($data->detailRetur as $detail)
+        <tr>
+            <td class="px-4 py-2 text-center">{{ $no++ }}</td>
+            @if ($firstRow)
+                <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                    {{ $detail->idBarangRetur }}
+                </td>
+
+                <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                    {{ $data->supplier->nama }} ({{ $data->idSupplier }})
+                </td>
+                <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                    {{ $data->akun->nama }} ({{ $data->penanggungJawab }})
+                </td>
+            @endif
+
+            <td class="px-4 py-2 text-center">{{ $detail->detailBarangRetur->barcode ?? '-' }}</td>
+            <td class="px-4 py-2 text-left">{{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
+            <td class="px-4 py-2 text-center">
+                {{ $detail->jumlah }}
+                @php
+                    $satuan = $detail->detailBarangRetur->barang->satuan->namaSatuan();
+                @endphp
+                @if ($satuan == 'pcs/eceran')
+                    pcs
+                @elseif ($satuan == 'kg')
+                    gr
+                @endif
+            </td>
+            <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
+
+            @if ($firstRow)
+                <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                    {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') }}
+                </td>
+            @endif
+
+            <td class="px-4 py-2 text-center">
+                @if ($detail->statusReturDetail == 2)
+                    <span class="text-yellow-500 font-semibold">Pending</span>
+                @elseif ($detail->statusReturDetail == 1)
+                    <span class="text-green-500 font-semibold">Approved</span>
+                @elseif ($detail->statusReturDetail == 0)
+                    <span class="text-red-500 font-semibold">Rejected</span>
+                @else
+                    <span class="text-gray-500">Unknown</span>
+                @endif
+            </td>
+        </tr>
+        @php $firstRow = false; @endphp
+    @endforeach
+@endforeach
+
                 <!-- Grand Total Row -->
                 <tr>
                     <td colspan="10" style="text-align: center; font-weight: bold;">

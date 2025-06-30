@@ -150,38 +150,63 @@
             </thead>
             <tbody>
                 @php $no = 1; @endphp
-                @foreach ($bRusak as $data)
-                    @foreach ($data->detailRusak as $detail)
-                        <tr>
-                            {{-- <td class="px-4 py-2">{{ $no++ }}</td> --}}
-                            <td class="px-4 py-2 text-center">{{ $data->idBarangRusak }}</td>
-                            <td class="px-4 py-2 text-center">{{ $data->akun->nama }} ({{ $data->penanggungJawab }})</td>
-                            <td class="px-4 py-2 text-center">{{ $detail->barcode }}</td>
-                            <td class="px-4 py-2 text-left">{{ $detail->detailBarangRusak->barang->namaBarang }}</td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $detail->jumlah }}
-                                @if ($detail->detailBarangRusak->barang->satuan->namaSatuan() == 'pcs/eceran')
-                                    pcs
-                                @elseif($detail->detailBarangRusak->barang->satuan->namaSatuan() == 'kg')
-                                    gr
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
-                            <td class="px-4 py-2 text-center">{{ \Carbon\Carbon::parse($data->tglRusak)->translatedFormat('d F Y') }}</td>
-                            <td class="px-4 py-2 text-center">
-                                @if ($detail->statusRusakDetail == 2)
-                                    <span class="text-yellow-500 font-semibold">Pending</span>
-                                @elseif ($detail->statusRusakDetail == 1)
-                                    <span class="text-green-500 font-semibold">Approved</span>
-                                @elseif ($detail->statusRusakDetail == 0)
-                                    <span class="text-red-500 font-semibold">Rejected</span>
-                                @else
-                                    <span class="text-gray-500">Unknown</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                @endforeach
+@foreach ($bRusak as $data)
+    @php
+        $rowspan = $data->detailRusak->count();
+        $firstRow = true;
+    @endphp
+    @foreach ($data->detailRusak as $detail)
+        <tr>
+            {{-- <td class="px-4 py-2">{{ $no++ }}</td> --}}
+
+            @if ($firstRow)
+                <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                    {{ $data->idBarangRusak }}
+                </td>
+                <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                    {{ $data->akun->nama }} ({{ $data->penanggungJawab }})
+                </td>
+            @endif
+
+            <td class="px-4 py-2 text-center">{{ $detail->barcode }}</td>
+            <td class="px-4 py-2 text-left">
+                {{ $detail->detailBarangRusak->barang->namaBarang }}
+            </td>
+            <td class="px-4 py-2 text-center">
+                {{ $detail->jumlah }}
+                @php
+                    $satuan = $detail->detailBarangRusak->barang->satuan->namaSatuan();
+                @endphp
+                @if ($satuan == 'pcs/eceran')
+                    pcs
+                @elseif ($satuan == 'kg')
+                    gr
+                @endif
+            </td>
+            <td class="px-4 py-2 text-center">{{ $detail->kategoriAlasan->alasan() }}</td>
+
+            @if ($firstRow)
+                <td class="px-4 py-2 text-center" rowspan="{{ $rowspan }}">
+                    {{ \Carbon\Carbon::parse($data->tglRusak)->translatedFormat('d F Y') }}
+                </td>
+            @endif
+
+            <td class="px-4 py-2 text-center">
+                @if ($detail->statusRusakDetail == 2)
+                    <span class="text-yellow-500 font-semibold">Pending</span>
+                @elseif ($detail->statusRusakDetail == 1)
+                    <span class="text-green-500 font-semibold">Approved</span>
+                @elseif ($detail->statusRusakDetail == 0)
+                    <span class="text-red-500 font-semibold">Rejected</span>
+                @else
+                    <span class="text-gray-500">Unknown</span>
+                @endif
+            </td>
+        </tr>
+        @php $firstRow = false; @endphp
+    @endforeach
+@endforeach
+
                 <!-- Grand Total Row -->
                 <tr>
                     <td colspan="8" style="text-align: center; font-weight: bold;">
