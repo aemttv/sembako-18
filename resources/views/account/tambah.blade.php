@@ -170,12 +170,12 @@
 
         // Prevent add if any field is empty (except password, which can default)
         if (!namaLengkap || !email || !noHp || !statusPeran) {
-            showError('Semua field (kecuali password) harus diisi!');
+            alert('Semua field (kecuali password) harus diisi!');
             return;
         }
 
         if (!(isNumeric && (noHp.startsWith('08') || noHp.startsWith('628')))) {
-            showError('No HP harus berupa angka dan dimulai dengan 08 atau 628');
+            alert('No HP harus berupa angka dan dimulai dengan 08 atau 628');
             return;
         }
 
