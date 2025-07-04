@@ -160,7 +160,6 @@
     // Add Row Logic
     // Add Row Logic
     document.getElementById('addRow').addEventListener('click', function() {
-        clearError();
 
         var namaLengkap = document.getElementById('nama').value.trim();
         var email = document.getElementById('email').value.trim();
