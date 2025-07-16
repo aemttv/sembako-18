@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td class="p-2 border text-center">${id}</td>
                 <td class="p-2 border text-center">${barcode}</td>
                 <td class="p-2 border">${name}</td>
-                <td class="p-2 border text-right">Rp. ${price.toLocaleString()}</td>
+                <td class="p-2 border text-right">Rp. ${price.toLocaleString('id-ID')}</td>
                 <td class="p-2 border text-center">${qty}${detail.satuan == 2 ? ' gr' : ''}</td>
                 <td class="p-2 border text-right">Rp. ${totalPrice}</td>
                 <td class="p-2 border text-center"><button class="text-red-500 hover:underline remove-item">Remove</button></td>

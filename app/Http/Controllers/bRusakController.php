@@ -24,11 +24,13 @@ class bRusakController extends Controller
 
         $bRusak = bRusak::with(['detailRusak', 'detailRusak.barang', 'akun']) // Load nested relationships
             ->where('statusRusak', 2)
+            ->latest()
             ->paginate(10);
 
         $staffBRusak = bRusak::with(['detailRusak', 'detailRusak.barang']) // Load nested relationships
             ->where('statusRusak', 2)
             ->where('penanggungJawab', session('idAkun'))
+            ->latest()
             ->paginate(10);
 
         // dd($bRusak->items(),$staffBRusak->items());

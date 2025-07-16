@@ -23,11 +23,13 @@ class bReturController extends Controller
 
         $bRetur = bRetur::with(['detailRetur', 'detailRetur.barang']) // Load nested relationships
                     ->where('statusRetur', 2)
+                    ->latest()
                     ->paginate(10);
 
         $staffBRetur = bRetur::with(['detailRetur', 'detailRetur.barang']) // Load nested relationships
                     ->where('statusRetur', 2)
                     ->where('penanggungJawab', session('idAkun'))
+                    ->latest()
                     ->paginate(10);
 
         return view('menu.icare.retur.confirm-bRetur', ['bRetur' => $bRetur, 'staffBRetur' => $staffBRetur]);

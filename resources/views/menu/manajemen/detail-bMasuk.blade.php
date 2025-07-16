@@ -41,7 +41,10 @@
                     No. Barang Masuk <span class="text-blue-600">#{{ $bMasuk->idBarangMasuk }}</span>
                 </h2>
                 <p class="text-sm text-gray-500">
-                    Tanggal Transaksi: {{ \Carbon\Carbon::parse($bMasuk->created_at ?? now())->translatedFormat('d F Y, H:i') }}
+                    Tanggal Pencatatan Transaksi: {{ \Carbon\Carbon::parse($bMasuk->created_at ?? now())->translatedFormat('d F Y, H:i') }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    Tanggal Barang Masuk: {{ \Carbon\Carbon::parse($bMasuk->tglMasuk ?? now())->translatedFormat('d F Y') }}
                 </p>
             </div>
             <div class="mt-4 md:mt-0 text-left md:text-right">

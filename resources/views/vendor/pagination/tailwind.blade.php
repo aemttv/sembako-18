@@ -5,7 +5,7 @@
             @if ($paginator->onFirstPage())
                 <li class="disabled" aria-disabled="true">
                     <span class="px-4 py-2 text-gray-400 rounded-lg cursor-not-allowed">
-                        &laquo; Previous
+                        &laquo; Sebelumnya
                     </span>
                 </li>
             @else
@@ -13,7 +13,7 @@
                     <a href="{{ $paginator->previousPageUrl() }}" 
                        rel="prev" 
                        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                        &laquo; Previous
+                        &laquo; Sebelumnya
                     </a>
                 </li>
             @endif
@@ -89,13 +89,13 @@
                     <a href="{{ $paginator->nextPageUrl() }}" 
                        rel="next" 
                        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                        Next &raquo;
+                        Selanjutnya &raquo;
                     </a>
                 </li>
             @else
                 <li class="disabled" aria-disabled="true">
                     <span class="px-4 py-2 text-gray-400 rounded-lg cursor-not-allowed">
-                        Next &raquo;
+                        Selanjutnya &raquo;
                     </span>
                 </li>
             @endif

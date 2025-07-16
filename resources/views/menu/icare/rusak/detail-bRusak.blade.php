@@ -41,8 +41,10 @@
                     No. Laporan <span class="text-blue-600">#{{ $bRusak->idBarangRusak }}</span>
                 </h2>
                 <p class="text-sm text-gray-500">
-                    {{-- Assuming the date is in the 'created_at' field of the $bRusak object --}}
-                    Tanggal Laporan: {{ \Carbon\Carbon::parse($bRusak->created_at ?? now())->translatedFormat('d F Y, H:i') }}
+                    Tanggal Pengajuan Laporan: {{ \Carbon\Carbon::parse($bRusak->created_at ?? now())->translatedFormat('d F Y, H:i') }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    Tanggal Laporan: {{ \Carbon\Carbon::parse($bRusak->tglRusak ?? now())->translatedFormat('d F Y') }}
                 </p>
             </div>
             <div class="mt-4 md:mt-0 text-left md:text-right">

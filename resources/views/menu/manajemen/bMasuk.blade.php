@@ -57,9 +57,9 @@
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Kuantitas Masuk</label>
                                 <input type="number" id="kuantitas_masuk" class="w-full border rounded-md px-3 py-2"
-                                    min="1" value="1" max="100"
+                                    min="1" value="1" max="10000"
                                     oninput="
-                                        if(this.value.length > 3) this.value = this.value.slice(0,3);
+                                        if(this.value.length > 6) this.value = this.value.slice(0,5);
                                         if(this.value == 0) this.value = 1;
                                     " />
                             </div>
@@ -528,6 +528,7 @@
                 }
             });
 
+
             // Menambahkan baris baru ke dalam tabel
             document.addEventListener('DOMContentLoaded', function() {
                 const addRowBtn = document.getElementById('addRow');
@@ -634,6 +635,9 @@
             // Pastikan form bisa submit ke backend
             document.getElementById('submitData').addEventListener('click', function() {
                 e.preventDefault();
+
+
+
                 const supplierId = document.getElementById('supplier_id').value;
                 if (!supplierId) {
                     alert('Silahkan memilih supplier terlebih dahulu.');
@@ -657,6 +661,9 @@
                 }
             });
             updateMinExpiryDate();
+
+            
+
         </script>
 
     </div>

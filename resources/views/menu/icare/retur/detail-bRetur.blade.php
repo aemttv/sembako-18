@@ -44,6 +44,10 @@
                     {{-- Assuming the date is in the 'created_at' field of the $bRetur object --}}
                     Tanggal Pengajuan: {{ \Carbon\Carbon::parse($bRetur->created_at ?? now())->translatedFormat('d F Y, H:i') }}
                 </p>
+                <p class="text-sm text-gray-500">
+                    {{-- Assuming the date is in the 'created_at' field of the $bRetur object --}}
+                    Tanggal Retur: {{ \Carbon\Carbon::parse($bRetur->tglRetur ?? now())->translatedFormat('d F Y') }}
+                </p>
             </div>
             <div class="mt-4 md:mt-0 text-left md:text-right">
                 <span class="px-3 py-1 text-sm font-medium text-gray-500">Status Pengajuan</span><br>

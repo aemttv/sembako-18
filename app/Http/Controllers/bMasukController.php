@@ -21,8 +21,8 @@ class bMasukController extends Controller
         }
 
         Carbon::setLocale('id');
-        $bMasuk = bMasuk::with('detailMasuk')->paginate(10);
-        $bMasukStaff = bMasuk::with('detailMasuk', 'akun')->where('idAkun', session('idAkun'))->paginate(10);
+        $bMasuk = bMasuk::with('detailMasuk')->latest()->paginate(10);
+        $bMasukStaff = bMasuk::with('detailMasuk', 'akun')->where('idAkun', session('idAkun'))->latest()->paginate(10);
 
         $bMasuk->getCollection()->transform(function ($item) {
             $item->quantity = $item->detailMasuk->sum('jumlahMasuk');
