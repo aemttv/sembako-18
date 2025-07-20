@@ -37,6 +37,7 @@ class SupplierController extends Controller
 
         // Search for suppliers with names that contain the query string
         $suppliers = Supplier::where('nama', 'like', "%$query%")
+            ->where('status', 1)
             ->select('idSupplier', 'nama')
             ->get(); // Only retrieve id and name fields for efficiency
 

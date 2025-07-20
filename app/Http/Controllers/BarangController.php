@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\enum\KategoriBarang;
+use App\enum\KondisiBarang;
 use App\enum\satuan;
 use App\Models\Akun;
 use App\Models\Barang;
@@ -147,53 +148,84 @@ class BarangController extends Controller
 
         return response()->json($formatted);
     }
-    public function searchList(Request $request)
-    {
-        if(!isUserLoggedIn()){
-            abort(403, 'Unauthorized action.');
+
+public function searchList(Request $request)
+{
+    if(!isUserLoggedIn()){
+        abort(403, 'Unauthorized action.');
+    }
+
+    $search = $request->input('q');
+    $kategori = $request->input('kategoriBarang');
+    $kondisi = $request->input('kondisiBarang'); // from select option
+
+    $barangQuery = Barang::with([
+        'detailBarang' => function ($query) {
+            $query->where('statusDetailBarang', 1);
+        },
+        'merek',
+    ]);
+    // Filter by kondisiBarang if selected
+    if ($kondisi) {
+        $dbValue = KondisiBarang::from($kondisi)->namaKondisi();
+
+        $barangQuery->whereHas('detailBarang', function ($q) use ($dbValue) {
+            $q->where('kondisiBarang', $dbValue)
+            ->where('statusDetailBarang', 1);
+        });
+
+        if ($dbValue === 'Mendekati Kadaluarsa') {
+            $barangQuery->whereDoesntHave('detailBarang', function ($q) {
+                $q->where('kondisiBarang', 'Kadaluarsa')
+                ->where('statusDetailBarang', 1);
+            });
+        } elseif ($dbValue === 'Baik') {
+            $barangQuery->whereDoesntHave('detailBarang', function ($q) {
+                $q->whereIn('kondisiBarang', ['Kadaluarsa', 'Mendekati Kadaluarsa'])
+                ->where('statusDetailBarang', 1);
+            });
+        }
+    }
+
+    if ($kategori) {
+        $barangQuery->where('kategoriBarang', $kategori);
+    }
+
+
+    // Search by namaBarang or idBarang
+    $barangQuery->when($search, function ($query, $search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('namaBarang', 'like', '%' . $search . '%')
+            ->orWhere('idBarang', 'like', '%' . $search . '%');
+        });
+    });
+
+    $barang = $barangQuery->paginate(10)->appends($request->only(['q', 'kondisiBarang']));
+
+    // Transform the collection to include dynamic values
+    $barang->getCollection()->transform(function ($item) {
+        $item->totalStok = $item->detailBarang->sum('quantity');
+        $kondisiList = $item->detailBarang->pluck('kondisiBarang')->all();
+
+        if (in_array('Kadaluarsa', $kondisiList, true)) {
+            $item->kondisiBarangText = 'Kadaluarsa';
+        } elseif (in_array('Mendekati Kadaluarsa', $kondisiList, true)) {
+            $item->kondisiBarangText = 'Mendekati Kadaluarsa';
+        } else {
+            $item->kondisiBarangText = 'Baik';
         }
 
-        $search = $request->input('q');
+        $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
 
-        $barangQuery = Barang::with([
-            'detailBarang' => function ($query) {
-                $query->where('statusDetailBarang', 1);
-            },
-            'merek',
-        ]);
+        return $item;
+    });
 
-        // Only search by namaBarang and idBarang
-        $barangQuery->when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('namaBarang', 'like', '%' . $search . '%')->orWhere('idBarang', 'like', '%' . $search . '%');
-            });
-        });
-
-        $barang = $barangQuery->paginate(10)->appends($request->only(['q']));
-
-        // Transform the collection to include dynamic values
-        $barang->getCollection()->transform(function ($item) {
-            $item->totalStok = $item->detailBarang->sum('quantity');
-            $kondisiList = $item->detailBarang->pluck('kondisiBarang')->all();
-
-            if (in_array('Kadaluarsa', $kondisiList, true)) {
-                $item->kondisiBarangText = 'Kadaluarsa';
-            } elseif (in_array('Mendekati Kadaluarsa', $kondisiList, true)) {
-                $item->kondisiBarangText = 'Mendekati Kadaluarsa';
-            } else {
-                $item->kondisiBarangText = 'Baik';
-            }
-
-            $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
-
-            return $item;
-        });
-
-        return view('menu.barang.produk', [
-            'barang' => $barang,
-            'search' => $search,
-        ]);
-    }
+    return view('menu.barang.produk', [
+        'barang' => $barang,
+        'search' => $search,
+        'kondisiBarang' => $kondisi,
+    ]);
+}
 
     /**
      * Search for a barcode in the Barang's detailBarang relation.

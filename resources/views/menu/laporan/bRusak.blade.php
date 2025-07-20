@@ -110,8 +110,8 @@
                 <tbody class="bg-white divide-y">
                     @php
                         $totalDetails = 0;
-                        foreach ($bRusak as $data) {
-                            $totalDetails += $data->detailRusak->count();
+                        foreach ($details as $data) {
+                            $totalDetails += $data->count();
                         }
                     @endphp
                     @if ($totalDetails === 0)
@@ -119,13 +119,12 @@
                             <td colspan="10" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
-                        @php $no = 1; @endphp
-                        @foreach ($bRusak as $data)
-                            @foreach ($data->detailRusak as $detail)
+                        @php $no = ($details->currentPage() - 1) * $details->perPage() + 1; @endphp
+                            @foreach ($details as $detail)
                                 <tr class="hover:bg-blue-50 even:bg-gray-50">
                                     <td class="px-4 py-2">{{ $no++ }}</td>
-                                    <td class="px-4 py-2">{{ $data->idBarangRusak }}</td>
-                                    <td class="px-4 py-2">{{ $data->akun->nama }} ({{ $data->penanggungJawab }})</td>
+                                    <td class="px-4 py-2">{{ $detail->rusakBarang->idBarangRusak }}</td>
+                                    <td class="px-4 py-2">{{ $detail->rusakBarang->akun->nama }} ({{ $detail->rusakBarang->penanggungJawab }})</td>
                                     <td class="px-4 py-2">{{ $detail->barcode }}</td>
                                     <td class="px-4 py-2  text-left">
                                         {{ $detail->detailBarangRusak->barang->namaBarang ?? '-' }}</td>
@@ -141,7 +140,7 @@
                                     </td>
                                     <td>{{ $detail->kategoriAlasan->alasan() }}</td>
                                     <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($data->tglRusak)->translatedFormat('d F Y') }}</td>
+                                        {{ \Carbon\Carbon::parse($detail->rusakBarang->tglRusak)->translatedFormat('d F Y') }}</td>
                                     <td class="px-4 py-2">
                                         @if ($detail->statusRusakDetail == 2)
                                             <span class="text-yellow-500 font-semibold">Pending</span>
@@ -155,16 +154,13 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        @endforeach
                     @endif
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-between items-center text-sm text-gray-800">
-            {{ $bRusak->links() }}
-        </div>
+        {{ $details->links() }}
     </div>
 
     <script>

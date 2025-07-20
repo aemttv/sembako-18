@@ -110,8 +110,8 @@
                 <tbody class="bg-white divide-y">
                     @php
                         $totalDetails = 0;
-                        foreach ($bRetur as $data) {
-                            $totalDetails += $data->detailRetur->count();
+                        foreach ($details as $data) {
+                            $totalDetails += $data->count();
                         }
                     @endphp
                     @if ($totalDetails === 0)
@@ -119,43 +119,41 @@
                             <td colspan="10" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
-                        @php $no = 1; @endphp
-                        @foreach ($bRetur as $data)
-                            @foreach ($data->detailRetur as $detail)
-                                <tr class="hover:bg-blue-50 even:bg-gray-50" >
-                                    <td class="px-4 py-2">{{ $no++ }}</td>
-                                    <td class="px-4 py-2">{{ $detail->idBarangRetur ?? '-' }}</td>
-                                    <td class="px-4 py-2">{{ $data->supplier->nama ?? '-' }} ({{ $data->idSupplier }})</td>
-                                    <td class="px-4 py-2">{{ $data->akun->nama ?? '-' }} ({{ $data->penanggungJawab }})</td>
-                                    <td class="px-4 py-2">{{ $detail->barcode ?? '-' }}</td>
-                                    <td class="px-4 py-2  text-left">
-                                        {{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ $detail->jumlah ?? '-' }}
-                                        @if ($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'pcs/eceran')
-                                            Pcs
-                                        @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'kg')
-                                            Kg
-                                        @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'dus')
-                                            Dus
-                                        @endif
-                                    </td>
-                                    <td>{{ $detail->kategoriAlasan->alasan() ?? '-' }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($data->tglRetur)->translatedFormat('d F Y') ?? '-' }}</td>
-                                    <td class="px-4 py-2">
-                                        @if ($detail->statusReturDetail == 2)
-                                            <span class="text-yellow-500 font-semibold">Pending</span>
-                                        @elseif ($detail->statusReturDetail == 1)
-                                            <span class="text-green-500 font-semibold">Approved</span>
-                                        @elseif ($detail->statusReturDetail == 0)
-                                            <span class="text-red-500 font-semibold">Rejected</span>
-                                        @else
-                                            <span class="text-gray-500">Unknown</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
+                        @php $no = ($details->currentPage() - 1) * $details->perPage() + 1; @endphp
+                        @foreach ($details as $detail)
+                            <tr class="hover:bg-blue-50 even:bg-gray-50" >
+                                <td class="px-4 py-2">{{ $no++ }}</td>
+                                <td class="px-4 py-2">{{ $detail->returBarang->idBarangRetur ?? '-' }}</td>
+                                <td class="px-4 py-2">{{ $detail->returBarang->supplier->nama ?? '-' }} ({{ $detail->returBarang->idSupplier }})</td>
+                                <td class="px-4 py-2">{{ $detail->returBarang->akun->nama ?? '-' }} ({{ $detail->returBarang->penanggungJawab }})</td>
+                                <td class="px-4 py-2">{{ $detail->barcode ?? '-' }}</td>
+                                <td class="px-4 py-2  text-left">
+                                    {{ $detail->detailBarangRetur->barang->namaBarang ?? '-' }}</td>
+                                <td class="px-4 py-2">
+                                    {{ $detail->jumlah ?? '-' }}
+                                    @if ($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                        Pcs
+                                    @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'kg')
+                                        Kg
+                                    @elseif($detail->detailBarangRetur->barang->satuan->namaSatuan() == 'dus')
+                                        Dus
+                                    @endif
+                                </td>
+                                <td>{{ $detail->kategoriAlasan->alasan() ?? '-' }}</td>
+                                <td class="px-4 py-2">
+                                    {{ \Carbon\Carbon::parse($detail->returBarang->tglRetur)->translatedFormat('d F Y') ?? '-' }}</td>
+                                <td class="px-4 py-2">
+                                    @if ($detail->statusReturDetail == 2)
+                                        <span class="text-yellow-500 font-semibold">Pending</span>
+                                    @elseif ($detail->statusReturDetail == 1)
+                                        <span class="text-green-500 font-semibold">Approved</span>
+                                    @elseif ($detail->statusReturDetail == 0)
+                                        <span class="text-red-500 font-semibold">Rejected</span>
+                                    @else
+                                        <span class="text-gray-500">Unknown</span>
+                                    @endif
+                                </td>
+                            </tr>
                         @endforeach
                     @endif
                 </tbody>
@@ -163,7 +161,7 @@
         </div>
 
         <!-- Pagination -->
-        {{ $bRetur->links() }}
+        {{ $details->links() }}
     </div>
 
     <script>

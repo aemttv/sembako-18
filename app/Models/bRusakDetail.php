@@ -81,4 +81,9 @@ class bRusakDetail extends Model
     {
         return $this->belongsTo(BarangDetail::class, 'idBarang', 'idBarang');
     }
+
+     public function rusakBarang()
+    {
+        return $this->belongsTo(bRusak::class, 'idBarangRusak', 'idBarangRusak');
+    }
 }

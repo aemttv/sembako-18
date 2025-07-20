@@ -197,30 +197,28 @@ class PDFController extends Controller
             });
         }
 
-        $barang = $query->paginate(10);
+        $barang = $query->get();
 
-        $barang->setCollection(
-            $barang->getCollection()->transform(function ($item) {
-                // Dynamic total stock from detailBarang
-                $item->totalStok = $item->detailBarang->sum('quantity');
-
-                // Determine kondisiBarangText based on string value in detailBarang
-                $kondisiList = $item->detailBarang->pluck('kondisiBarang')->all();
-
-                if (in_array('Kadaluarsa', $kondisiList, true)) {
-                    $item->kondisiBarangText = 'Kadaluarsa';
-                } elseif (in_array('Mendekati Kadaluarsa', $kondisiList, true)) {
-                    $item->kondisiBarangText = 'Mendekati Kadaluarsa';
-                } else {
-                    $item->kondisiBarangText = 'Baik';
-                }
-
-                // Access the 'merek' relationship and add a custom attribute
-                $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
-
-                return $item;
-            }),
-        );
+        $barang = $barang->transform(function ($item) {
+            // Dynamic total stock from detailBarang
+            $item->totalStok = $item->detailBarang->sum('quantity');
+        
+            // Determine kondisiBarangText based on string value in detailBarang
+            $kondisiList = $item->detailBarang->pluck('kondisiBarang')->all();
+        
+            if (in_array('Kadaluarsa', $kondisiList, true)) {
+                $item->kondisiBarangText = 'Kadaluarsa';
+            } elseif (in_array('Mendekati Kadaluarsa', $kondisiList, true)) {
+                $item->kondisiBarangText = 'Mendekati Kadaluarsa';
+            } else {
+                $item->kondisiBarangText = 'Baik';
+            }
+        
+            // Access the 'merek' relationship and add a custom attribute
+            $item->merekBarangName = $item->merek ? $item->merek->namaMerek : 'Unknown';
+        
+            return $item;
+        });
 
         // Calculate grand total from all subtotal fields in detailMasuk
         $grandTotal = 0;

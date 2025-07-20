@@ -108,8 +108,8 @@
                 <tbody class="bg-white divide-y">
                     @php
                         $totalDetails = 0;
-                        foreach ($bKeluar as $data) {
-                            $totalDetails += $data->detailKeluar->count();
+                        foreach ($details as $data) {
+                            $totalDetails += $data->count();
                         }
                     @endphp
                     @if ($totalDetails === 0)
@@ -117,32 +117,30 @@
                             <td colspan="8" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
-                        @php $no = 1; @endphp
-                        @foreach ($bKeluar as $data)
-                            @foreach ($data->detailKeluar as $detail)
-                                <tr class="hover:bg-blue-50 even:bg-gray-50">
-                                    <td class="px-4 py-2">{{ $no++ }}</td>
-                                    <td class="px-4 py-2">{{ $data->invoice }}</td>
-                                    <td class="px-4 py-2">{{ $detail->idBarang }}</td>
-                                    <td class="px-4 py-2  text-left">{{ $detail->barangDetailKeluar->barang->namaBarang }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ $detail->jumlahKeluar }}
-                                        @if ($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'pcs/eceran')
-                                            Pcs
-                                        @elseif($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'kg')
-                                            Gram
-                                        @elseif($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'dus')
-                                            Dus
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
-                                    </td>
-                                    <td>{{ $detail->kategoriAlasan->alasan() }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($data->tglKeluar)->translatedFormat('d F Y') }}</td>
-                                </tr>
-                            @endforeach
+                        @php $no = ($details->currentPage() - 1) * $details->perPage() + 1; @endphp
+                        @foreach ($details as $detail)
+                            <tr class="hover:bg-blue-50 even:bg-gray-50">
+                                <td class="px-4 py-2">{{ $no++ }}</td>
+                                <td class="px-4 py-2">{{ $detail->barangKeluar->invoice }}</td>
+                                <td class="px-4 py-2">{{ $detail->idBarang }}</td>
+                                <td class="px-4 py-2  text-left">{{ $detail->barangDetailKeluar->barang->namaBarang }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ $detail->jumlahKeluar }}
+                                    @if ($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'pcs/eceran')
+                                        Pcs
+                                    @elseif($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'kg')
+                                        Gram
+                                    @elseif($detail->barangDetailKeluar->barang->satuan->namaSatuan() == 'dus')
+                                        Dus
+                                    @endif
+                                </td>
+                                <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
+                                </td>
+                                <td>{{ $detail->kategoriAlasan->alasan() }}</td>    
+                                <td class="px-4 py-2">
+                                    {{ \Carbon\Carbon::parse($detail->barangKeluar->tglKeluar)->translatedFormat('d F Y') }}</td>
+                            </tr>
                         @endforeach
                     @endif
                 </tbody>
@@ -150,7 +148,7 @@
         </div>
 
         <!-- Pagination -->
-            {{ $bKeluar->links() }}
+            {{ $details->links() }}
     </div>
 
     <script>

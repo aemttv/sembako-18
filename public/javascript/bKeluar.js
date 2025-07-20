@@ -333,10 +333,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (detail.satuan == 2) {
                 // Price per kg * (qty in grams / 1000)
                 const total = price * (qty / 1000);
-                totalPrice = total.toLocaleString();
+                totalPrice = total.toLocaleString('id-ID');
             } else {
                 const total = price * qty;
-                totalPrice = total.toLocaleString();
+                totalPrice = total.toLocaleString('id-ID');
             }
 
             // Create new row

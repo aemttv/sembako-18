@@ -4,108 +4,128 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\bKeluar;
+use App\Models\bKeluarDetail;
 use App\Models\bMasuk;
+use App\Models\bMasukDetail;
 use App\Models\bRetur;
+use App\Models\bReturDetail;
 use App\Models\bRusak;
+use App\Models\bRusakDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
     function viewbMasuk()
     {
+        Carbon::setLocale('id');
+
         if(!isOwner() ||  !isUserLoggedIn()){
 
             abort(403, 'Unauthorized action.');
         }
 
-        $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')->OrderBy('tglMasuk', 'desc')->paginate(5);
+        // $bMasuk = bMasuk::with('detailMasuk.barangDetail.barang')->OrderBy('tglMasuk', 'desc')->paginate(5);
+        $details = bMasukDetail::with(['barangMasuk', 'barangDetail.barang'])
+            ->join('barang_masuk as bm', 'detail_barang_masuk.idBarangMasuk', '=', 'bm.idBarangMasuk')
+            ->orderBy('bm.tglMasuk', 'desc')
+            ->select('detail_barang_masuk.*')
+            ->paginate(10);
 
-
-        return view('menu.laporan.bMasuk', ['bMasuk' => $bMasuk]);
+        return view('menu.laporan.bMasuk', ['details' => $details]);
     }
 
     function searchBMasuk(Request $request)
     {
-
+        Carbon::setLocale('id');
+        
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
-        $query = bMasuk::with('detailMasuk.barangDetail.barang');
+        $query = bMasukDetail::with(['barangMasuk', 'barangDetail.barang'])
+            ->join('barang_masuk as bm', 'detail_barang_masuk.idBarangMasuk', '=', 'bm.idBarangMasuk')
+            ->select('detail_barang_masuk.*');
 
         // Filter by date range if provided
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $query->whereBetween('tglMasuk', [$request->tanggal_awal, $request->tanggal_akhir]);
+            $query->whereBetween('bm.tglMasuk', [$request->tanggal_awal, $request->tanggal_akhir]);
         } elseif ($request->filled('tanggal_awal')) {
-            $query->where('tglMasuk', '>=', $request->tanggal_awal);
+            $query->where('bm.tglMasuk', '>=', $request->tanggal_awal);
         } elseif ($request->filled('tanggal_akhir')) {
-            $query->where('tglMasuk', '<=', $request->tanggal_akhir);
+            $query->where('bm.tglMasuk', '<=', $request->tanggal_akhir);
         }
 
         // Search by keyword (e.g., namaBarang or idBarang)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->with([
-                'detailMasuk' => function ($q) use ($search) {
-                    $q->whereHas('barangDetail.barang', function ($q2) use ($search) {
-                        $q2->where('namaBarang', 'like', "%$search%")->orWhere('idBarang', 'like', "%$search%");
-                    });
-                },
-            ]);
+            $query->whereHas('barangDetail.barang', function ($q) use ($search) {
+                $q->where('namaBarang', 'like', "%$search%")
+                ->orWhere('idBarang', 'like', "%$search%");
+            });
         }
 
-        $bMasuk = $query->paginate(6);
+        $details = $query->orderBy('bm.tglMasuk', 'desc')->paginate(10);
 
-        return view('menu.laporan.bMasuk', compact('bMasuk'));
+        return view('menu.laporan.bMasuk', ['details' => $details]);
     }
 
     function viewbKeluar()
     {
+        Carbon::setLocale('id');
+
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
-        $bKeluar = bKeluar::with('detailKeluar.barangDetailKeluar.barang')->OrderBy('tglKeluar', 'desc')->paginate(5);
+        $details = bKeluarDetail::with(['barangKeluar', 'barangDetailKeluar.barang'])
+            ->join('barang_keluar as bk', 'detail_barang_keluar.idBarangKeluar', '=', 'bk.idBarangKeluar')
+            ->orderBy('bk.tglKeluar', 'desc')
+            ->select('detail_barang_keluar.*')
+            ->paginate(10);
 
-        return view('menu.laporan.bKeluar', ['bKeluar' => $bKeluar]);
+        return view('menu.laporan.bKeluar', ['details' => $details]);
     }
 
     function searchBKeluar(Request $request)
     {
+        Carbon::setLocale('id');
+
         if(!isOwner()||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
-        $query = bKeluar::with('detailKeluar.barangDetailKeluar.barang');
+        $query = bKeluarDetail::with(['barangKeluar', 'barangDetailKeluar.barang'])
+            ->join('barang_keluar as bk', 'detail_barang_keluar.idBarangKeluar', '=', 'bk.idBarangKeluar')
+            ->select('detail_barang_keluar.*');
 
         // Filter by date range if provided
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $query->whereBetween('tglKeluar', [$request->tanggal_awal, $request->tanggal_akhir]);
+            $query->whereBetween('bk.tglKeluar', [$request->tanggal_awal, $request->tanggal_akhir]);
         } elseif ($request->filled('tanggal_awal')) {
-            $query->where('tglKeluar', '>=', $request->tanggal_awal);
+            $query->where('bk.tglKeluar', '>=', $request->tanggal_awal);
         } elseif ($request->filled('tanggal_akhir')) {
-            $query->where('tglKeluar', '<=', $request->tanggal_akhir);
+            $query->where('bk.tglKeluar', '<=', $request->tanggal_akhir);
         }
 
         // Search by keyword (e.g., namaBarang or idBarang)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->with([
-                'detailKeluar' => function ($q) use ($search) {
-                    $q->whereHas('barangDetailKeluar.barang', function ($q2) use ($search) {
-                        $q2->where('namaBarang', 'like', "%$search%")->orWhere('idBarang', 'like', "%$search%");
-                    });
-                },
-            ]);
+            $query->whereHas('barangDetailKeluar.barang', function ($q) use ($search) {
+                $q->where('namaBarang', 'like', "%$search%")
+                ->orWhere('idBarang', 'like', "%$search%");
+            });
         }
 
-        $bKeluar = $query->paginate(6);
+        $details = $query->orderBy('bk.tglKeluar', 'desc')->paginate(10);
 
-        return view('menu.laporan.bKeluar', compact('bKeluar'));
+        return view('menu.laporan.bKeluar', ['details' => $details]);
     }
 
     function viewStokBarang()
     {
+        Carbon::setLocale('id');
+
         if(!isOwner() || !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
@@ -135,6 +155,8 @@ class LaporanController extends Controller
 
     public function searchStokBarang(Request $request)
     {
+        Carbon::setLocale('id');
+        
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
@@ -202,96 +224,104 @@ class LaporanController extends Controller
         return view('menu.laporan.stok', compact('barang'));
     }
 
-    function viewbRetur() {
+    function viewbRetur()
+    {
+        Carbon::setLocale('id');
 
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
-        $bRetur = bRetur::with('detailRetur.detailBarangRetur.barang')
-        ->orderBy('tglRetur', 'desc')
-        ->orderBy('idBarangRetur', 'desc')
-        ->paginate(5);
+        $details = bReturDetail::with(['returBarang', 'barang'])
+            ->join('retur_barang as rb', 'detail_retur_barang.idBarangRetur', '=', 'rb.idBarangRetur')
+            ->orderBy('rb.tglRetur', 'desc')
+            ->select('detail_retur_barang.*')
+            ->paginate(10);
 
-        return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
+        return view('menu.laporan.bRetur', ['details' => $details]);
     }
 
-    function searchBRetur(Request $request) {
+    function searchBRetur(Request $request)
+    {
+        Carbon::setLocale('id');
 
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
-        $query = bRetur::with('detailRetur.detailBarangRetur.barang', 'supplier');
+        $query = bReturDetail::with(['returBarang', 'barang'])
+            ->join('retur_barang as rb', 'detail_retur_barang.idBarangRetur', '=', 'rb.idBarangRetur')
+            ->select('detail_retur_barang.*');
 
+        // Filter by date range if provided
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $query->whereBetween('tglRetur', [$request->tanggal_awal, $request->tanggal_akhir]);
+            $query->whereBetween('rb.tglRetur', [$request->tanggal_awal, $request->tanggal_akhir]);
         } elseif ($request->filled('tanggal_awal')) {
-            $query->where('tglRetur', '>=', $request->tanggal_awal);
+            $query->where('rb.tglRetur', '>=', $request->tanggal_awal);
         } elseif ($request->filled('tanggal_akhir')) {
-            $query->where('tglRetur', '<=', $request->tanggal_akhir);
+            $query->where('rb.tglRetur', '<=', $request->tanggal_akhir);
         }
 
+        // Search by keyword (e.g., barcode or namaBarang)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->with([
-                'detailRetur' => function ($q) use ($search) {
-                    $q->whereHas('detailBarangRetur.barang', function ($q2) use ($search) {
-                        $q2->where('namaBarang', 'like', "%$search%")->orWhere('barcode', 'like', "%$search%");
-                    });
-                },
-            ]);
+            $query->whereHas('barang', function ($q) use ($search) {
+                $q->where('namaBarang', 'like', "%$search%")
+                ->orWhere('barcode', 'like', "%$search%");
+            });
         }
 
-        $bRetur = $query->OrderBy('tglRetur', 'desc')->paginate(6);
+        $details = $query->orderBy('rb.tglRetur', 'desc')->paginate(10);
 
-
-        return view('menu.laporan.bRetur', ['bRetur' => $bRetur]);
+        return view('menu.laporan.bRetur', ['details' => $details]);
     }
-
-    function viewbRusak() {
-
+    function viewbRusak()
+    {
+        Carbon::setLocale('id');
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
-        $bRusak = bRusak::with('detailRusak.detailBarangRusak.barang')
-        ->OrderBy('tglRusak', 'desc')
-        ->OrderBy('idBarangRusak', 'desc')
-        ->paginate(6);
+        $details = bRusakDetail::with(['rusakBarang', 'barang'])
+            ->join('barang_rusak as br', 'detail_barang_rusak.idBarangRusak', '=', 'br.idBarangRusak')
+            ->orderBy('br.tglRusak', 'desc')
+            ->select('detail_barang_rusak.*')
+            ->paginate(10);
 
-        return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);
+        return view('menu.laporan.bRusak', ['details' => $details]);
     }
 
-    function searchBRusak(Request $request) {
-
+    function searchBRusak(Request $request)
+    {
+        Carbon::setLocale('id');
         if(!isOwner() ||  !isUserLoggedIn()){
             abort(403, 'Unauthorized action.');
         }
 
-        $query = bRusak::with('detailRusak.detailBarangRusak.barang');
+        $query = bRusakDetail::with(['rusakBarang', 'barang'])
+            ->join('barang_rusak as br', 'detail_barang_rusak.idBarangRusak', '=', 'br.idBarangRusak')
+            ->select('detail_barang_rusak.*');
 
+        // Filter by date range if provided
         if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $query->whereBetween('tglRusak', [$request->tanggal_awal, $request->tanggal_akhir]);
+            $query->whereBetween('br.tglRusak', [$request->tanggal_awal, $request->tanggal_akhir]);
         } elseif ($request->filled('tanggal_awal')) {
-            $query->where('tglRusak', '>=', $request->tanggal_awal);
+            $query->where('br.tglRusak', '>=', $request->tanggal_awal);
         } elseif ($request->filled('tanggal_akhir')) {
-            $query->where('tglRusak', '<=', $request->tanggal_akhir);
+            $query->where('br.tglRusak', '<=', $request->tanggal_akhir);
         }
 
+        // Search by keyword (e.g., namaBarang or barcode)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->with([
-                'detailRusak' => function ($q) use ($search) {
-                    $q->whereHas('detailBarangRusak.barang', function ($q2) use ($search) {
-                        $q2->where('namaBarang', 'like', "%$search%")->orWhere('barcode', 'like', "%$search%");
-                    });
-                },
-            ]);
+            $query->whereHas('barang', function ($q) use ($search) {
+                $q->where('namaBarang', 'like', "%$search%")
+                ->orWhere('barcode', 'like', "%$search%");
+            });
         }
 
-        $bRusak = $query->OrderBy('tglRusak', 'desc')->paginate(6);
+        $details = $query->orderBy('br.tglRusak', 'desc')->paginate(10);
 
-        return view('menu.laporan.bRusak', ['bRusak' => $bRusak]);
+        return view('menu.laporan.bRusak', ['details' => $details]);
     }
 }

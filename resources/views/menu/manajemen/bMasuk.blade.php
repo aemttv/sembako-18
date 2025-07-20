@@ -633,23 +633,8 @@
             });
 
             // Pastikan form bisa submit ke backend
-            document.getElementById('submitData').addEventListener('click', function() {
-                e.preventDefault();
-
-
-
-                const supplierId = document.getElementById('supplier_id').value;
-                if (!supplierId) {
-                    alert('Silahkan memilih supplier terlebih dahulu.');
-                    return;
-                }
-
-                // Validate at least one row exists
-                const rowCount = document.getElementById('barangTableBody').rows.length;
-                if (rowCount === 0) {
-                    alert('Silahkan menambahkan barang terlebih dahulu.');
-                    return;
-                }
+            document.getElementById('submitData').addEventListener('click', function(e) {
+                
 
                 // Create FormData object
                 const formData = new FormData(this);
@@ -662,7 +647,37 @@
             });
             updateMinExpiryDate();
 
-            
+            document.getElementById('barangMasukForm').addEventListener('submit', function(e) {
+                // 1. Check at least one row in the table
+                const rowCount = document.getElementById('barangTableBody').querySelectorAll('tr:not(#noDataRow)').length;
+                if (rowCount === 0) {
+                    e.preventDefault();
+                    alert('Silahkan menambahkan barang terlebih dahulu.');
+                    return false;
+                }
+
+                // 2. Check supplier
+                const supplierId = document.getElementById('supplier_id').value;
+                if (!supplierId) {
+                    e.preventDefault();
+                    alert('Silahkan memilih supplier terlebih dahulu.');
+                    return false;
+                }
+
+
+                // 4. Optionally, check if all hidden inputs for each row are filled
+                const hiddenRows = document.getElementById('hiddenRows');
+                const inputs = hiddenRows.querySelectorAll('input');
+                let allFilled = true;
+                inputs.forEach(input => {
+                    if (!input.value) allFilled = false;
+                });
+                if (!allFilled) {
+                    e.preventDefault();
+                    alert('Pastikan semua data barang sudah lengkap.');
+                    return false;
+                }
+            });
 
         </script>
 

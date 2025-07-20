@@ -82,4 +82,9 @@ class bReturDetail extends Model
         return $this->belongsTo(BarangDetail::class, 'barcode', 'barcode');
     }
 
+    public function returBarang()
+    {
+        return $this->belongsTo(bRetur::class, 'idBarangRetur', 'idBarangRetur');
+    }
+
 }

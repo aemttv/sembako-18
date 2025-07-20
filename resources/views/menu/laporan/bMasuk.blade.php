@@ -108,8 +108,8 @@
                 <tbody class="bg-white divide-y">
                     @php
                         $totalDetails = 0;
-                        foreach ($bMasuk as $data) {
-                            $totalDetails += $data->detailMasuk->count();
+                        foreach ($details as $data) {
+                            $totalDetails += $data->count();
                         }
                     @endphp
                     @if ($totalDetails === 0)
@@ -117,14 +117,13 @@
                             <td colspan="10" class="px-4 py-8 text-center text-gray-500">Data tidak ditemukan</td>
                         </tr>
                     @else
-                    @php $no = ($bMasuk->currentPage() - 1) * $bMasuk->perPage() + 1; @endphp
-                    @foreach ($bMasuk as $data)
-                        @foreach ($data->detailMasuk as $detail)
+                    @php $no = ($details->currentPage() - 1) * $details->perPage() + 1; @endphp
+                        @foreach ($details as $detail)
                             <tr>
-                                <td class="px-4 py-2">{{ $no++ }}</td>
-                                <td class="px-4 py-2">{{ $detail->idBarang }}</td>
-                                <td class="px-4 py-2">{{ $data->supplier->nama }} ({{ $data->idSupplier }})</td>
-                                <td class="px-4 py-2">{{ $data->akun->nama }} ({{ $data->idAkun }})</td>
+                                    <td class="px-4 py-2">{{ $no++ }}</td>
+                                    <td class="px-4 py-2">{{ $detail->idBarang }}</td>
+                                    <td class="px-4 py-2">{{ $detail->barangMasuk->supplier->nama }} ({{ $detail->barangMasuk->idSupplier }})</td>
+                                    <td class="px-4 py-2">{{ $detail->barangMasuk->akun->nama }} ({{ $detail->barangMasuk->idAkun }})</td>
                                 <td class="px-4 py-2 text-left">
                                     {{ $detail->barangDetail->barang->namaBarang ?? 'Nama Barang Tidak Ditemukan' }}</td>
                                 <td class="px-4 py-2">
@@ -140,7 +139,7 @@
                                 <td class="px-4 py-2 text-right">Rp.{{ number_format($detail->subtotal, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-2">
-                                    {{ \Carbon\Carbon::parse($data->tglMasuk)->translatedFormat('d F Y') }}</td>
+                                    {{ \Carbon\Carbon::parse($detail->barangMasuk->tglMasuk)->translatedFormat('d F Y') }}</td>
                                 @if (in_array($detail->barangDetail->barang->kategoriBarang->value, [1, 2, 3]))
                                     <td class="px-4 py-2">
                                         {{ \Carbon\Carbon::parse($detail->tglKadaluarsa)->translatedFormat('d F Y') }}
@@ -152,14 +151,13 @@
                                 @endif
                             </tr>
                         @endforeach
-                    @endforeach
                     @endif
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        {{ $bMasuk->links() }}
+        {{ $details->links() }}
     </div>
 
     <script>

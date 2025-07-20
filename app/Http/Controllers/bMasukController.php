@@ -133,7 +133,9 @@ class bMasukController extends Controller
 
             // Validasi dan simpan detail barang
             if (!$request->has('items') || !is_array($request->items)) {
-                return response()->json(['error' => 'Data barang belum dimasukkan.'], 400);
+                return redirect()
+                ->back()
+                ->with('error', 'Data barang masuk masih kosong. Silakan tambahkan barang terlebih dahulu.');
             }
 
             foreach ($request->items as $item) {
